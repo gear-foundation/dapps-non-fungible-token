@@ -2,7 +2,7 @@
 name = "nft-example"
 version = "0.1.0"
 authors = ["Gear Technologies"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
 codec = { package = "parity-scale-codec", version = "3.1.2", default-features = false, features = ["derive"] }
