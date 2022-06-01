@@ -66,7 +66,7 @@ fn add_offer() {
     let mut offers = vec![];
     for i in 0..9 {
         offer(&market, USERS[1], None, 1000 * (i + 1));
-        let hash = get_hash(&2_u64.into(), None, 1_000 * (i + 1));
+        let hash = get_hash(&2.into(), None, 1_000 * (i + 1));
         offers.push(Offer {
             hash,
             id: USERS[1].into(),
