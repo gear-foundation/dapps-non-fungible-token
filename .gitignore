@@ -1,4 +1,4 @@
 .binpath
-.vscode/
 .DS_Store
+.vscode
 target
