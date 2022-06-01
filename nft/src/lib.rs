@@ -19,11 +19,15 @@ static mut CONTRACT: Option<NFT> = None;
 #[no_mangle]
 pub unsafe extern "C" fn init() {
     let config: InitNFT = msg::load().expect("Unable to decode InitNFT");
+    if config.royalties.is_some() {
+        config.royalties.as_ref().unwrap().validate();
+    }
     let nft = NFT {
         token: NFTState {
             name: config.name,
             symbol: config.symbol,
             base_uri: config.base_uri,
+            royalties: config.royalties,
             ..Default::default()
         },
         owner: msg::source(),
