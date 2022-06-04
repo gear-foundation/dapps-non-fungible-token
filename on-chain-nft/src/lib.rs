@@ -21,7 +21,9 @@ static mut CONTRACT: Option<OnChainNFT> = None;
 
 #[no_mangle]
 pub unsafe extern "C" fn init() {
+    debug!("BEFORE GETTING A CONFIG");
     let config: InitOnChainNFT = msg::load().expect("Unable to decode InitNFT");
+    debug!("GOT CONFIG");
     let mut _layers: BTreeMap<LayerId, BTreeMap<LayerItemId, Vec<u8>>> = BTreeMap::new();
     for (layer_id, layer) in config.layers.iter() {
         let mut layer_map: BTreeMap<LayerItemId, Vec<u8>> = BTreeMap::new();
@@ -44,6 +46,7 @@ pub unsafe extern "C" fn init() {
         layers: _layers.clone(),
         ..Default::default()
     };
+    debug!("Constructed: {:?}", _layers);
     CONTRACT = Some(nft);
 }
 

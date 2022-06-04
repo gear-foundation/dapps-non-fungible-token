@@ -6,7 +6,7 @@ const fs = require('fs');
 
 require('dotenv').config();
 
-const MINT_COUNT = 10;
+const MINT_COUNT = 3;
 const loadFiles = (directoryPath) => {
     let filesArr = [];
     fs.readdirSync(directoryPath).forEach(file => {
@@ -44,7 +44,7 @@ async function main() {
     const metaFile = readFileSync(process.env.META_WASM);
     const meta = metaFile ? await getWasmMetadata(metaFile) : undefined;
     console.log(process.env.PROGRAM_ID)
-    let lc = getLayersCount("./cryptopunk-nft-generator/layers_svg/trait_types");
+    let lc = getLayersCount("../cryptopunk-nft-generator/layers_svg/trait_types");
     let cartesianCombinations = lc[0];
     for(let i = 1; i < lc.length; i++) {
         cartesianCombinations = cartesian(cartesianCombinations, lc[i]);

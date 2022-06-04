@@ -14,7 +14,7 @@ const loadFiles = (directoryPath) => {
 };
 
 const getLayersMap = (layerPath) => {
-    const layers = loadFiles(layerPath);
+    const layers = loadFiles(layerPath).slice(0, 2);
     let layer = {};
     layers.map((layerItemImage, layerItemId) => {
         layer[parseInt(layerItemId)] = fs.readFileSync(
@@ -32,7 +32,7 @@ const uploadProgram = async (
     value,
     initPayload
 ) => {
-    const basePath = "./cryptopunk-nft-generator/layers_svg/trait_types";
+    const basePath = "../cryptopunk-nft-generator/layers_svg/trait_types";
 
     const code = readFileSync(pathToProgram);
     const metaFile = pathToMeta ? readFileSync(pathToMeta) : undefined;
@@ -41,10 +41,13 @@ const uploadProgram = async (
     folders.map((layer, i) => {
         initLayers[parseInt(i)] = getLayersMap(path.join(basePath, layer));
     });
-    const baseImage = fs.readFileSync("./cryptopunk-nft-generator/layers_svg/base/blue.svg").toString();
+    const baseImage = fs.readFileSync("../cryptopunk-nft-generator/layers_svg/base/blue.svg").toString();
+
+    console.log(initPayload);
     initPayload.base_image = baseImage;
     initPayload.layers = initLayers;
-    const meta = metaFile ? await getWasmMetadata(metaFile) : undefined;    const gas = await api.program.gasSpent.init(
+    const meta = metaFile ? await getWasmMetadata(metaFile) : undefined;
+    const gas = await api.program.gasSpent.init(
         account.publicKey,
         code,
         initPayload,
