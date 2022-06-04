@@ -17,20 +17,10 @@ async function main() {
     const account = GearKeyring.fromJson(jsonKeyring, 'Google06!!');
     const metaFile = readFileSync(process.env.META_WASM);
     const meta = metaFile ? await getWasmMetadata(metaFile) : undefined;
-    console.log(process.env.PROGRAM_ID)
     try {
         let somePayload = {
-            Mint: {
-                token_metadata: {
-                    name: "COC #0",
-                    description: "Empty",
-                    media: "",
-                    reference: "",
-                },
-                description: {
-                    1: 1,
-                    2: 1,
-                },
+            TokenURI: {
+                token_id: 0,
             }
         }
 

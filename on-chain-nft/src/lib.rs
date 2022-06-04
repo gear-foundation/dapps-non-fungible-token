@@ -2,7 +2,7 @@
 
 use gear_lib::non_fungible_token::{nft_core::*, state::*, token::*};
 use gear_lib_derive::{NFTCore, NFTMetaState, NFTStateKeeper};
-use gstd::{msg, prelude::*, ActorId};
+use gstd::{msg, debug, prelude::*, ActorId};
 use on_chain_nft_io::*;
 use primitive_types::U256;
 
@@ -26,8 +26,10 @@ pub unsafe extern "C" fn init() {
     for (layer_id, layer) in config.layers.iter() {
         let mut layer_map: BTreeMap<LayerItemId, Vec<u8>> = BTreeMap::new();
         for (layer_item_id, layer_item) in layer.clone() {
+            debug!("INSIDE INNER LAYERS");
             layer_map.insert(layer_item_id, layer_item.into_bytes());
         }
+
         _layers.insert(*layer_id, layer_map);
     }
     let nft = OnChainNFT {

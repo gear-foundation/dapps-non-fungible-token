@@ -26,6 +26,7 @@ const events = async () => {
   });
 
   gearApi.gearEvents.subscribeToProgramEvents(({ method, data: { info, reason } }) => {
+    console.log(reason);
     console.log(`
       ${method}:
       programId: ${info.programId.toHex()}
