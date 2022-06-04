@@ -2,7 +2,7 @@
 
 use gear_lib::non_fungible_token::{nft_core::*, state::*, token::*};
 use gear_lib_derive::{NFTCore, NFTMetaState, NFTStateKeeper};
-use gstd::{msg, debug, prelude::*, ActorId};
+use gstd::{msg, prelude::*, ActorId};
 use on_chain_nft_io::*;
 use primitive_types::U256;
 
@@ -21,14 +21,11 @@ static mut CONTRACT: Option<OnChainNFT> = None;
 
 #[no_mangle]
 pub unsafe extern "C" fn init() {
-    debug!("BEFORE GETTING A CONFIG");
     let config: InitOnChainNFT = msg::load().expect("Unable to decode InitNFT");
-    debug!("GOT CONFIG");
     let mut _layers: BTreeMap<LayerId, BTreeMap<LayerItemId, Vec<u8>>> = BTreeMap::new();
     for (layer_id, layer) in config.layers.iter() {
         let mut layer_map: BTreeMap<LayerItemId, Vec<u8>> = BTreeMap::new();
         for (layer_item_id, layer_item) in layer.clone() {
-            debug!("INSIDE INNER LAYERS");
             layer_map.insert(layer_item_id, layer_item.into_bytes());
         }
 
@@ -46,7 +43,6 @@ pub unsafe extern "C" fn init() {
         layers: _layers.clone(),
         ..Default::default()
     };
-    debug!("Constructed: {:?}", _layers);
     CONTRACT = Some(nft);
 }
 
