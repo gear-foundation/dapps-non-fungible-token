@@ -11,6 +11,8 @@ pub mod auction;
 pub mod offers;
 pub mod payment;
 pub mod sale;
+pub mod state;
+use state::*;
 
 pub type ContractAndTokenId = String;
 
@@ -124,15 +126,6 @@ impl Market {
     }
 }
 
-gstd::metadata! {
-    title: "NFTMarketplace",
-        init:
-            input: InitMarket,
-        handle:
-            input: MarketAction,
-            output: MarketEvent,
-}
-
 #[gstd::async_main]
 async unsafe fn main() {
     let action: MarketAction = msg::load().expect("Could not load Action");
@@ -241,4 +234,38 @@ pub unsafe extern "C" fn init() {
         ..Market::default()
     };
     MARKET = Some(market);
+}
+
+gstd::metadata! {
+    title: "NFTMarketplace",
+        init:
+            input: InitMarket,
+        handle:
+            input: MarketAction,
+            output: MarketEvent,
+        state:
+            input: State,
+            output: StateReply,
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn meta_state() -> *mut [i32; 2] {
+    let state: State = msg::load().expect("failed to decode input argument");
+    let market: &mut Market = MARKET.get_or_insert(Market::default());
+    let encoded = match state {
+        State::AllItems => StateReply::AllItems(market.items.values().cloned().collect()).encode(),
+        State::ItemInfo {
+            nft_contract_id,
+            token_id,
+        } => {
+            let contract_and_token_id =
+                format!("{}{}", H256::from_slice(nft_contract_id.as_ref()), token_id);
+            if let Some(item) = market.items.get(&contract_and_token_id) {
+                StateReply::ItemInfo(item.clone()).encode()
+            } else {
+                StateReply::ItemInfo(Item::default()).encode()
+            }
+        }
+    };
+    gstd::util::to_leak_ptr(encoded)
 }
