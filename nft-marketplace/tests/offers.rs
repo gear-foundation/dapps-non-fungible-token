@@ -66,7 +66,7 @@ fn add_offer() {
     let mut offers = vec![];
     for i in 0..9 {
         offer(&market, USERS[1], None, 1000 * (i + 1));
-        let hash = get_hash(&2.into(), None, 1_000 * (i + 1));
+        let hash = get_hash(&2.into(), 0.into(), None, 1_000 * (i + 1));
         offers.push(Offer {
             hash,
             id: USERS[1].into(),
@@ -201,7 +201,7 @@ fn accept_offer() {
     offer(&market, USERS[1], None, 100_000);
     offer(&market, USERS[2], Some(1.into()), 1_000);
 
-    let hash = get_hash(&2.into(), Some(1.into()), 1_000);
+    let hash = get_hash(&2.into(), 0.into(), Some(1.into()), 1_000);
 
     let res = market.send(
         USERS[0],
@@ -227,7 +227,7 @@ fn accept_offer() {
     assert!(res.contains(&(USERS[0], FTEvent::Balance(990).encode())));
 
     let offer = Offer {
-        hash: get_hash(&2.into(), None, 100_000),
+        hash: get_hash(&2.into(), 0.into(), None, 100_000),
         id: USERS[1].into(),
         ft_contract_id: None,
         price: 100_000,
@@ -258,7 +258,7 @@ fn accept_offer() {
         MarketAction::AcceptOffer {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
-            offer_hash: get_hash(&2.into(), None, 100_000),
+            offer_hash: get_hash(&2.into(),  0.into(),None, 100_000),
         },
     );
     assert!(res.contains(&(
@@ -312,7 +312,7 @@ fn accept_offer_failures() {
         MarketAction::AcceptOffer {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
-            offer_hash: get_hash(&2.into(), Some(1.into()), 1_000),
+            offer_hash: get_hash(&2.into(),  0.into(),Some(1.into()), 1_000),
         },
     );
     assert!(res.main_failed());
@@ -323,7 +323,7 @@ fn accept_offer_failures() {
         MarketAction::AcceptOffer {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
-            offer_hash: get_hash(&2.into(), Some(1.into()), 10_000),
+            offer_hash: get_hash(&2.into(),  0.into(),Some(1.into()), 10_000),
         },
     );
     assert!(res.main_failed());
@@ -348,7 +348,7 @@ fn withdraw() {
         MarketAction::Withdraw {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
-            hash: get_hash(&2.into(), Some(1.into()), 1_000),
+            hash: get_hash(&2.into(),  0.into(),Some(1.into()), 1_000),
         },
     );
     assert!(res.contains(&(
@@ -366,7 +366,7 @@ fn withdraw() {
     assert!(res.contains(&(USERS[0], FTEvent::Balance(100_000).encode())));
 
     let offer = Offer {
-        hash: get_hash(&2.into(), None, 100_000),
+        hash: get_hash(&2.into(), 0.into(), None, 100_000),
         id: USERS[1].into(),
         ft_contract_id: None,
         price: 100_000,
@@ -397,7 +397,7 @@ fn withdraw() {
         MarketAction::Withdraw {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
-            hash: get_hash(&2.into(), None, 100_000),
+            hash: get_hash(&2.into(),  0.into(),None, 100_000),
         },
     );
     assert!(res.contains(&(
@@ -452,7 +452,7 @@ fn withdraws_failure() {
         MarketAction::Withdraw {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
-            hash: get_hash(&2.into(), Some(1.into()), 1_000),
+            hash: get_hash(&2.into(),  0.into(),Some(1.into()), 1_000),
         },
     );
     assert!(res.main_failed());
@@ -463,7 +463,7 @@ fn withdraws_failure() {
         MarketAction::Withdraw {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
-            hash: get_hash(&2.into(), Some(1.into()), 1_010),
+            hash: get_hash(&2.into(),  0.into(),Some(1.into()), 1_010),
         },
     );
     assert!(res.main_failed());

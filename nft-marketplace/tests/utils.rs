@@ -4,7 +4,7 @@ use gstd::ActorId;
 use gtest::{Program, System};
 use market_io::*;
 use nft_io::*;
-use primitive_types::H256;
+use primitive_types::{H256, U256};
 
 pub const USERS: &[u64] = &[4, 5, 6, 7];
 pub const TREASURY_ID: u64 = 8;
@@ -47,7 +47,7 @@ pub fn init_market(sys: &System) {
         InitMarket {
             owner_id: USERS[0].into(),
             treasury_id: TREASURY_ID.into(),
-            treasury_fee: 100,
+            treasury_fee: 1,
         },
     );
     assert!(res.log().is_empty());
@@ -82,11 +82,13 @@ pub fn add_market_data(
     )));
 }
 
-pub fn get_hash(nft_contract_id: &ActorId, ft_contract_id: Option<ActorId>, price: u128) -> H256 {
+pub fn get_hash(nft_contract_id: &ActorId, token_id: U256, ft_contract_id: Option<ActorId>, price: u128) -> H256 {
     let nft_conract_vec: Vec<u8> = <[u8; 32]>::from(*nft_contract_id).into();
     let price_vec: Vec<u8> = price.to_be_bytes().into();
+    let token_id_vec: Vec<u8> = <[u8; 32]>::from(token_id).into();
     let ft_contract_vec: Vec<u8> = ft_contract_id
         .map(|id| <[u8; 32]>::from(id).into())
         .unwrap_or_default();
-    sp_core_hashing::blake2_256(&[nft_conract_vec, price_vec, ft_contract_vec].concat()).into()
+    sp_core_hashing::blake2_256(&[nft_conract_vec, price_vec, ft_contract_vec, token_id_vec].concat()).into()
 }
+
