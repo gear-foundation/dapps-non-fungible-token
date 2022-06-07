@@ -30,6 +30,11 @@ fn mint_failures() {
     init_nft(&sys);
     let nft = sys.get_program(1);
     assert!(mint(&nft, USERS[0], BTreeMap::from([(3, 1), (3, 2),])).main_failed());
+
+    // mint token
+    assert!(!mint(&nft, USERS[0], BTreeMap::from([(1, 1), (2, 2),])).main_failed());
+    // mint it again
+    assert!(mint(&nft, USERS[0], BTreeMap::from([(1, 1), (2, 2),])).main_failed());
 }
 
 #[test]

@@ -15,6 +15,7 @@ pub struct OnChainNFT {
     pub base_image: Vec<u8>,
     pub layers: BTreeMap<LayerId, BTreeMap<LayerItemId, Vec<u8>>>,
     pub nfts: BTreeMap<TokenId, BTreeMap<LayerId, LayerItemId>>,
+    pub nfts_existence: BTreeMap<String, bool>
 }
 
 static mut CONTRACT: Option<OnChainNFT> = None;
@@ -93,6 +94,20 @@ impl OnChainNFTCore for OnChainNFT {
                 .get(&layer_item_id)
                 .expect("No such layer item");
         }
+
+        // also check if description has all layers provided
+        if description.len() != self.layers.len() {
+            panic!("Not enough layers provided");
+        }
+        // precheck if there is already an nft with such description
+        let mut key = String::from("");
+        for lii in description.values() {
+            key = key + &lii.to_string();
+        }
+        if self.nfts_existence.get(&key).is_some() {
+            panic!("Such nft already exists");
+        }
+        self.nfts_existence.insert(key, true);
         NFTCore::mint(self, &msg::source(), self.token_id, Some(metadata));
         self.nfts.insert(self.token_id, description);
         self.token_id = self.token_id.saturating_add(U256::one());

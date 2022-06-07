@@ -14,7 +14,7 @@ const loadFiles = (directoryPath) => {
 };
 
 const getLayersMap = (layerPath) => {
-    const layers = loadFiles(layerPath).slice(0, 2);
+    const layers = loadFiles(layerPath).slice(0,4);
     let layer = {};
     layers.map((layerItemImage, layerItemId) => {
         layer[parseInt(layerItemId)] = fs.readFileSync(
