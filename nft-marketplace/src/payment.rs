@@ -23,7 +23,7 @@ pub async fn transfer_payment(
     price: u128,
 ) {
     if ft_contract_id.is_none() {
-        if to != &exec::program_id() {
+        if to != &exec::program_id() && price > 500 {
             msg::send(*to, "", price).unwrap();
         }
     } else {
