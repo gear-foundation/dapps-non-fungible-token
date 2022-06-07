@@ -3,13 +3,14 @@ use gstd::{exec, msg, prelude::*, ActorId};
 use market_io::*;
 use primitive_types::{H256, U256};
 
-fn get_hash(nft_contract_id: &ActorId, ft_contract_id: Option<ActorId>, price: u128) -> H256 {
+fn get_hash(nft_contract_id: &ActorId, token_id: U256, ft_contract_id: Option<ActorId>, price: u128) -> H256 {
     let nft_conract_vec: Vec<u8> = <[u8; 32]>::from(*nft_contract_id).into();
     let price_vec: Vec<u8> = price.to_be_bytes().into();
+    let token_id_vec: Vec<u8> = <[u8; 32]>::from(token_id).into();
     let ft_contract_vec: Vec<u8> = ft_contract_id
         .map(|id| <[u8; 32]>::from(id).into())
         .unwrap_or_default();
-    sp_core_hashing::blake2_256(&[nft_conract_vec, price_vec, ft_contract_vec].concat()).into()
+    sp_core_hashing::blake2_256(&[nft_conract_vec, price_vec, ft_contract_vec, token_id_vec].concat()).into()
 }
 
 impl Market {
@@ -42,7 +43,7 @@ impl Market {
             panic!("Cant offer zero price");
         }
 
-        let hash: H256 = get_hash(nft_contract_id, ft_contract_id, price);
+        let hash: H256 = get_hash(nft_contract_id, token_id, ft_contract_id, price);
         let mut offers = item.offers.clone();
         if offers.iter().any(|offer| offer.hash == hash) {
             panic!("the offer with these params already exists");

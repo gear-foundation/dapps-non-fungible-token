@@ -227,10 +227,13 @@ async unsafe fn main() {
 #[no_mangle]
 pub unsafe extern "C" fn init() {
     let config: InitMarket = msg::load().expect("Unable to decode InitConfig");
+    if config.treasury_fee == 0 || config.treasury_fee > 5 {
+        panic!("Wrong treasury fee");
+    }
     let market = Market {
         owner_id: config.owner_id,
         treasury_id: config.treasury_id,
-        treasury_fee: config.treasury_fee,
+        treasury_fee: config.treasury_fee * 100,
         ..Market::default()
     };
     MARKET = Some(market);
