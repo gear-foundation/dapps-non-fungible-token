@@ -13,7 +13,7 @@ pub struct OnChainNFT {
     pub token_id: TokenId,
     pub owner: ActorId,
     pub base_image: Vec<u8>,
-    pub layers: BTreeMap<LayerId, BTreeMap<ItemId, Vec<u8>>>,
+    pub layers: BTreeMap<LayerId, BTreeMap<ItemId, String>>,
     pub nfts: BTreeMap<TokenId, BTreeMap<LayerId, ItemId>>,
     pub nfts_existence: BTreeSet<String>,
 }
@@ -23,15 +23,7 @@ static mut CONTRACT: Option<OnChainNFT> = None;
 #[no_mangle]
 pub unsafe extern "C" fn init() {
     let config: InitOnChainNFT = msg::load().expect("Unable to decode InitOnChainNFT");
-    let mut _layers: BTreeMap<LayerId, BTreeMap<ItemId, Vec<u8>>> = BTreeMap::new();
-    for (layer_id, layer) in config.layers.iter() {
-        let mut layer_map: BTreeMap<ItemId, Vec<u8>> = BTreeMap::new();
-        for (layer_item_id, layer_item) in layer.clone() {
-            layer_map.insert(layer_item_id, layer_item.into_bytes());
-        }
 
-        _layers.insert(*layer_id, layer_map);
-    }
     let nft = OnChainNFT {
         token: NFTState {
             name: config.name,
@@ -41,7 +33,7 @@ pub unsafe extern "C" fn init() {
         },
         owner: msg::source(),
         base_image: config.base_image.into_bytes(),
-        layers: _layers,
+        layers: config.layers,
         ..Default::default()
     };
     CONTRACT = Some(nft);
@@ -142,8 +134,7 @@ impl OnChainNFTCore for OnChainNFT {
                 .expect("No such layer")
                 .get(layer_item_id)
                 .expect("No such layer item");
-            let cc = String::from_utf8((*layer_content).clone()).expect("Found invalid UTF-8");
-            content.push(cc);
+            content.push(layer_content.clone());
         }
         Some(TokenURI { metadata, content }.encode())
     }
