@@ -54,7 +54,7 @@ pub fn init_nft(sys: &System) {
     assert!(res.log().is_empty());
 }
 
-pub fn mint(nft: &Program, member: u64, description: BTreeMap<LayerId, LayerItemId>) -> RunResult {
+pub fn mint(nft: &Program, member: u64, description: BTreeMap<LayerId, ItemId>) -> RunResult {
     nft.send(
         member,
         OnChainNFTAction::Mint {

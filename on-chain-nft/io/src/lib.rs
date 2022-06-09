@@ -1,18 +1,22 @@
 #![no_std]
 
-use codec::{Decode, Encode};
-use gear_lib::non_fungible_token::{royalties::*, token::*};
+use gear_lib::non_fungible_token::{royalties::*, state::*, token::*};
 use gstd::{prelude::*, ActorId};
-use scale_info::TypeInfo;
 
 pub type LayerId = u128;
-pub type LayerItemId = u128;
+pub type ItemId = u128;
+
+#[derive(Debug, Encode, Decode, TypeInfo)]
+pub enum OnChainNFTQuery {
+    TokenURI { token_id: TokenId },
+    Base(NFTQuery),
+}
 
 #[derive(Debug, Encode, Decode, TypeInfo)]
 pub enum OnChainNFTAction {
     Mint {
         token_metadata: TokenMetadata,
-        description: BTreeMap<LayerId, LayerItemId>,
+        description: BTreeMap<LayerId, ItemId>,
     },
     Burn {
         token_id: TokenId,
@@ -30,9 +34,6 @@ pub enum OnChainNFTAction {
         token_id: TokenId,
         amount: u128,
     },
-    TokenURI {
-        token_id: TokenId,
-    },
 }
 
 #[derive(Debug, Encode, Decode, TypeInfo)]
@@ -47,6 +48,6 @@ pub struct InitOnChainNFT {
     pub symbol: String,
     pub base_uri: String,
     pub base_image: String,
-    pub layers: BTreeMap<LayerId, BTreeMap<LayerItemId, String>>,
+    pub layers: BTreeMap<LayerId, BTreeMap<ItemId, String>>,
     pub royalties: Option<Royalties>,
 }
