@@ -97,12 +97,3 @@ pub fn approve(nft: &Program, from: u64, to: u64, token_id: u64) -> RunResult {
         },
     )
 }
-
-pub fn token_uri(nft: &Program, from: u64, token_id: u64) -> RunResult {
-    nft.send(
-        from,
-        OnChainNFTAction::TokenURI {
-            token_id: token_id.into(),
-        },
-    )
-}

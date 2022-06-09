@@ -1,8 +1,6 @@
 use gear_lib::non_fungible_token::io::*;
-use gear_lib::non_fungible_token::token::TokenMetadata;
 use gstd::prelude::*;
 use gtest::System;
-use on_chain_nft_io::*;
 mod utils;
 use utils::*;
 const USERS: &[u64] = &[3, 4, 5];
