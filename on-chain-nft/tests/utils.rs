@@ -9,34 +9,22 @@ pub fn init_nft(sys: &System) {
     let nft = Program::current(sys);
 
     let mut layers = BTreeMap::new();
-    let first_layer = BTreeMap::from([
-        (
-            1,
-            String::from(
-                "<svg height='210' width='500'><polygon points='100,10 40,198 190,78 10,78 160,198' style='fill:lime;stroke:purple;stroke-width:5;fill-rule:nonzero;'/></svg>",
-            )
+    let first_layer = vec![
+        String::from(
+        "PHN2ZyBoZWlnaHQ9JzIxMCcgd2lkdGg9JzUwMCc+PHBvbHlnb24gcG9pbnRzPScxMDAsMTAgNDAsMTk4IDE5MCw3OCAxMCw3OCAxNjAsMTk4JyBzdHlsZT0nZmlsbDpsaW1lO3N0cm9rZTpwdXJwbGU7c3Ryb2tlLXdpZHRoOjU7ZmlsbC1ydWxlOm5vbnplcm87Jy8+PC9zdmc+",
         ),
-        (
-            2,
-            String::from(
-                "<svg height='210' width='500'><polygon points='100,10 40,198 190,78 10,78 160,198' style='fill:blue;stroke:red;stroke-width:5;fill-rule:nonzero;'/></svg>",
-            )
+        String::from(
+            "PHN2ZyBoZWlnaHQ9JzIxMCcgd2lkdGg9JzUwMCc+PHBvbHlnb24gcG9pbnRzPScxMDAsMTAgNDAsMTk4IDE5MCw3OCAxMCw3OCAxNjAsMTk4JyBzdHlsZT0nZmlsbDpibHVlO3N0cm9rZTpyZWQ7c3Ryb2tlLXdpZHRoOjU7ZmlsbC1ydWxlOm5vbnplcm87Jy8+PC9zdmc+",
         )
-    ]);
-    let second_layer = BTreeMap::from([
-        (
-            1,
-            String::from(
-                "<svg height='30' width='200'><text x='0' y='15' fill='red'>On Chain NFT</text></svg>"
-            ),
+    ];
+    let second_layer = vec![
+        String::from(
+            "PHN2ZyBoZWlnaHQ9JzMwJyB3aWR0aD0nMjAwJz48dGV4dCB4PScwJyB5PScxNScgZmlsbD0ncmVkJz5PbiBDaGFpbiBORlQ8L3RleHQ+PC9zdmc+"
         ),
-        (
-            2,
-            String::from(
-                "<svg height='30' width='200'><text x='0' y='15' fill='green'>On Chain NFT</text></svg>"
-            )
+        String::from(
+            "PHN2ZyBoZWlnaHQ9JzMwJyB3aWR0aD0nMjAwJz48dGV4dCB4PScwJyB5PScxNScgZmlsbD0nZ3JlZW4nPk9uIENoYWluIE5GVDwvdGV4dD48L3N2Zz4="
         )
-    ]);
+    ];
     layers.insert(1, first_layer);
     layers.insert(2, second_layer);
     let res = nft.send(
@@ -54,7 +42,7 @@ pub fn init_nft(sys: &System) {
     assert!(res.log().is_empty());
 }
 
-pub fn mint(nft: &Program, member: u64, description: BTreeMap<LayerId, ItemId>) -> RunResult {
+pub fn mint(nft: &Program, member: u64, description: Vec<ItemId>) -> RunResult {
     nft.send(
         member,
         OnChainNFTAction::Mint {

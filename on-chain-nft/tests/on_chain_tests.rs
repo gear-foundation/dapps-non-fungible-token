@@ -11,7 +11,7 @@ fn mint_success() {
     let sys = System::new();
     init_nft(&sys);
     let nft = sys.get_program(1);
-    let res = mint(&nft, USERS[0], BTreeMap::from([(1, 1), (2, 2)]));
+    let res = mint(&nft, USERS[0], vec![0, 1]);
     let message = NFTTransfer {
         from: ZERO_ID.into(),
         to: USERS[0].into(),
@@ -26,12 +26,12 @@ fn mint_failures() {
     let sys = System::new();
     init_nft(&sys);
     let nft = sys.get_program(1);
-    assert!(mint(&nft, USERS[0], BTreeMap::from([(3, 1), (3, 2),])).main_failed());
+    assert!(mint(&nft, USERS[0], vec![3, 3]).main_failed());
 
     // mint token
-    assert!(!mint(&nft, USERS[0], BTreeMap::from([(1, 1), (2, 2),])).main_failed());
+    assert!(!mint(&nft, USERS[0], vec![0, 1]).main_failed());
     // mint it again
-    assert!(mint(&nft, USERS[0], BTreeMap::from([(1, 1), (2, 2),])).main_failed());
+    assert!(mint(&nft, USERS[0], vec![0, 1]).main_failed());
 }
 
 #[test]
@@ -39,7 +39,7 @@ fn burn_success() {
     let sys = System::new();
     init_nft(&sys);
     let nft = sys.get_program(1);
-    assert!(!mint(&nft, USERS[0], BTreeMap::from([(1, 1), (2, 2),])).main_failed());
+    assert!(!mint(&nft, USERS[0], vec![0, 1]).main_failed());
     let res = burn(&nft, USERS[0], 0);
     let message = NFTTransfer {
         from: USERS[0].into(),
@@ -55,7 +55,7 @@ fn burn_failures() {
     let sys = System::new();
     init_nft(&sys);
     let nft = sys.get_program(1);
-    assert!(!mint(&nft, USERS[0], BTreeMap::from([(1, 1), (2, 2),])).main_failed());
+    assert!(!mint(&nft, USERS[0], vec![0, 1]).main_failed());
     // must fail since the token doesn't exist
     assert!(burn(&nft, USERS[0], 1).main_failed());
     // must fail since the caller is not the token owner
@@ -67,7 +67,7 @@ fn transfer_success() {
     let sys = System::new();
     init_nft(&sys);
     let nft = sys.get_program(1);
-    assert!(!mint(&nft, USERS[0], BTreeMap::from([(1, 1), (2, 2),])).main_failed());
+    assert!(!mint(&nft, USERS[0], vec![0, 1]).main_failed());
     let res = transfer(&nft, USERS[0], USERS[1], 0);
     let message = NFTTransfer {
         from: USERS[0].into(),
@@ -83,7 +83,7 @@ fn transfer_failures() {
     let sys = System::new();
     init_nft(&sys);
     let nft = sys.get_program(1);
-    assert!(!mint(&nft, USERS[0], BTreeMap::from([(1, 1), (2, 2),])).main_failed());
+    assert!(!mint(&nft, USERS[0], vec![0, 1]).main_failed());
 
     // must fail since the token doesn't exist
     assert!(transfer(&nft, USERS[0], USERS[1], 1).main_failed());
@@ -98,7 +98,7 @@ fn approve_success() {
     let sys = System::new();
     init_nft(&sys);
     let nft = sys.get_program(1);
-    assert!(!mint(&nft, USERS[0], BTreeMap::from([(1, 1), (2, 2),])).main_failed());
+    assert!(!mint(&nft, USERS[0], vec![0, 1]).main_failed());
     let res = approve(&nft, USERS[0], USERS[1], 0);
     let message = NFTApproval {
         owner: USERS[0].into(),
@@ -115,7 +115,7 @@ fn approve_failures() {
     let sys = System::new();
     init_nft(&sys);
     let nft = sys.get_program(1);
-    assert!(!mint(&nft, USERS[0], BTreeMap::from([(1, 1), (2, 2),])).main_failed());
+    assert!(!mint(&nft, USERS[0], vec![0, 1]).main_failed());
     // must fail since the token doesn't exist
     assert!(approve(&nft, USERS[0], USERS[1], 1).main_failed());
     // must fail since the caller is not the token owner

@@ -12,9 +12,9 @@ pub struct OnChainNFT {
     pub token: NFTState,
     pub token_id: TokenId,
     pub owner: ActorId,
-    pub base_image: Vec<u8>,
-    pub layers: BTreeMap<LayerId, BTreeMap<ItemId, String>>,
-    pub nfts: BTreeMap<TokenId, BTreeMap<LayerId, ItemId>>,
+    pub base_image: String,
+    pub layers: BTreeMap<LayerId, Vec<String>>,
+    pub nfts: BTreeMap<TokenId, Vec<ItemId>>,
     pub nfts_existence: BTreeSet<String>,
 }
 
@@ -23,7 +23,6 @@ static mut CONTRACT: Option<OnChainNFT> = None;
 #[no_mangle]
 pub unsafe extern "C" fn init() {
     let config: InitOnChainNFT = msg::load().expect("Unable to decode InitOnChainNFT");
-
     let nft = OnChainNFT {
         token: NFTState {
             name: config.name,
@@ -32,7 +31,7 @@ pub unsafe extern "C" fn init() {
             ..Default::default()
         },
         owner: msg::source(),
-        base_image: config.base_image.into_bytes(),
+        base_image: config.base_image,
         layers: config.layers,
         ..Default::default()
     };
@@ -78,21 +77,21 @@ pub unsafe extern "C" fn meta_state() -> *mut [i32; 2] {
 }
 
 pub trait OnChainNFTCore: NFTCore {
-    fn mint(&mut self, description: BTreeMap<LayerId, ItemId>, metadata: TokenMetadata);
+    fn mint(&mut self, description: Vec<ItemId>, metadata: TokenMetadata);
     fn burn(&mut self, token_id: TokenId);
     fn token_uri(&mut self, token_id: TokenId) -> Option<Vec<u8>>;
 }
 
 impl OnChainNFTCore for OnChainNFT {
-    fn mint(&mut self, description: BTreeMap<LayerId, ItemId>, metadata: TokenMetadata) {
+    fn mint(&mut self, description: Vec<ItemId>, metadata: TokenMetadata) {
         // precheck if the layers actually exist
-        for (layer_id, layer_item_id) in description.iter() {
-            let _ = self
-                .layers
-                .get(layer_id)
-                .expect("No such layer")
-                .get(layer_item_id)
-                .expect("No such layer item");
+        for (layer_id, layer_item_id) in description.iter().enumerate() {
+            if layer_id > self.layers.len() {
+                panic!("No such layer");
+            }
+            if *layer_item_id > self.layers.get(&(layer_id as u128)).unwrap().len() as u128 {
+                panic!("No such item");
+            }
         }
 
         // also check if description has all layers provided
@@ -100,10 +99,11 @@ impl OnChainNFTCore for OnChainNFT {
             panic!("The number of layers must be equal to the number of layers in the contract");
         }
         // precheck if there is already an nft with such description
-        let mut key = String::from("");
-        for lii in description.values() {
-            key = key + &lii.to_string();
-        }
+        let key = description
+            .clone()
+            .into_iter()
+            .map(|i| i.to_string())
+            .collect::<String>();
         if self.nfts_existence.contains(&key) {
             panic!("Such nft already exists");
         }
@@ -116,6 +116,14 @@ impl OnChainNFTCore for OnChainNFT {
     fn burn(&mut self, token_id: TokenId) {
         NFTCore::burn(self, token_id);
         self.nfts.remove(&token_id);
+        let key = self
+            .nfts
+            .get(&token_id)
+            .unwrap()
+            .iter()
+            .map(|i| i.to_string())
+            .collect::<String>();
+        self.nfts_existence.remove(&key);
     }
 
     fn token_uri(&mut self, token_id: TokenId) -> Option<Vec<u8>> {
@@ -127,12 +135,13 @@ impl OnChainNFTCore for OnChainNFT {
         let mut content: Vec<String> = Vec::new();
         // check if exists
         let nft = self.nfts.get(&token_id).expect("No such nft");
-        for (layer_id, layer_item_id) in nft {
+        for (layer_id, layer_item_id) in nft.iter().enumerate() {
             let layer_content = self
                 .layers
-                .get(layer_id)
+                .get(&(layer_id as u128))
                 .expect("No such layer")
-                .get(layer_item_id)
+                .iter()
+                .nth(*layer_item_id as usize)
                 .expect("No such layer item");
             content.push(layer_content.clone());
         }

@@ -16,7 +16,7 @@ pub enum OnChainNFTQuery {
 pub enum OnChainNFTAction {
     Mint {
         token_metadata: TokenMetadata,
-        description: BTreeMap<LayerId, ItemId>,
+        description: Vec<ItemId>,
     },
     Burn {
         token_id: TokenId,
@@ -48,6 +48,6 @@ pub struct InitOnChainNFT {
     pub symbol: String,
     pub base_uri: String,
     pub base_image: String,
-    pub layers: BTreeMap<LayerId, BTreeMap<ItemId, String>>,
+    pub layers: BTreeMap<LayerId, Vec<String>>,
     pub royalties: Option<Royalties>,
 }
