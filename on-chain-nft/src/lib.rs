@@ -89,7 +89,7 @@ impl OnChainNFTCore for OnChainNFT {
             if layer_id > self.layers.len() {
                 panic!("No such layer");
             }
-            if *layer_item_id > self.layers.get(&(layer_id as u128)).unwrap().len() as u128 {
+            if *layer_item_id > self.layers.get(&(layer_id as u128)).expect("No such layer").len() as u128 {
                 panic!("No such item");
             }
         }
@@ -115,14 +115,14 @@ impl OnChainNFTCore for OnChainNFT {
 
     fn burn(&mut self, token_id: TokenId) {
         NFTCore::burn(self, token_id);
-        self.nfts.remove(&token_id);
         let key = self
             .nfts
             .get(&token_id)
-            .unwrap()
+            .expect("No such token")
             .iter()
             .map(|i| i.to_string())
             .collect::<String>();
+        self.nfts.remove(&token_id);
         self.nfts_existence.remove(&key);
     }
 

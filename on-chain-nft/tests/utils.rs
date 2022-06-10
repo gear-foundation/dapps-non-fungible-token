@@ -25,8 +25,8 @@ pub fn init_nft(sys: &System) {
             "PHN2ZyBoZWlnaHQ9JzMwJyB3aWR0aD0nMjAwJz48dGV4dCB4PScwJyB5PScxNScgZmlsbD0nZ3JlZW4nPk9uIENoYWluIE5GVDwvdGV4dD48L3N2Zz4="
         )
     ];
-    layers.insert(1, first_layer);
-    layers.insert(2, second_layer);
+    layers.insert(0, first_layer);
+    layers.insert(1, second_layer);
     let res = nft.send(
         USERS[0],
         InitOnChainNFT {
