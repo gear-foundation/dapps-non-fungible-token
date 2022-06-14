@@ -83,6 +83,11 @@ pub trait OnChainNFTCore: NFTCore {
 }
 
 impl OnChainNFTCore for OnChainNFT {
+
+    /// Mint an NFT on chain.
+    /// `description` - is the vector of ids ,
+    ///  where each index represents a layer id, and element represents a layer item id.
+    /// `metadata` - is the default metadata provided by gear-lib.
     fn mint(&mut self, description: Vec<ItemId>, metadata: TokenMetadata) {
         // precheck if the layers actually exist
         for (layer_id, layer_item_id) in description.iter().enumerate() {
@@ -98,6 +103,7 @@ impl OnChainNFTCore for OnChainNFT {
         if description.len() != self.layers.len() {
             panic!("The number of layers must be equal to the number of layers in the contract");
         }
+
         // precheck if there is already an nft with such description
         let key = description
             .clone()
@@ -113,6 +119,8 @@ impl OnChainNFTCore for OnChainNFT {
         self.token_id = self.token_id.saturating_add(U256::one());
     }
 
+    /// Burns an NFT.
+    /// `token_id` - is the id of a token. MUST exist.
     fn burn(&mut self, token_id: TokenId) {
         NFTCore::burn(self, token_id);
         let key = self
@@ -126,6 +134,8 @@ impl OnChainNFTCore for OnChainNFT {
         self.nfts_existence.remove(&key);
     }
 
+    /// Returns token information - metadata and all the content of all the layers for the NFT.
+    /// `token_id` - is the id of a token. MUST exist.
     fn token_uri(&mut self, token_id: TokenId) -> Option<Vec<u8>> {
         let mut metadata = TokenMetadata::default();
         if let Some(Some(mtd)) = self.token.token_metadata_by_id.get(&token_id) {
