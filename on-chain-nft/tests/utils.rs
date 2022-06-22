@@ -1,15 +1,18 @@
-use gear_lib::non_fungible_token::token::*;
-use gstd::prelude::*;
+use gear_lib::non_fungible_token::{state::*, token::*};
+
+use gstd::{prelude::*, ActorId};
 use gtest::{Program, RunResult, System};
 use on_chain_nft_io::*;
 const USERS: &[u64] = &[3, 4, 5];
-
 
 // this is needed to enable state testing
 pub fn init_nft_from_file(sys: &System) {
     sys.init_logger();
 
-    let nft = Program::from_file(sys, "../target/wasm32-unknown-unknown/release/on_chain_nft.wasm");
+    let nft = Program::from_file(
+        sys,
+        "../target/wasm32-unknown-unknown/release/on_chain_nft.wasm",
+    );
     let mut layers = BTreeMap::new();
     let first_layer = vec![
         String::from(
@@ -43,6 +46,7 @@ pub fn init_nft_from_file(sys: &System) {
 
     assert!(res.log().is_empty());
 }
+
 pub fn init_nft(sys: &System) {
     sys.init_logger();
     let nft = Program::current(sys);
@@ -134,7 +138,10 @@ pub fn check_token_uri(
     match nft.meta_state(OnChainNFTQuery::TokenURI {
         token_id: token_id.into(),
     }) {
-        TokenURI { metadata: rec_metadata, content: rec_content } => {
+        TokenURI {
+            metadata: rec_metadata,
+            content: rec_content,
+        } => {
             // since they don't have PartialEq do it manually
             if metadata.name != rec_metadata.name {
                 panic!("Metadata name is different");
@@ -155,5 +162,34 @@ pub fn check_token_uri(
         _ => unreachable!(
             "Unreachable metastate reply for the OnChainNFTQuery::TokenURI payload has occured"
         ),
+    }
+}
+
+pub fn check_token_from_state(nft: &Program, owner_id: u64, token_id: u64) {
+    match nft.meta_state(OnChainNFTQuery::Base(NFTQuery::Token {
+        token_id: token_id.into(),
+    })) {
+        NFTQueryReply::Token {
+            token:
+                Token {
+                    id: true_token_id,
+                    owner_id: true_owner_id,
+                    ..
+                },
+        } if ActorId::from(owner_id) == true_owner_id
+            && TokenId::from(token_id) == true_token_id => {}
+        NFTQueryReply::Token {
+            token:
+                Token {
+                    id: true_token_id,
+                    owner_id: true_owner_id,
+                    ..
+                },
+        } => panic!(
+            "There is no such token with token_id ({token_id:?}) for the owner ({owner_id:?})"
+        ),
+        _ => {
+            unreachable!("Unreachable metastate reply for the NFTQuery::Token payload has occured")
+        }
     }
 }

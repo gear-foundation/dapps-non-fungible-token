@@ -10,7 +10,7 @@ const ZERO_ID: u64 = 0;
 #[test]
 fn mint_success() {
     let sys = System::new();
-    init_nft(&sys);
+    init_nft_from_file(&sys);
     let nft = sys.get_program(1);
     let res = mint(&nft, USERS[0], vec![0, 1]);
     let message = NFTTransfer {
@@ -20,6 +20,8 @@ fn mint_success() {
     }
     .encode();
     assert!(res.contains(&(USERS[0], message.encode())));
+    // Check that we minted a token properly
+    check_token_from_state(&nft, USERS[0], 0);
 }
 
 #[test]
@@ -38,9 +40,12 @@ fn mint_failures() {
 #[test]
 fn burn_success() {
     let sys = System::new();
-    init_nft(&sys);
+    init_nft_from_file(&sys);
     let nft = sys.get_program(1);
     assert!(!mint(&nft, USERS[0], vec![0, 1]).main_failed());
+    // Check that we minted a token properly
+    check_token_from_state(&nft, USERS[0], 0);
+
     let res = burn(&nft, USERS[0], 0);
     let message = NFTTransfer {
         from: USERS[0].into(),
@@ -49,6 +54,8 @@ fn burn_success() {
     }
     .encode();
     assert!(res.contains(&(USERS[0], message.encode())));
+    // We should check against owner_id = 0 since the token is burned
+    check_token_from_state(&nft, 0, 0);
 }
 
 #[test]
@@ -66,9 +73,12 @@ fn burn_failures() {
 #[test]
 fn transfer_success() {
     let sys = System::new();
-    init_nft(&sys);
+    init_nft_from_file(&sys);
     let nft = sys.get_program(1);
     assert!(!mint(&nft, USERS[0], vec![0, 1]).main_failed());
+    // Check that we minted a token properly
+    check_token_from_state(&nft, USERS[0], 0);
+
     let res = transfer(&nft, USERS[0], USERS[1], 0);
     let message = NFTTransfer {
         from: USERS[0].into(),
@@ -77,6 +87,9 @@ fn transfer_success() {
     }
     .encode();
     assert!(res.contains(&(USERS[0], message.encode())));
+
+    // Check the token now belongs to another user
+    check_token_from_state(&nft, USERS[1], 0);
 }
 
 #[test]
@@ -100,6 +113,9 @@ fn approve_success() {
     init_nft(&sys);
     let nft = sys.get_program(1);
     assert!(!mint(&nft, USERS[0], vec![0, 1]).main_failed());
+    // Check that we minted a token properly
+    check_token_from_state(&nft, USERS[0], 0);
+
     let res = approve(&nft, USERS[0], USERS[1], 0);
     let message = NFTApproval {
         owner: USERS[0].into(),
@@ -145,8 +161,10 @@ fn test_token_uri_state() {
     }
     .encode();
     assert!(res.contains(&(USERS[0], message.encode())));
+    // Check that we minted a token properly
+    check_token_from_state(&nft, USERS[0], 0);
 
-    let token_metadata = TokenMetadata{
+    let token_metadata = TokenMetadata {
         name: "CryptoKitty".to_string(),
         description: "Description".to_string(),
         media: "http://".to_string(),
