@@ -83,7 +83,6 @@ pub trait OnChainNFTCore: NFTCore {
 }
 
 impl OnChainNFTCore for OnChainNFT {
-
     /// Mint an NFT on chain.
     /// `description` - is the vector of ids ,
     ///  where each index represents a layer id, and element represents a layer item id.
@@ -94,7 +93,13 @@ impl OnChainNFTCore for OnChainNFT {
             if layer_id > self.layers.len() {
                 panic!("No such layer");
             }
-            if *layer_item_id > self.layers.get(&(layer_id as u128)).expect("No such layer").len() as u128 {
+            if *layer_item_id
+                > self
+                    .layers
+                    .get(&(layer_id as u128))
+                    .expect("No such layer")
+                    .len() as u128
+            {
                 panic!("No such item");
             }
         }

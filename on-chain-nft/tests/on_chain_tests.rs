@@ -1,4 +1,5 @@
 use gear_lib::non_fungible_token::io::*;
+use gear_lib::non_fungible_token::token::*;
 use gstd::prelude::*;
 use gtest::System;
 mod utils;
@@ -129,4 +130,28 @@ fn approve_failures() {
     assert!(!transfer(&nft, USERS[1], USERS[2], 0).main_failed());
     //must fail since approval was removed after transferring
     assert!(transfer(&nft, USERS[1], USERS[0], 0).main_failed());
+}
+
+#[test]
+fn test_token_uri_state() {
+    let sys = System::new();
+    init_nft_from_file(&sys);
+    let nft = sys.get_program(1);
+    let res = mint(&nft, USERS[0], vec![0, 1]);
+    let message = NFTTransfer {
+        from: ZERO_ID.into(),
+        to: USERS[0].into(),
+        token_id: 0.into(),
+    }
+    .encode();
+    assert!(res.contains(&(USERS[0], message.encode())));
+
+    let token_metadata = TokenMetadata{
+        name: "CryptoKitty".to_string(),
+        description: "Description".to_string(),
+        media: "http://".to_string(),
+        reference: "http://".to_string(),
+    };
+    let content = vec![String::from("PHN2ZyBoZWlnaHQ9JzIxMCcgd2lkdGg9JzUwMCc+PHBvbHlnb24gcG9pbnRzPScxMDAsMTAgNDAsMTk4IDE5MCw3OCAxMCw3OCAxNjAsMTk4JyBzdHlsZT0nZmlsbDpsaW1lO3N0cm9rZTpwdXJwbGU7c3Ryb2tlLXdpZHRoOjU7ZmlsbC1ydWxlOm5vbnplcm87Jy8+PC9zdmc+"), String::from("PHN2ZyBoZWlnaHQ9JzMwJyB3aWR0aD0nMjAwJz48dGV4dCB4PScwJyB5PScxNScgZmlsbD0nZ3JlZW4nPk9uIENoYWluIE5GVDwvdGV4dD48L3N2Zz4=")];
+    check_token_uri(&nft, 0, token_metadata, content);
 }
