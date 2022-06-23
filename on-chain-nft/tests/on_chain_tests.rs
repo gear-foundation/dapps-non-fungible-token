@@ -10,7 +10,7 @@ const ZERO_ID: u64 = 0;
 #[test]
 fn mint_success() {
     let sys = System::new();
-    init_nft_from_file(&sys);
+    init_nft(&sys);
     let nft = sys.get_program(1);
     let res = mint(&nft, USERS[0], vec![0, 1]);
     let message = NFTTransfer {
@@ -40,7 +40,7 @@ fn mint_failures() {
 #[test]
 fn burn_success() {
     let sys = System::new();
-    init_nft_from_file(&sys);
+    init_nft(&sys);
     let nft = sys.get_program(1);
     assert!(!mint(&nft, USERS[0], vec![0, 1]).main_failed());
     // Check that we minted a token properly
@@ -73,7 +73,7 @@ fn burn_failures() {
 #[test]
 fn transfer_success() {
     let sys = System::new();
-    init_nft_from_file(&sys);
+    init_nft(&sys);
     let nft = sys.get_program(1);
     assert!(!mint(&nft, USERS[0], vec![0, 1]).main_failed());
     // Check that we minted a token properly
@@ -151,7 +151,7 @@ fn approve_failures() {
 #[test]
 fn test_token_uri_state() {
     let sys = System::new();
-    init_nft_from_file(&sys);
+    init_nft(&sys);
     let nft = sys.get_program(1);
     let res = mint(&nft, USERS[0], vec![0, 1]);
     let message = NFTTransfer {
