@@ -96,10 +96,10 @@ pub fn check_token_uri(
     match nft.meta_state(OnChainNFTQuery::TokenURI {
         token_id: token_id.into(),
     }) {
-        TokenURI {
+        gstd::Ok(TokenURI {
             metadata: rec_metadata,
             content: rec_content,
-        } => {
+        }) => {
             // since they don't have PartialEq do it manually
             if metadata.name != rec_metadata.name {
                 panic!("Metadata name is different");
@@ -127,23 +127,23 @@ pub fn check_token_from_state(nft: &Program, owner_id: u64, token_id: u64) {
     match nft.meta_state(OnChainNFTQuery::Base(NFTQuery::Token {
         token_id: token_id.into(),
     })) {
-        NFTQueryReply::Token {
+        gstd::Ok(NFTQueryReply::Token {
             token:
                 Token {
                     id: true_token_id,
                     owner_id: true_owner_id,
                     ..
                 },
-        } if ActorId::from(owner_id) == true_owner_id
+        }) if ActorId::from(owner_id) == true_owner_id
             && TokenId::from(token_id) == true_token_id => {}
-        NFTQueryReply::Token {
+        gstd::Ok(NFTQueryReply::Token {
             token:
                 Token {
-                    id: true_token_id,
-                    owner_id: true_owner_id,
+                    id: _true_token_id,
+                    owner_id: _true_owner_id,
                     ..
                 },
-        } => panic!(
+        }) => panic!(
             "There is no such token with token_id ({token_id:?}) for the owner ({owner_id:?})"
         ),
         _ => {
