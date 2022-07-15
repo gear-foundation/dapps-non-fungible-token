@@ -9,10 +9,13 @@ pub type ItemId = u128;
 #[derive(Debug, Encode, Decode, TypeInfo)]
 pub enum OnChainNFTQuery {
     /// Returns an NFT for a specified `token_id`.
+    ///
     /// Requirements:
     /// * `token_id` MUST exist
+    ///
     /// Arguments:
     /// * `token_id` - is the id of the NFT
+    ///
     /// On success, returns TokenURI struct.
     TokenURI { token_id: TokenId },
     /// Base NFT query. Derived from gear-lib.
@@ -21,13 +24,16 @@ pub enum OnChainNFTQuery {
 
 #[derive(Debug, Encode, Decode, TypeInfo)]
 pub enum OnChainNFTAction {
-    /// Mints an NFT.
+    /// Mints an NFT consisting of layers provided in the `description` parameter.
+    ///
     /// Requirements:
     /// * `description` MUST contain layers and layers' items that EXIST
+    ///
     /// Arguments:
     /// * `token_metadata` - is a default token metadata from gear-lib.
     /// * `description` - is the vector of layer's item id, where
     /// the index i is the layer id.
+    ///
     /// On success, returns NFTEvent::Mint from gear-lib.
     Mint {
         /// Metadata
@@ -36,22 +42,28 @@ pub enum OnChainNFTAction {
         description: Vec<ItemId>,
     },
     /// Burns an NFT.
+    ///
     /// Requirements:
     /// * `token_id` MUST exist
     /// Arguments:
+    ///
     /// * `token_id` - is the id of the burnt token
-    /// On sucess, returns NFTEvent::Burn from gear-lib.
+    ///
+    /// On success, returns NFTEvent::Burn from gear-lib.
     Burn {
         /// Token id to burn.
         token_id: TokenId,
     },
     /// Transfers an NFT.
+    ///
     /// Requirements:
     /// * `token_id` MUST exist
     /// * `to` MUST be a non-zero addresss
+    ///
     /// Arguments:
     /// * `token_id` - is the id of the transferred token
-    /// On sucess, returns NFTEvent::Transfer from gear-lib.
+    ///
+    /// On success, returns NFTEvent::Transfer from gear-lib.
     Transfer {
         /// A recipient address.
         to: ActorId,
@@ -59,12 +71,15 @@ pub enum OnChainNFTAction {
         token_id: TokenId,
     },
     /// Approves an account to perform operation upon the specifiefd NFT.
+    ///
     /// Requirements:
     /// * `token_id` MUST exist
     /// * `to` MUST be a non-zero addresss
+    ///
     /// Arguments:
     /// * `token_id` - is the id of the transferred token
-    /// On sucess, returns NFTEvent::Approval from gear-lib.
+    ///
+    /// On success, returns NFTEvent::Approval from gear-lib.
     Approve {
         /// An account being approved.
         to: ActorId,
@@ -72,13 +87,16 @@ pub enum OnChainNFTAction {
         token_id: TokenId,
     },
     /// Transfers payouts from an NFT to an account.
+    ///
     /// Requirements:
     /// * `token_id` MUST exist
     /// * `to` MUST be a non-zero addresss
     /// * `amount` MUST be a non-zero number
+    ///
     /// Arguments:
     /// * `token_id` - is the id of the transferred token
-    /// On sucess, returns NFTEvent::Approval from gear-lib.
+    ///
+    /// On success, returns NFTEvent::Approval from gear-lib.
     TransferPayout {
         /// Payout recipient
         to: ActorId,
