@@ -26,6 +26,9 @@ pub enum NFTAction {
         to: ActorId,
         token_id: TokenId,
     },
+    Owner {
+        token_id: TokenId,
+    },
 }
 
 #[derive(Debug, Encode, Decode, TypeInfo)]

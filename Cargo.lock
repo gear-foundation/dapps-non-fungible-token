@@ -630,6 +630,16 @@ dependencies = [
 [[package]]
 name = "gear-lib"
 version = "0.1.0"
+dependencies = [
+ "gstd",
+ "parity-scale-codec",
+ "primitive-types",
+ "scale-info",
+]
+
+[[package]]
+name = "gear-lib"
+version = "0.1.0"
 source = "git+https://github.com/gear-dapps/gear-lib.git#a7ddecc78afd222558ae2577c4fc93dee650e959"
 dependencies = [
  "gstd",
@@ -641,7 +651,6 @@ dependencies = [
 [[package]]
 name = "gear-lib-derive"
 version = "0.1.0"
-source = "git+https://github.com/gear-dapps/gear-lib.git#a7ddecc78afd222558ae2577c4fc93dee650e959"
 dependencies = [
  "gear-lib-macros",
  "proc-macro2",
@@ -652,7 +661,6 @@ dependencies = [
 [[package]]
 name = "gear-lib-macros"
 version = "0.1.0"
-source = "git+https://github.com/gear-dapps/gear-lib.git#a7ddecc78afd222558ae2577c4fc93dee650e959"
 
 [[package]]
 name = "gear-wasm-builder"
@@ -914,7 +922,7 @@ checksum = "7843ec2de400bcbc6a6328c958dc38e5359da6e93e72e37bc5246bf1ae776389"
 name = "nft"
 version = "0.1.0"
 dependencies = [
- "gear-lib",
+ "gear-lib 0.1.0",
  "gear-lib-derive",
  "gear-wasm-builder",
  "gstd",
@@ -929,7 +937,7 @@ dependencies = [
 name = "nft-io"
 version = "0.1.0"
 dependencies = [
- "gear-lib",
+ "gear-lib 0.1.0 (git+https://github.com/gear-dapps/gear-lib.git)",
  "gstd",
  "parity-scale-codec",
  "primitive-types",
@@ -941,7 +949,7 @@ name = "nft-marketplace"
 version = "0.1.0"
 dependencies = [
  "ft-io",
- "gear-lib",
+ "gear-lib 0.1.0 (git+https://github.com/gear-dapps/gear-lib.git)",
  "gear-wasm-builder",
  "gstd",
  "gtest",
