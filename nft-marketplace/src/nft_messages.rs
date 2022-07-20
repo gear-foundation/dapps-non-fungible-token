@@ -10,7 +10,7 @@ pub async fn nft_transfer(
     token_id: U256,
     amount: u128,
 ) -> Payout {
-    let response: Vec<u8> = msg::send_for_reply(
+    let response: Vec<u8> = msg::send_for_reply_as(
         *nft_program_id,
         NFTAction::TransferPayout {
             to: *to,

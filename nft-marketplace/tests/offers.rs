@@ -6,6 +6,7 @@ use gtest::{Program, System};
 use market_io::*;
 use nft_io::*;
 mod utils;
+use nft_marketplace::offers::get_hash;
 use utils::*;
 
 fn before_each_test(sys: &System) {
@@ -34,16 +35,28 @@ fn before_each_test(sys: &System) {
 }
 
 fn offer(market: &Program, user: u64, ft_contract_id: Option<ActorId>, price: u128) {
-    let res = market.send_with_value(
-        user,
-        MarketAction::AddOffer {
-            nft_contract_id: 2.into(),
-            ft_contract_id,
-            token_id: 0.into(),
+    let res = if ft_contract_id.is_none() {
+        market.send_with_value(
+            user,
+            MarketAction::AddOffer {
+                nft_contract_id: 2.into(),
+                ft_contract_id,
+                token_id: 0.into(),
+                price,
+            },
             price,
-        },
-        price,
-    );
+        )
+    } else {
+        market.send(
+            user,
+            MarketAction::AddOffer {
+                nft_contract_id: 2.into(),
+                ft_contract_id,
+                token_id: 0.into(),
+                price,
+            },
+        )
+    };
     assert!(res.contains(&(
         user,
         MarketEvent::OfferAdded {
@@ -65,8 +78,9 @@ fn add_offer() {
     add_market_data(&market, None, USERS[0], 0, Some(100_000));
     let mut offers = vec![];
     for i in 0..9 {
+        sys.mint_to(USERS[1], 1000 * (i + 1) as u128);
         offer(&market, USERS[1], None, 1000 * (i + 1));
-        let hash = get_hash(&2.into(), None, 1_000 * (i + 1));
+        let hash = get_hash(None, 1_000 * (i + 1));
         offers.push(Offer {
             hash,
             id: USERS[1].into(),
@@ -85,9 +99,7 @@ fn add_offer() {
         USERS[0],
         MarketEvent::ItemInfo(Item {
             owner_id: USERS[0].into(),
-            nft_contract_id: 2.into(),
             ft_contract_id: None,
-            token_id: 0.into(),
             price: Some(100_000),
             auction: None,
             offers,
@@ -174,6 +186,7 @@ fn add_offer_failures() {
     assert!(res.main_failed());
 
     // must fail since the attached value is not equal to the offered price
+    sys.mint_to(USERS[1], 10001);
     let res = market.send_with_value(
         USERS[1],
         MarketAction::AddOffer {
@@ -198,10 +211,11 @@ fn accept_offer() {
     let res = ft.send(USERS[2], FTAction::Mint(100_000));
     assert!(!res.main_failed());
     add_market_data(&market, None, USERS[0], 0, Some(100_000));
+    sys.mint_to(USERS[1], 100_000);
     offer(&market, USERS[1], None, 100_000);
     offer(&market, USERS[2], Some(1.into()), 1_000);
 
-    let hash = get_hash(&2.into(), Some(1.into()), 1_000);
+    let hash = get_hash(Some(1.into()), 1_000);
 
     let res = market.send(
         USERS[0],
@@ -227,7 +241,7 @@ fn accept_offer() {
     assert!(res.contains(&(USERS[0], FTEvent::Balance(990).encode())));
 
     let offer = Offer {
-        hash: get_hash(&2.into(), None, 100_000),
+        hash: get_hash(None, 100_000),
         id: USERS[1].into(),
         ft_contract_id: None,
         price: 100_000,
@@ -243,9 +257,7 @@ fn accept_offer() {
         USERS[0],
         MarketEvent::ItemInfo(Item {
             owner_id: USERS[2].into(),
-            nft_contract_id: 2.into(),
             ft_contract_id: None,
-            token_id: 0.into(),
             price: None,
             auction: None,
             offers: vec![offer],
@@ -258,7 +270,7 @@ fn accept_offer() {
         MarketAction::AcceptOffer {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
-            offer_hash: get_hash(&2.into(), None, 100_000),
+            offer_hash: get_hash(None, 100_000),
         },
     );
     assert!(res.contains(&(
@@ -283,9 +295,7 @@ fn accept_offer() {
         USERS[0],
         MarketEvent::ItemInfo(Item {
             owner_id: USERS[1].into(),
-            nft_contract_id: 2.into(),
             ft_contract_id: None,
-            token_id: 0.into(),
             price: None,
             auction: None,
             offers: vec![],
@@ -305,6 +315,7 @@ fn accept_offer_failures() {
     let res = ft.send(USERS[2], FTAction::Mint(100_000));
     assert!(!res.main_failed());
     add_market_data(&market, None, USERS[0], 0, Some(100_000));
+    sys.mint_to(USERS[1], 100_000);
     offer(&market, USERS[1], None, 100_000);
     // must fail since only owner can accept offer
     let res = market.send(
@@ -312,7 +323,7 @@ fn accept_offer_failures() {
         MarketAction::AcceptOffer {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
-            offer_hash: get_hash(&2.into(), Some(1.into()), 1_000),
+            offer_hash: get_hash(Some(1.into()), 1_000),
         },
     );
     assert!(res.main_failed());
@@ -323,7 +334,7 @@ fn accept_offer_failures() {
         MarketAction::AcceptOffer {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
-            offer_hash: get_hash(&2.into(), Some(1.into()), 10_000),
+            offer_hash: get_hash(Some(1.into()), 10_000),
         },
     );
     assert!(res.main_failed());
@@ -340,6 +351,7 @@ fn withdraw() {
     let res = ft.send(USERS[2], FTAction::Mint(100_000));
     assert!(!res.main_failed());
     add_market_data(&market, None, USERS[0], 0, Some(100_000));
+    sys.mint_to(USERS[1], 100_000);
     offer(&market, USERS[1], None, 100_000);
     offer(&market, USERS[2], Some(1.into()), 1_000);
 
@@ -348,7 +360,7 @@ fn withdraw() {
         MarketAction::Withdraw {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
-            hash: get_hash(&2.into(), Some(1.into()), 1_000),
+            hash: get_hash(Some(1.into()), 1_000),
         },
     );
     assert!(res.contains(&(
@@ -366,7 +378,7 @@ fn withdraw() {
     assert!(res.contains(&(USERS[0], FTEvent::Balance(100_000).encode())));
 
     let offer = Offer {
-        hash: get_hash(&2.into(), None, 100_000),
+        hash: get_hash(None, 100_000),
         id: USERS[1].into(),
         ft_contract_id: None,
         price: 100_000,
@@ -382,9 +394,7 @@ fn withdraw() {
         USERS[0],
         MarketEvent::ItemInfo(Item {
             owner_id: USERS[0].into(),
-            nft_contract_id: 2.into(),
             ft_contract_id: None,
-            token_id: 0.into(),
             price: Some(100_000),
             auction: None,
             offers: vec![offer],
@@ -397,7 +407,7 @@ fn withdraw() {
         MarketAction::Withdraw {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
-            hash: get_hash(&2.into(), None, 100_000),
+            hash: get_hash(None, 100_000),
         },
     );
     assert!(res.contains(&(
@@ -421,9 +431,7 @@ fn withdraw() {
         USERS[0],
         MarketEvent::ItemInfo(Item {
             owner_id: USERS[0].into(),
-            nft_contract_id: 2.into(),
             ft_contract_id: None,
-            token_id: 0.into(),
             price: Some(100_000),
             auction: None,
             offers: vec![],
@@ -443,6 +451,7 @@ fn withdraws_failure() {
     let res = ft.send(USERS[2], FTAction::Mint(100_000));
     assert!(!res.main_failed());
     add_market_data(&market, None, USERS[0], 0, Some(100_000));
+    sys.mint_to(USERS[1], 100_000);
     offer(&market, USERS[1], None, 100_000);
     offer(&market, USERS[2], Some(1.into()), 1_000);
 
@@ -452,7 +461,7 @@ fn withdraws_failure() {
         MarketAction::Withdraw {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
-            hash: get_hash(&2.into(), Some(1.into()), 1_000),
+            hash: get_hash(Some(1.into()), 1_000),
         },
     );
     assert!(res.main_failed());
@@ -463,7 +472,7 @@ fn withdraws_failure() {
         MarketAction::Withdraw {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
-            hash: get_hash(&2.into(), Some(1.into()), 1_010),
+            hash: get_hash(Some(1.into()), 1_010),
         },
     );
     assert!(res.main_failed());

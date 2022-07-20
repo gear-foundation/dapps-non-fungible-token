@@ -42,13 +42,14 @@ fn buy() {
     let market = sys.get_program(3);
     add_market_data(&market, None, USERS[0], 0, Some(100_000));
 
+    sys.mint_to(USERS[1], 100_000);
     let res = market.send_with_value(
         USERS[1],
         MarketAction::BuyItem {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
         },
-        100000,
+        100_000,
     );
     assert!(res.contains(&(
         USERS[1],
@@ -71,9 +72,7 @@ fn buy() {
         USERS[0],
         MarketEvent::ItemInfo(Item {
             owner_id: USERS[1].into(),
-            nft_contract_id: 2.into(),
             ft_contract_id: None,
-            token_id: 0.into(),
             price: None,
             auction: None,
             offers: vec![],
@@ -144,9 +143,7 @@ fn buy_with_tokens() {
         USERS[0],
         MarketEvent::ItemInfo(Item {
             owner_id: USERS[1].into(),
-            nft_contract_id: 2.into(),
             ft_contract_id: Some(1.into()),
-            token_id: 0.into(),
             price: None,
             auction: None,
             offers: vec![],
@@ -197,6 +194,7 @@ fn buy_failures() {
 
     add_market_data(&market, None, USERS[0], 0, Some(1_000));
     // must fail since that the attached value is not equal to the indicated price
+    sys.mint_to(USERS[1], 990);
     let res = market.send_with_value(
         USERS[1],
         MarketAction::BuyItem {
