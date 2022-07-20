@@ -3,17 +3,18 @@ use primitive_types::U256;
 pub type Payout = BTreeMap<ActorId, u128>;
 use gear_lib::non_fungible_token::io::*;
 use nft_io::*;
+use crate::{TokenId, ContractId};
 
 pub async fn nft_transfer(
-    nft_program_id: &ActorId,
-    to: &ActorId,
-    token_id: U256,
+    nft_program_id: ContractId,
+    to: ActorId,
+    token_id: TokenId,
     amount: u128,
 ) -> Payout {
-    let response: Vec<u8> = msg::send_for_reply_as(
-        *nft_program_id,
+    let response: Vec<u8> = msg::send_and_wait_for_reply(
+        nft_program_id,
         NFTAction::TransferPayout {
-            to: *to,
+            to,
             token_id,
             amount,
         },
@@ -27,9 +28,9 @@ pub async fn nft_transfer(
     decoded_response.payouts
 }
 
-pub async fn nft_approve(nft_program_id: &ActorId, to: &ActorId, token_id: U256) {
+pub async fn nft_approve(nft_program_id: ContractId, to: ActorId, token_id: TokenId) {
     let _approve_response: Vec<u8> =
-        msg::send_for_reply(*nft_program_id, NFTAction::Approve { to: *to, token_id }, 0)
+        msg::send_and_wait_for_reply(nft_program_id, NFTAction::Approve { to, token_id }, 0)
             .unwrap()
             .await
             .expect("error in transfer");

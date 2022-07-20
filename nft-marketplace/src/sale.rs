@@ -1,11 +1,9 @@
-use crate::{nft_messages::*, payment::*, Market, MarketEvent, BASE_PERCENT};
-use gstd::{msg, prelude::*, ActorId};
-use primitive_types::{H256, U256};
+use crate::{nft_messages::*, payment::*, Market, MarketEvent, BASE_PERCENT, TokenId, ContractId};
+use gstd::{msg, prelude::*};
 
 impl Market {
-    pub async fn buy_item(&mut self, nft_contract_id: &ActorId, token_id: U256) {
-        let contract_and_token_id =
-            format!("{}{}", H256::from_slice(nft_contract_id.as_ref()), token_id);
+    pub async fn buy_item(&mut self, nft_contract_id: ContractId, token_id: TokenId) {
+        let contract_and_token_id = (nft_contract_id, token_id);
         let item = self
             .items
             .get_mut(&contract_and_token_id)
@@ -30,7 +28,7 @@ impl Market {
         // transfer NFT and pay royalties
         let payouts = nft_transfer(
             nft_contract_id,
-            &msg::source(),
+            msg::source(),
             token_id,
             price - treasury_fee,
         )
@@ -45,7 +43,7 @@ impl Market {
         msg::reply(
             MarketEvent::ItemSold {
                 owner: msg::source(),
-                nft_contract_id: *nft_contract_id,
+                nft_contract_id,
                 token_id,
             },
             0,

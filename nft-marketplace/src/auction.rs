@@ -5,25 +5,22 @@ use crate::{
 };
 use gstd::{debug, exec, msg, prelude::*, ActorId};
 use market_io::*;
-use primitive_types::{H256, U256};
 const MIN_BID_PERIOD: u64 = 60_000;
 const ZERO_ID: ActorId = ActorId::new([0u8; 32]);
 
 impl Market {
     pub async fn create_auction(
         &mut self,
-        nft_contract_id: &ActorId,
+        nft_contract_id: ContractId,
         ft_contract_id: Option<ActorId>,
-        token_id: U256,
+        token_id: TokenId,
         min_price: u128,
         bid_period: u64,
         duration: u64,
     ) {
         self.check_approved_nft_contract(nft_contract_id);
         self.check_approved_ft_contract(ft_contract_id);
-        let contract_and_token_id =
-            format!("{}{}", H256::from_slice(nft_contract_id.as_ref()), token_id);
-        self.on_auction(&contract_and_token_id);
+        let contract_and_token_id = (nft_contract_id, token_id);        self.on_auction(contract_and_token_id);
         if bid_period < MIN_BID_PERIOD || duration < MIN_BID_PERIOD {
             panic!("bid period or auction duration can't be less than 1 minute");
         }
@@ -31,7 +28,7 @@ impl Market {
             panic!("price can't be equal to zero");
         }
         // approve nft to trade on the marketplace
-        nft_approve(nft_contract_id, &exec::program_id(), token_id).await;
+        nft_approve(nft_contract_id, exec::program_id(), token_id).await;
 
         let auction = Auction {
             bid_period,
@@ -57,7 +54,7 @@ impl Market {
 
         msg::reply(
             MarketEvent::AuctionCreated {
-                nft_contract_id: *nft_contract_id,
+                nft_contract_id,
                 token_id,
                 price: min_price,
             },
@@ -78,9 +75,8 @@ impl Market {
     /// On success auction replies [`MarketEvent::AuctionSettled`].
     /// If no bids were made replies [`MarketEvent::AuctionCancelled`].
 
-    pub async fn settle_auction(&mut self, nft_contract_id: &ActorId, token_id: U256) {
-        let contract_and_token_id =
-            format!("{}{}", H256::from_slice(nft_contract_id.as_ref()), token_id);
+    pub async fn settle_auction(&mut self, nft_contract_id: ContractId, token_id: TokenId) {
+        let contract_and_token_id = (nft_contract_id, token_id);
         let item = self
             .items
             .get_mut(&contract_and_token_id)
@@ -97,7 +93,7 @@ impl Market {
         if winner == ZERO_ID {
             msg::reply(
                 MarketEvent::AuctionCancelled {
-                    nft_contract_id: *nft_contract_id,
+                    nft_contract_id,
                     token_id,
                 },
                 0,
@@ -118,9 +114,13 @@ impl Market {
         .await;
 
         // transfer NFT and pay royalties
+<<<<<<< HEAD
         let payouts = nft_transfer(nft_contract_id, &winner, token_id, price - treasury_fee).await;
         debug!("payouts {:?}", payouts);
 
+=======
+        let payouts = nft_transfer(nft_contract_id, winner, token_id, price - treasury_fee).await;
+>>>>>>> aa1e43c (updated marketplace)
         for (account, amount) in payouts.iter() {
             debug!("account {:?} amount {:?}", account, amount);
             transfer_payment(&exec::program_id(), account, item.ft_contract_id, *amount).await;
@@ -130,7 +130,7 @@ impl Market {
         item.auction = None;
         msg::reply(
             MarketEvent::AuctionSettled {
-                nft_contract_id: *nft_contract_id,
+                nft_contract_id,
                 token_id,
                 price,
             },
@@ -139,9 +139,8 @@ impl Market {
         .expect("Error in reply [MarketEvent::AuctionSettled]");
     }
 
-    pub async fn add_bid(&mut self, nft_contract_id: &ActorId, token_id: U256, price: u128) {
-        let contract_and_token_id =
-            format!("{}{}", H256::from_slice(nft_contract_id.as_ref()), token_id);
+    pub async fn add_bid(&mut self, nft_contract_id: ContractId, token_id: TokenId, price: u128) {
+        let contract_and_token_id = (nft_contract_id, token_id);
 
         let item = self
             .items
@@ -191,7 +190,7 @@ impl Market {
 
         msg::reply(
             MarketEvent::BidAdded {
-                nft_contract_id: *nft_contract_id,
+                nft_contract_id,
                 token_id,
                 price,
             },
@@ -201,8 +200,8 @@ impl Market {
     }
 
     // checks that there is an active auction
-    pub fn on_auction(&self, contract_and_token_id: &String) {
-        if let Some(item) = self.items.get(contract_and_token_id) {
+    pub fn on_auction(&self, contract_and_token_id: (ContractId, TokenId)) {
+        if let Some(item) = self.items.get(&contract_and_token_id) {
             if item.auction.is_some() {
                 panic!("There is an opened auction");
             }
