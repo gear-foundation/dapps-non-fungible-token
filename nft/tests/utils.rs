@@ -53,6 +53,15 @@ pub fn transfer(nft: &Program, from: u64, to: u64, token_id: u64) -> RunResult {
     )
 }
 
+pub fn owner_of(nft: &Program, from: u64, token_id: u64) -> RunResult {
+    nft.send(
+        from,
+        NFTAction::Owner {
+            token_id: token_id.into(),
+        },
+    )
+}
+
 pub fn approve(nft: &Program, from: u64, to: u64, token_id: u64) -> RunResult {
     nft.send(
         from,
