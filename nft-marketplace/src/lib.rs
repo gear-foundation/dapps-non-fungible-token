@@ -156,17 +156,19 @@ async unsafe fn main() {
         MarketAction::AcceptOffer {
             nft_contract_id,
             token_id,
-            offer_hash,
+            ft_contract_id,
+            price,
         } => {
             market
-                .accept_offer(nft_contract_id, token_id, offer_hash)
+                .accept_offer(nft_contract_id, token_id, ft_contract_id, price)
                 .await
         }
         MarketAction::Withdraw {
             nft_contract_id,
             token_id,
-            hash,
-        } => market.withdraw(nft_contract_id, token_id, hash).await,
+            ft_contract_id,
+            price,
+        } => market.withdraw(nft_contract_id, token_id, ft_contract_id, price).await,
         MarketAction::CreateAuction {
             nft_contract_id,
             ft_contract_id,

@@ -17,7 +17,7 @@ impl Market {
         nft_contract_id: ContractId,
         ft_contract_id: Option<ContractId>,
         token_id: TokenId,
-        price: u128,
+        price: Price,
     ) {
         let contract_and_token_id = (nft_contract_id, token_id);
         self.check_approved_ft_contract(ft_contract_id);
@@ -30,9 +30,9 @@ impl Market {
             panic!("Cant offer zero price");
         }
 
-        let hash: H256 = get_hash(ft_contract_id, price);
+        let offer = (ft_contract_id, price);
         let mut offers = item.offers.clone();
-        if offers.iter().any(|offer| offer.hash == hash) {
+        if offers.insert(offer, msg::source()).is_some() {
             panic!("the offer with these params already exists");
         }
 
@@ -40,12 +40,6 @@ impl Market {
 
         transfer_payment(&msg::source(), &exec::program_id(), ft_contract_id, price).await;
 
-        offers.push(Offer {
-            hash,
-            id: msg::source(),
-            ft_contract_id,
-            price,
-        });
         item.offers = offers;
         msg::reply(
             MarketEvent::OfferAdded {
@@ -73,90 +67,94 @@ impl Market {
         &mut self,
         nft_contract_id: ContractId,
         token_id: TokenId,
-        offer_hash: H256,
+        ft_contract_id: Option<ContractId>,
+        price: Price,
     ) {
         let contract_and_token_id = (nft_contract_id, token_id);        self.on_auction(contract_and_token_id);
         let item = self
             .items
             .get_mut(&contract_and_token_id)
             .expect("Item does not exist");
-        if item.owner_id != msg::source() {
-            panic!("only owner can accept offer");
-        }
-        let mut offers = item.offers.clone();
-        if let Some(offer) = offers.clone().iter().find(|offer| offer.hash == offer_hash) {
-            let treasury_fee =
-                offer.price * (self.treasury_fee * BASE_PERCENT) as u128 / 10_000u128;
-            transfer_payment(
-                &exec::program_id(),
-                &self.treasury_id,
-                offer.ft_contract_id,
-                treasury_fee,
-            )
-            .await;
+        // if item.owner_id != msg::source() {
+        //     panic!("only owner can accept offer");
+        // }
+        // let mut offers = item.offers.clone();
 
-            // transfer NFT and pay royalties
-            let payouts = nft_transfer(
-                nft_contract_id,
-                offer.id,
-                token_id,
-                offer.price - treasury_fee,
-            )
-            .await;
-            for (account, amount) in payouts.iter() {
-                transfer_payment(&exec::program_id(), account, offer.ft_contract_id, *amount).await;
-            }
 
-            offers.retain(|offer| offer.hash != offer_hash);
-            item.offers = offers;
-            item.price = None;
-            item.owner_id = offer.id;
-            msg::reply(
-                MarketEvent::OfferAccepted {
-                    nft_contract_id,
-                    token_id,
-                    new_owner: offer.id,
-                    price: offer.price,
-                },
-                0,
-            )
-            .expect("Error in reply [MarketEvent::OfferAccepted]");
-        } else {
-            panic!("The offer with that hash does not exist");
-        }
+        // if let Some(offer) = offers.clone().iter().find(|offer| offer.hash == offer_hash) {
+        //     let treasury_fee =
+        //         offer.price * (self.treasury_fee * BASE_PERCENT) as u128 / 10_000u128;
+        //     transfer_payment(
+        //         &exec::program_id(),
+        //         &self.treasury_id,
+        //         offer.ft_contract_id,
+        //         treasury_fee,
+        //     )
+        //     .await;
+
+            // // transfer NFT and pay royalties
+            // let payouts = nft_transfer(
+            //     nft_contract_id,
+            //     offer.id,
+            //     token_id,
+            //     offer.price - treasury_fee,
+            // )
+            // .await;
+            // for (account, amount) in payouts.iter() {
+            //     transfer_payment(&exec::program_id(), account, offer.ft_contract_id, *amount).await;
+            // }
+
+            // offers.retain(|offer| offer.hash != offer_hash);
+        //     item.offers = offers;
+        //     item.price = None;
+        //     item.owner_id = offer.id;
+        //     msg::reply(
+        //         MarketEvent::OfferAccepted {
+        //             nft_contract_id,
+        //             token_id,
+        //             new_owner: offer.id,
+        //             price: offer.price,
+        //         },
+        //         0,
+        //     )
+        //     .expect("Error in reply [MarketEvent::OfferAccepted]");
+        // } else {
+        //     panic!("The offer with that hash does not exist");
+        // }
     }
 
-    pub async fn withdraw(&mut self, nft_contract_id: ContractId, token_id: TokenId, offer_hash: H256) {
-        let contract_and_token_id = (nft_contract_id, token_id);        let item = self
-            .items
-            .get_mut(&contract_and_token_id)
-            .expect("Item does not exist");
+    pub async fn withdraw(&mut self, nft_contract_id: ContractId, token_id: TokenId, ft_contract_id: Option<ContractId>, price: Price) {
+    //     let contract_and_token_id = (nft_contract_id, token_id);        
+    //     let item = self
+    //         .items
+    //         .get_mut(&contract_and_token_id)
+    //         .expect("Item does not exist");
 
-        let mut offers = item.offers.clone();
-        if let Some(offer) = offers.clone().iter().find(|offer| offer.hash == offer_hash) {
-            if msg::source() != offer.id {
-                panic!("can't withdraw other user's tokens");
-            }
-            transfer_payment(
-                &exec::program_id(),
-                &msg::source(),
-                offer.ft_contract_id,
-                offer.price,
-            )
-            .await;
-            offers.retain(|offer| offer.hash != offer_hash);
-            item.offers = offers;
-            msg::reply(
-                MarketEvent::TokensWithdrawn {
-                    nft_contract_id,
-                    token_id,
-                    price: offer.price,
-                },
-                0,
-            )
-            .expect("Error in reply [MarketEvent::TokensWithdrawn]");
-        } else {
-            panic!("The offer with that hash does not exist");
-        }
-    }
+    //     let mut offers = item.offers.clone();
+    //     if let Some(offer) = offers.clone().iter().find(|offer| offer.hash == offer_hash) {
+    //         if msg::source() != offer.id {
+    //             panic!("can't withdraw other user's tokens");
+    //         }
+    //         transfer_payment(
+    //             &exec::program_id(),
+    //             &msg::source(),
+    //             offer.ft_contract_id,
+    //             offer.price,
+    //         )
+    //         .await;
+    //         offers.retain(|offer| offer.hash != offer_hash);
+    //         item.offers = offers;
+    //         msg::reply(
+    //             MarketEvent::TokensWithdrawn {
+    //                 nft_contract_id,
+    //                 token_id,
+    //                 price: offer.price,
+    //             },
+    //             0,
+    //         )
+    //         .expect("Error in reply [MarketEvent::TokensWithdrawn]");
+    //     } else {
+    //         panic!("The offer with that hash does not exist");
+    //     }
+    // }
 }
