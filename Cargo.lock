@@ -546,7 +546,7 @@ dependencies = [
 [[package]]
 name = "galloc"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#e2d2f7442342a948fd198fe909b426b956efbc7e"
+source = "git+https://github.com/gear-tech/gear.git#826162ad49b8cd6ae607a82800b8257aa5ebe52a"
 dependencies = [
  "dlmalloc",
 ]
@@ -554,7 +554,7 @@ dependencies = [
 [[package]]
 name = "gcore"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#e2d2f7442342a948fd198fe909b426b956efbc7e"
+source = "git+https://github.com/gear-tech/gear.git#826162ad49b8cd6ae607a82800b8257aa5ebe52a"
 dependencies = [
  "gear-core-errors",
  "parity-scale-codec",
@@ -563,7 +563,7 @@ dependencies = [
 [[package]]
 name = "gear-backend-common"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#e2d2f7442342a948fd198fe909b426b956efbc7e"
+source = "git+https://github.com/gear-tech/gear.git#826162ad49b8cd6ae607a82800b8257aa5ebe52a"
 dependencies = [
  "derive_more",
  "gear-core",
@@ -576,7 +576,7 @@ dependencies = [
 [[package]]
 name = "gear-backend-wasmtime"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#e2d2f7442342a948fd198fe909b426b956efbc7e"
+source = "git+https://github.com/gear-tech/gear.git#826162ad49b8cd6ae607a82800b8257aa5ebe52a"
 dependencies = [
  "anyhow",
  "derive_more",
@@ -591,7 +591,7 @@ dependencies = [
 [[package]]
 name = "gear-core"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#e2d2f7442342a948fd198fe909b426b956efbc7e"
+source = "git+https://github.com/gear-tech/gear.git#826162ad49b8cd6ae607a82800b8257aa5ebe52a"
 dependencies = [
  "blake2-rfc",
  "derive_more",
@@ -609,7 +609,7 @@ dependencies = [
 [[package]]
 name = "gear-core-errors"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#e2d2f7442342a948fd198fe909b426b956efbc7e"
+source = "git+https://github.com/gear-tech/gear.git#826162ad49b8cd6ae607a82800b8257aa5ebe52a"
 dependencies = [
  "derive_more",
  "parity-scale-codec",
@@ -619,7 +619,7 @@ dependencies = [
 [[package]]
 name = "gear-core-processor"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#e2d2f7442342a948fd198fe909b426b956efbc7e"
+source = "git+https://github.com/gear-tech/gear.git#826162ad49b8cd6ae607a82800b8257aa5ebe52a"
 dependencies = [
  "anyhow",
  "blake2-rfc",
@@ -635,6 +635,17 @@ dependencies = [
 [[package]]
 name = "gear-lib"
 version = "0.1.0"
+dependencies = [
+ "gstd",
+ "parity-scale-codec",
+ "primitive-types",
+ "scale-info",
+]
+
+[[package]]
+name = "gear-lib"
+version = "0.1.0"
+source = "git+https://github.com/gear-dapps/gear-lib.git?branch=feature/add-getting-owner#6b3ed29c2b9ba1cd0ecf02536ef28c1fa58e9404"
 dependencies = [
  "gstd",
  "parity-scale-codec",
@@ -656,8 +667,9 @@ dependencies = [
 [[package]]
 name = "gear-lib-derive"
 version = "0.1.0"
+source = "git+https://github.com/gear-dapps/gear-lib.git?branch=feature/add-getting-owner#6b3ed29c2b9ba1cd0ecf02536ef28c1fa58e9404"
 dependencies = [
- "gear-lib-macros 0.1.0",
+ "gear-lib-macros 0.1.0 (git+https://github.com/gear-dapps/gear-lib.git?branch=feature/add-getting-owner)",
  "proc-macro2",
  "quote",
  "syn",
@@ -677,6 +689,7 @@ dependencies = [
 [[package]]
 name = "gear-lib-macros"
 version = "0.1.0"
+source = "git+https://github.com/gear-dapps/gear-lib.git?branch=feature/add-getting-owner#6b3ed29c2b9ba1cd0ecf02536ef28c1fa58e9404"
 
 [[package]]
 name = "gear-lib-macros"
@@ -686,7 +699,7 @@ source = "git+https://github.com/gear-academy/gear-lib.git#c8e30678613e22b230c9c
 [[package]]
 name = "gear-wasm-builder"
 version = "0.1.2"
-source = "git+https://github.com/gear-tech/gear.git#e2d2f7442342a948fd198fe909b426b956efbc7e"
+source = "git+https://github.com/gear-tech/gear.git#826162ad49b8cd6ae607a82800b8257aa5ebe52a"
 dependencies = [
  "anyhow",
  "cargo_metadata",
@@ -734,7 +747,7 @@ dependencies = [
 [[package]]
 name = "gstd"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#e2d2f7442342a948fd198fe909b426b956efbc7e"
+source = "git+https://github.com/gear-tech/gear.git#826162ad49b8cd6ae607a82800b8257aa5ebe52a"
 dependencies = [
  "bs58",
  "futures",
@@ -751,7 +764,7 @@ dependencies = [
 [[package]]
 name = "gstd-codegen"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#e2d2f7442342a948fd198fe909b426b956efbc7e"
+source = "git+https://github.com/gear-tech/gear.git#826162ad49b8cd6ae607a82800b8257aa5ebe52a"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -761,7 +774,7 @@ dependencies = [
 [[package]]
 name = "gtest"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#e2d2f7442342a948fd198fe909b426b956efbc7e"
+source = "git+https://github.com/gear-tech/gear.git#826162ad49b8cd6ae607a82800b8257aa5ebe52a"
 dependencies = [
  "anyhow",
  "colored",
@@ -949,8 +962,8 @@ checksum = "7843ec2de400bcbc6a6328c958dc38e5359da6e93e72e37bc5246bf1ae776389"
 name = "nft"
 version = "0.1.0"
 dependencies = [
- "gear-lib 0.1.0",
- "gear-lib-derive 0.1.0",
+ "gear-lib 0.1.0 (git+https://github.com/gear-dapps/gear-lib.git?branch=feature/add-getting-owner)",
+ "gear-lib-derive 0.1.0 (git+https://github.com/gear-dapps/gear-lib.git?branch=feature/add-getting-owner)",
  "gear-wasm-builder",
  "gstd",
  "gtest",
@@ -964,7 +977,7 @@ dependencies = [
 name = "nft-io"
 version = "0.1.0"
 dependencies = [
- "gear-lib 0.1.0",
+ "gear-lib 0.1.0 (git+https://github.com/gear-dapps/gear-lib.git?branch=feature/add-getting-owner)",
  "gstd",
  "parity-scale-codec",
  "primitive-types",
@@ -1382,18 +1395,18 @@ dependencies = [
 
 [[package]]
 name = "serde"
-version = "1.0.139"
+version = "1.0.140"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0171ebb889e45aa68b44aee0859b3eede84c6f5f5c228e6f140c0b2a0a46cad6"
+checksum = "fc855a42c7967b7c369eb5860f7164ef1f6f81c20c7cc1141f2a604e18723b03"
 dependencies = [
  "serde_derive",
 ]
 
 [[package]]
 name = "serde_derive"
-version = "1.0.139"
+version = "1.0.140"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dc1d3230c1de7932af58ad8ffbe1d784bd55efd5a9d84ac24f69c72d83543dfb"
+checksum = "6f2122636b9fe3b81f1cb25099fcf2d3f542cdb1d45940d56c713158884a05da"
 dependencies = [
  "proc-macro2",
  "quote",
