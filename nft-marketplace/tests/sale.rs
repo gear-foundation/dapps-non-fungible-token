@@ -1,6 +1,7 @@
 use codec::Encode;
 use ft_io::*;
 use gear_lib::non_fungible_token::token::*;
+use gstd::BTreeMap;
 use market_io::*;
 use nft_io::*;
 
@@ -75,7 +76,7 @@ fn buy() {
             ft_contract_id: None,
             price: None,
             auction: None,
-            offers: vec![],
+            offers: BTreeMap::new(),
         })
         .encode()
     )));
@@ -146,7 +147,7 @@ fn buy_with_tokens() {
             ft_contract_id: Some(1.into()),
             price: None,
             auction: None,
-            offers: vec![],
+            offers: BTreeMap::new(),
         })
         .encode()
     )));

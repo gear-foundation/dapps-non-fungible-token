@@ -1,6 +1,6 @@
 use codec::Encode;
 use ft_io::*;
-use gstd::ActorId;
+use gstd::{ActorId, BTreeMap};
 use gtest::{Program, RunResult, System};
 use market_io::*;
 use nft_io::*;
@@ -217,7 +217,7 @@ fn settle_auction() {
             ft_contract_id: None,
             price: None,
             auction: None,
-            offers: vec![],
+            offers: BTreeMap::new(),
         })
         .encode()
     )));
@@ -383,7 +383,7 @@ fn auction_with_ft_token() {
             ft_contract_id: Some(1.into()),
             price: None,
             auction: None,
-            offers: vec![],
+            offers: BTreeMap::new(),
         })
         .encode()
     )));

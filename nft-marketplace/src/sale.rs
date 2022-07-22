@@ -1,4 +1,4 @@
-use crate::{nft_messages::*, payment::*, Market, MarketEvent, BASE_PERCENT, TokenId, ContractId};
+use crate::{nft_messages::*, payment::*, ContractId, Market, MarketEvent, TokenId, BASE_PERCENT};
 use gstd::{msg, prelude::*};
 
 impl Market {
@@ -18,8 +18,8 @@ impl Market {
         let treasury_fee = price * (self.treasury_fee * BASE_PERCENT) as u128 / 10_000u128;
 
         transfer_payment(
-            &msg::source(),
-            &self.treasury_id,
+            msg::source(),
+            self.treasury_id,
             item.ft_contract_id,
             treasury_fee,
         )
@@ -34,7 +34,7 @@ impl Market {
         )
         .await;
         for (account, amount) in payouts.iter() {
-            transfer_payment(&msg::source(), account, item.ft_contract_id, *amount).await;
+            transfer_payment(msg::source(), *account, item.ft_contract_id, *amount).await;
         }
 
         item.owner_id = msg::source();

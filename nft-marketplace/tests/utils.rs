@@ -16,6 +16,7 @@ pub fn init_ft(sys: &System) {
         InitConfig {
             name: String::from("MyToken"),
             symbol: String::from("MTK"),
+            decimals: 18,
         },
     );
 

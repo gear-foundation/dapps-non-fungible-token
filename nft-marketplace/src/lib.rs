@@ -65,7 +65,7 @@ impl Market {
                 ft_contract_id,
                 price,
                 auction: None,
-                offers: Vec::new(),
+                offers: BTreeMap::new(),
             });
 
         msg::reply(
@@ -168,7 +168,11 @@ async unsafe fn main() {
             token_id,
             ft_contract_id,
             price,
-        } => market.withdraw(nft_contract_id, token_id, ft_contract_id, price).await,
+        } => {
+            market
+                .withdraw(nft_contract_id, token_id, ft_contract_id, price)
+                .await
+        }
         MarketAction::CreateAuction {
             nft_contract_id,
             ft_contract_id,

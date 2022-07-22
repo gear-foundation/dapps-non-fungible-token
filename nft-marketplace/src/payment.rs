@@ -1,39 +1,26 @@
+use crate::ContractId;
 use ft_io::*;
 use gstd::{exec, msg, ActorId};
+
 const MINIMUM_VALUE: u64 = 500;
-pub async fn transfer_tokens(contract_id: &ActorId, from: &ActorId, to: &ActorId, amount: u128) {
-    let _transfer_response: FTEvent = msg::send_for_reply_as(
-        *contract_id,
-        FTAction::Transfer {
-            from: *from,
-            to: *to,
-            amount,
-        },
-        0,
-    )
-    .expect("Error in sending message to FT contract")
-    .await
-    .expect("Error in transfer");
+pub async fn transfer_tokens(contract_id: ContractId, from: ActorId, to: ActorId, amount: u128) {
+    let _transfer_response: FTEvent =
+        msg::send_for_reply_as(contract_id, FTAction::Transfer { from, to, amount }, 0)
+            .expect("Error in sending message to FT contract")
+            .await
+            .expect("Error in transfer");
 }
 
 pub async fn transfer_payment(
-    from: &ActorId,
-    to: &ActorId,
-    ft_contract_id: Option<ActorId>,
+    from: ActorId,
+    to: ActorId,
+    ft_contract_id: Option<ContractId>,
     price: u128,
 ) {
-    if ft_contract_id.is_none() {
-        if to != &exec::program_id() && price > MINIMUM_VALUE.into() {
-            msg::send(*to, "", price).expect("Error in sending payment in value");
-        }
-    } else {
-        transfer_tokens(
-            &ft_contract_id.expect("There must no be an error here"),
-            from,
-            to,
-            price,
-        )
-        .await;
+    if let Some(contract_id) = ft_contract_id {
+        transfer_tokens(contract_id, from, to, price).await;
+    } else if to != exec::program_id() && price > MINIMUM_VALUE.into() {
+            msg::send(to, "", price).expect("Error in sending payment in value");
     }
 }
 

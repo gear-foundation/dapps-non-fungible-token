@@ -20,7 +20,8 @@ impl Market {
     ) {
         self.check_approved_nft_contract(nft_contract_id);
         self.check_approved_ft_contract(ft_contract_id);
-        let contract_and_token_id = (nft_contract_id, token_id);        self.on_auction(contract_and_token_id);
+        let contract_and_token_id = (nft_contract_id, token_id);
+        self.on_auction(contract_and_token_id);
         if bid_period < MIN_BID_PERIOD || duration < MIN_BID_PERIOD {
             panic!("bid period or auction duration can't be less than 1 minute");
         }
@@ -49,7 +50,7 @@ impl Market {
                 ft_contract_id,
                 price: None,
                 auction: Some(auction),
-                offers: Vec::new(),
+                offers: BTreeMap::new(),
             });
 
         msg::reply(
@@ -106,24 +107,18 @@ impl Market {
         // fee for treasury
         let treasury_fee = price * (self.treasury_fee * BASE_PERCENT) as u128 / 10_000u128;
         transfer_payment(
-            &exec::program_id(),
-            &self.treasury_id,
+            exec::program_id(),
+            self.treasury_id,
             item.ft_contract_id,
             treasury_fee,
         )
         .await;
 
         // transfer NFT and pay royalties
-<<<<<<< HEAD
-        let payouts = nft_transfer(nft_contract_id, &winner, token_id, price - treasury_fee).await;
-        debug!("payouts {:?}", payouts);
-
-=======
         let payouts = nft_transfer(nft_contract_id, winner, token_id, price - treasury_fee).await;
->>>>>>> aa1e43c (updated marketplace)
         for (account, amount) in payouts.iter() {
             debug!("account {:?} amount {:?}", account, amount);
-            transfer_payment(&exec::program_id(), account, item.ft_contract_id, *amount).await;
+            transfer_payment(exec::program_id(), *account, item.ft_contract_id, *amount).await;
         }
 
         item.owner_id = winner;
@@ -170,8 +165,8 @@ impl Market {
         item.auction = Some(auction);
         // transfer payment from the current account to the marketplace contract
         transfer_payment(
-            &msg::source(),
-            &exec::program_id(),
+            msg::source(),
+            exec::program_id(),
             item.ft_contract_id,
             price,
         )
@@ -180,8 +175,8 @@ impl Market {
         if previous_winner != ZERO_ID {
             // transfer payment back to the previous winner
             transfer_payment(
-                &exec::program_id(),
-                &previous_winner,
+                exec::program_id(),
+                previous_winner,
                 item.ft_contract_id,
                 previous_price,
             )

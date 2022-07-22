@@ -1,12 +1,11 @@
 use codec::Encode;
 use ft_io::*;
 use gear_lib::non_fungible_token::token::*;
-use gstd::ActorId;
+use gstd::{ActorId, BTreeMap};
 use gtest::{Program, System};
 use market_io::*;
 use nft_io::*;
 mod utils;
-use nft_marketplace::offers::get_hash;
 use utils::*;
 
 fn before_each_test(sys: &System) {
@@ -76,17 +75,11 @@ fn add_offer() {
     before_each_test(&sys);
     let market = sys.get_program(3);
     add_market_data(&market, None, USERS[0], 0, Some(100_000));
-    let mut offers = vec![];
+    let mut offers: BTreeMap<(Option<ContractId>, Price), ActorId> = BTreeMap::new();
     for i in 0..9 {
         sys.mint_to(USERS[1], 1000 * (i + 1) as u128);
         offer(&market, USERS[1], None, 1000 * (i + 1));
-        let hash = get_hash(None, 1_000 * (i + 1));
-        offers.push(Offer {
-            hash,
-            id: USERS[1].into(),
-            ft_contract_id: None,
-            price: 1_000 * (i + 1),
-        });
+        offers.insert((None, 1_000 * (i + 1)), USERS[1].into());
     }
     let res = market.send(
         USERS[0],
@@ -215,14 +208,13 @@ fn accept_offer() {
     offer(&market, USERS[1], None, 100_000);
     offer(&market, USERS[2], Some(1.into()), 1_000);
 
-    let hash = get_hash(Some(1.into()), 1_000);
-
     let res = market.send(
         USERS[0],
         MarketAction::AcceptOffer {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
-            offer_hash: hash,
+            ft_contract_id: Some(1.into()),
+            price: 1_000,
         },
     );
     assert!(res.contains(&(
@@ -240,12 +232,9 @@ fn accept_offer() {
     let res = ft.send(USERS[0], FTAction::BalanceOf(USERS[0].into()));
     assert!(res.contains(&(USERS[0], FTEvent::Balance(990).encode())));
 
-    let offer = Offer {
-        hash: get_hash(None, 100_000),
-        id: USERS[1].into(),
-        ft_contract_id: None,
-        price: 100_000,
-    };
+    let mut offers: BTreeMap<(Option<ContractId>, Price), ActorId> = BTreeMap::new();
+    offers.insert((None, 100_000), USERS[1].into());
+
     let res = market.send(
         USERS[0],
         MarketAction::Item {
@@ -260,7 +249,7 @@ fn accept_offer() {
             ft_contract_id: None,
             price: None,
             auction: None,
-            offers: vec![offer],
+            offers,
         })
         .encode()
     )));
@@ -270,7 +259,8 @@ fn accept_offer() {
         MarketAction::AcceptOffer {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
-            offer_hash: get_hash(None, 100_000),
+            ft_contract_id: None,
+            price: 100_000,
         },
     );
     assert!(res.contains(&(
@@ -298,7 +288,7 @@ fn accept_offer() {
             ft_contract_id: None,
             price: None,
             auction: None,
-            offers: vec![],
+            offers: BTreeMap::new(),
         })
         .encode()
     )));
@@ -323,7 +313,8 @@ fn accept_offer_failures() {
         MarketAction::AcceptOffer {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
-            offer_hash: get_hash(Some(1.into()), 1_000),
+            ft_contract_id: Some(1.into()),
+            price:1_000,
         },
     );
     assert!(res.main_failed());
@@ -334,7 +325,8 @@ fn accept_offer_failures() {
         MarketAction::AcceptOffer {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
-            offer_hash: get_hash(Some(1.into()), 10_000),
+            ft_contract_id: Some(1.into()),
+            price: 10_000,
         },
     );
     assert!(res.main_failed());
@@ -352,7 +344,10 @@ fn withdraw() {
     assert!(!res.main_failed());
     add_market_data(&market, None, USERS[0], 0, Some(100_000));
     sys.mint_to(USERS[1], 100_000);
+
+    let mut offers: BTreeMap<(Option<ContractId>, Price), ActorId> = BTreeMap::new();
     offer(&market, USERS[1], None, 100_000);
+    offers.insert((None, 100_000), USERS[1].into());
     offer(&market, USERS[2], Some(1.into()), 1_000);
 
     let res = market.send(
@@ -360,7 +355,8 @@ fn withdraw() {
         MarketAction::Withdraw {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
-            hash: get_hash(Some(1.into()), 1_000),
+            ft_contract_id: Some(1.into()),
+            price: 1_000,
         },
     );
     assert!(res.contains(&(
@@ -368,6 +364,7 @@ fn withdraw() {
         MarketEvent::TokensWithdrawn {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
+            ft_contract_id: Some(1.into()),
             price: 1_000,
         }
         .encode()
@@ -377,12 +374,12 @@ fn withdraw() {
     let res = ft.send(USERS[0], FTAction::BalanceOf(USERS[2].into()));
     assert!(res.contains(&(USERS[0], FTEvent::Balance(100_000).encode())));
 
-    let offer = Offer {
-        hash: get_hash(None, 100_000),
-        id: USERS[1].into(),
-        ft_contract_id: None,
-        price: 100_000,
-    };
+    // let offer = Offer {
+    //     hash: get_hash(None, 100_000),
+    //     id: USERS[1].into(),
+    //     ft_contract_id: None,
+    //     price: 100_000,
+    // };
     let res = market.send(
         USERS[0],
         MarketAction::Item {
@@ -397,7 +394,7 @@ fn withdraw() {
             ft_contract_id: None,
             price: Some(100_000),
             auction: None,
-            offers: vec![offer],
+            offers,
         })
         .encode()
     )));
@@ -407,7 +404,8 @@ fn withdraw() {
         MarketAction::Withdraw {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
-            hash: get_hash(None, 100_000),
+            ft_contract_id: None,
+            price: 100_000,
         },
     );
     assert!(res.contains(&(
@@ -415,6 +413,7 @@ fn withdraw() {
         MarketEvent::TokensWithdrawn {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
+            ft_contract_id: None,
             price: 100_000,
         }
         .encode()
@@ -434,7 +433,7 @@ fn withdraw() {
             ft_contract_id: None,
             price: Some(100_000),
             auction: None,
-            offers: vec![],
+            offers: BTreeMap::new(),
         })
         .encode()
     )));
@@ -461,7 +460,8 @@ fn withdraws_failure() {
         MarketAction::Withdraw {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
-            hash: get_hash(Some(1.into()), 1_000),
+            ft_contract_id: Some(1.into()),
+            price: 1_000,
         },
     );
     assert!(res.main_failed());
@@ -472,7 +472,8 @@ fn withdraws_failure() {
         MarketAction::Withdraw {
             nft_contract_id: 2.into(),
             token_id: 0.into(),
-            hash: get_hash(Some(1.into()), 1_010),
+            ft_contract_id: Some(1.into()),
+            price: 1_010,
         },
     );
     assert!(res.main_failed());
