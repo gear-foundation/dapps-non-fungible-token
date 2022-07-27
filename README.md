@@ -12,7 +12,7 @@
 [build_badge]: https://github.com/gear-dapps/non-fungible-token/workflows/Build/badge.svg
 [build_href]: https://github.com/gear-dapps/non-fungible-token/actions/workflows/build.yml
 
-[lic_badge]: https://img.shields.io/badge/License-GPL%203.0-success
+[lic_badge]: https://img.shields.io/badge/License-MIT-success
 [lic_href]: https://github.com/gear-dapps/non-fungible-token/blob/master/LICENSE
 
 
@@ -81,4 +81,4 @@ make
 
 ## License
 
-The source code is licensed under [GPL v3.0 license](LICENSE).
+The source code is licensed under [MIT license](LICENSE).
