@@ -9,7 +9,7 @@ pub const USERS: &[u64] = &[4, 5, 6, 7];
 pub const TREASURY_ID: u64 = 8;
 
 pub fn init_ft(sys: &System) {
-    let ft = Program::from_file(sys, "../target/fungible_token.wasm");
+    let ft = Program::from_file(sys, "../target/fungible_token-0.1.0.wasm");
 
     let res = ft.send(
         USERS[0],
