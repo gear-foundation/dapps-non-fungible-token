@@ -5,8 +5,7 @@ use gear_lib::non_fungible_token::{royalties::*, token::*};
 use gstd::{prelude::*, ActorId};
 use scale_info::TypeInfo;
 
-pub use gear_lib::non_fungible_token::delegated;
-use gear_lib::non_fungible_token::delegated::DelegatedApproveMessage;
+pub use gear_lib::non_fungible_token::delegated::DelegatedApproveMessage;
 
 #[derive(Debug, Encode, Decode, TypeInfo)]
 pub enum NFTAction {

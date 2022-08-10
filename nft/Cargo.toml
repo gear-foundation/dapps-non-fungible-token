@@ -15,6 +15,8 @@ gear-lib-derive = { git = "https://github.com/gear-dapps/gear-lib.git", branch =
 
 [dev-dependencies]
 gtest = { git = "https://github.com/gear-tech/gear.git" }
+hex-literal = "0.3.4"
+sp-core = { version = "6.0.0", git = "https://github.com/gear-tech/substrate.git", branch = "gear-stable" }
 
 [build-dependencies]
 gear-wasm-builder = { git = "https://github.com/gear-tech/gear.git" }
