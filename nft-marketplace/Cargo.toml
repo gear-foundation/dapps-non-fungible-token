@@ -14,10 +14,12 @@ nft-io = { path = "../nft/io" }
 ft-io = { git = "https://github.com/gear-dapps/fungible-token.git", tag = "0.1.0" }
 market-io = {path = "io" }
 sp-core-hashing = { version = "4.0.0", default-features = false }
-gear-lib = { git = "https://github.com/gear-dapps/gear-lib.git", branch = "feature/delegated-approve" }
+gear-lib = { git = "https://github.com/gear-dapps/gear-lib.git" }
 
 [dev-dependencies]
-gtest = { git = "https://github.com/gear-tech/gear.git"}
+gtest = { git = "https://github.com/gear-tech/gear.git" }
+sp-core = { version = "6.0.0", git = "https://github.com/gear-tech/substrate.git", branch = "gear-stable" }
+
 
 [build-dependencies]
 gear-wasm-builder = { git = "https://github.com/gear-tech/gear.git" }

@@ -1,9 +1,9 @@
 #![no_std]
 
 use codec::{Decode, Encode};
-use gstd::{exec, msg, prelude::*, ActorId};
+use gstd::{msg, prelude::*, ActorId};
 pub use market_io::*;
-use primitive_types::{H256, U256};
+use primitive_types::H256;
 use scale_info::TypeInfo;
 pub mod nft_messages;
 use nft_messages::*;
@@ -45,18 +45,19 @@ impl Market {
 
     pub async fn add_market_data(
         &mut self,
-        nft_contract_id: &ActorId,
+        delegated_approve: &DelegatedApprove,
         ft_contract_id: Option<ActorId>,
-        token_id: U256,
         price: Option<u128>,
     ) {
+        let nft_contract_id = &delegated_approve.message.nft_program_id;
         self.check_approved_nft_contract(nft_contract_id);
         self.check_approved_ft_contract(ft_contract_id);
+        let token_id = delegated_approve.message.token_id;
         let contract_and_token_id =
             format!("{}{}", H256::from_slice(nft_contract_id.as_ref()), token_id);
         self.on_auction(&contract_and_token_id);
 
-        nft_approve(nft_contract_id, &exec::program_id(), token_id).await;
+        nft_approve(delegated_approve).await;
 
         self.items
             .entry(contract_and_token_id)
@@ -119,13 +120,12 @@ async unsafe fn main() {
             market.add_ft_contract(&nft_contract_id);
         }
         MarketAction::AddMarketData {
-            nft_contract_id,
+            delegated_approve,
             ft_contract_id,
-            token_id,
             price,
         } => {
             market
-                .add_market_data(&nft_contract_id, ft_contract_id, token_id, price)
+                .add_market_data(&delegated_approve, ft_contract_id, price)
                 .await;
         }
         MarketAction::BuyItem {
@@ -173,18 +173,16 @@ async unsafe fn main() {
             hash,
         } => market.withdraw(&nft_contract_id, token_id, hash).await,
         MarketAction::CreateAuction {
-            nft_contract_id,
+            delegated_approve,
             ft_contract_id,
-            token_id,
             min_price,
             bid_period,
             duration,
         } => {
             market
                 .create_auction(
-                    &nft_contract_id,
+                    &delegated_approve,
                     ft_contract_id,
-                    token_id,
                     min_price,
                     bid_period,
                     duration,

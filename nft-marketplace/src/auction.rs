@@ -12,15 +12,18 @@ const ZERO_ID: ActorId = ActorId::new([0u8; 32]);
 impl Market {
     pub async fn create_auction(
         &mut self,
-        nft_contract_id: &ActorId,
+        delegated_approve: &DelegatedApprove,
         ft_contract_id: Option<ActorId>,
-        token_id: U256,
         min_price: u128,
         bid_period: u64,
         duration: u64,
     ) {
+        let nft_contract_id = &delegated_approve.message.nft_program_id;
+
         self.check_approved_nft_contract(nft_contract_id);
         self.check_approved_ft_contract(ft_contract_id);
+
+        let token_id = delegated_approve.message.token_id;
         let contract_and_token_id =
             format!("{}{}", H256::from_slice(nft_contract_id.as_ref()), token_id);
         self.on_auction(&contract_and_token_id);
@@ -31,7 +34,7 @@ impl Market {
             panic!("price can't be equal to zero");
         }
         // approve nft to trade on the marketplace
-        nft_approve(nft_contract_id, &exec::program_id(), token_id).await;
+        nft_approve(delegated_approve).await;
 
         let auction = Auction {
             bid_period,

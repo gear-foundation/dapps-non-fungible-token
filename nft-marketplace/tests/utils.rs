@@ -1,9 +1,11 @@
 use codec::Encode;
 use ft_io::*;
+use gear_lib::non_fungible_token::token::TokenId;
 use gstd::ActorId;
 use gtest::{Program, System};
 use market_io::*;
 use nft_io::*;
+use sp_core::{sr25519::Pair as Sr25519Pair, Pair};
 
 pub const USERS: &[u64] = &[4, 5, 6, 7];
 pub const TREASURY_ID: u64 = 8;
@@ -54,19 +56,26 @@ pub fn init_market(sys: &System) {
 }
 
 pub fn add_market_data(
+    sys: &System,
     market: &Program,
     ft_contract_id: Option<ActorId>,
-    user: u64,
+    user_pair: Sr25519Pair,
     token_id: u128,
     price: Option<u128>,
 ) {
     // lists nft on the market
+    let approve = create_delegated_approve(
+        user_pair,
+        market.id(),
+        2.into(),
+        token_id.into(),
+        sys.block_timestamp() + 100,
+    );
     let res = market.send(
-        user,
+        user_pair.public().into(),
         MarketAction::AddMarketData {
-            nft_contract_id: 2.into(),
+            delegated_approve: approve,
             ft_contract_id,
-            token_id: token_id.into(),
             price,
         },
     );
@@ -74,10 +83,30 @@ pub fn add_market_data(
         user,
         MarketEvent::MarketDataAdded {
             nft_contract_id: 2.into(),
-            owner: user.into(),
+            owner: user_pair.public().into(),
             token_id: token_id.into(),
             price,
         }
         .encode()
     )));
+}
+
+fn create_delegated_approve(
+    token_owner: Sr25519Pair,
+    approved_actor_id: ProgramId,
+    nft_program_id: ActorId,
+    token_id: TokenId,
+    expiration_timestamp: u64,
+) -> DelegatedApprove {
+    let message = DelegatedApproveMessage {
+        token_owner_id: token_owner.public.into(),
+        approved_actor_id: approved_actor_id.as_ref().into(),
+        nft_program_id,
+        token_id,
+        expiration_timestamp,
+    };
+
+    let signature = token_owner.sign(message.encode().as_slice());
+
+    DelegatedApprove { message, signature }
 }
