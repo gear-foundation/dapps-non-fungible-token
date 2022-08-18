@@ -5,11 +5,10 @@ use gstd::{exec, msg, ActorId};
 const MINIMUM_VALUE: u64 = 500;
 
 pub async fn transfer_tokens(contract_id: ContractId, from: ActorId, to: ActorId, amount: u128) {
-    let _transfer_response: FTEvent =
-        msg::send_for_reply_as(contract_id, FTAction::Transfer { from, to, amount }, 0)
-            .expect("Error in sending message `FTAction::Transfer` to the fungible token contract")
-            .await
-            .expect("Error in decoding `FTEvent`");
+    msg::send_for_reply(contract_id, FTAction::Transfer { from, to, amount }, 0)
+        .expect("Error in sending message `FTAction::Transfer` to the fungible token contract")
+        .await
+        .expect("Error in decoding `FTEvent`");
 }
 
 pub async fn transfer_payment(

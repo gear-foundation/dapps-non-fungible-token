@@ -233,8 +233,8 @@ async unsafe fn main() {
 #[no_mangle]
 pub unsafe extern "C" fn init() {
     let config: InitMarket = msg::load().expect("Unable to decode InitConfig");
-    if config.treasury_fee == MIN_TREASURY_FEE.into()
-        || config.treasury_fee > MAX_TREASURY_FEE.into()
+    if config.treasury_fee == MIN_TREASURY_FEE as u16
+        || config.treasury_fee > MAX_TREASURY_FEE as u16
     {
         panic!("Wrong treasury fee");
     }
