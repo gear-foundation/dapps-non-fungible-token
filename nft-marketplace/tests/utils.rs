@@ -7,7 +7,17 @@ use market_io::*;
 use nft_io::*;
 use sp_core::{sr25519::Pair as Sr25519Pair, Pair};
 
-pub const USERS: &[u64] = &[4, 5, 6, 7];
+pub const USERS: Vec<[u8; 32]> = USERS_PAIRS
+    .iter()
+    .map(|pair| pair.public().0)
+    .clone()
+    .collect();
+pub const USERS_PAIRS: &[Sr25519Pair] = &[
+    Sr25519Pair::generate().0,
+    Sr25519Pair::generate().0,
+    Sr25519Pair::generate().0,
+    Sr25519Pair::generate().0,
+];
 pub const TREASURY_ID: u64 = 8;
 
 pub fn init_ft(sys: &System) {
@@ -65,14 +75,20 @@ pub fn add_market_data(
 ) {
     // lists nft on the market
     let approve = create_delegated_approve(
-        user_pair,
-        market.id(),
+        user_pair.clone(),
+        ActorId::new(
+            market
+                .id()
+                .as_ref()
+                .try_into()
+                .expect("slice with incorrect length"),
+        ),
         2.into(),
         token_id.into(),
         sys.block_timestamp() + 100,
     );
     let res = market.send(
-        user_pair.public().into(),
+        user_pair.public().0,
         MarketAction::AddMarketData {
             delegated_approve: approve,
             ft_contract_id,
@@ -80,10 +96,10 @@ pub fn add_market_data(
         },
     );
     assert!(res.contains(&(
-        user,
+        user_pair.public().0,
         MarketEvent::MarketDataAdded {
             nft_contract_id: 2.into(),
-            owner: user_pair.public().into(),
+            owner: user_pair.public().0.into(),
             token_id: token_id.into(),
             price,
         }
@@ -93,20 +109,20 @@ pub fn add_market_data(
 
 fn create_delegated_approve(
     token_owner: Sr25519Pair,
-    approved_actor_id: ProgramId,
+    approved_actor_id: ActorId,
     nft_program_id: ActorId,
     token_id: TokenId,
     expiration_timestamp: u64,
 ) -> DelegatedApprove {
     let message = DelegatedApproveMessage {
-        token_owner_id: token_owner.public.into(),
-        approved_actor_id: approved_actor_id.as_ref().into(),
+        token_owner_id: token_owner.public().0.into(),
+        approved_actor_id,
         nft_program_id,
         token_id,
         expiration_timestamp,
     };
 
-    let signature = token_owner.sign(message.encode().as_slice());
+    let signature = token_owner.sign(message.encode().as_slice()).0;
 
     DelegatedApprove { message, signature }
 }

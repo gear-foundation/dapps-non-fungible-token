@@ -40,7 +40,7 @@ fn buy() {
     assert!(!res.main_failed());
     // add nft to market
     let market = sys.get_program(3);
-    add_market_data(&market, None, USERS[0], 0, Some(100_000));
+    add_market_data(&sys, &market, None, USERS[0], 0, Some(100_000));
 
     sys.mint_to(USERS[1], 100_000);
     let res = market.send_with_value(
