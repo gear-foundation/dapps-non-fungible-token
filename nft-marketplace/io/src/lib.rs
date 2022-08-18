@@ -1,7 +1,7 @@
 #![no_std]
 use codec::{Decode, Encode};
 use gstd::{prelude::*, ActorId};
-use primitive_types::{H256, U256};
+use primitive_types::U256;
 use scale_info::TypeInfo;
 
 pub type ContractId = ActorId;
@@ -12,18 +12,10 @@ pub type Price = u128;
 pub struct InitMarket {
     pub admin_id: ActorId,
     pub treasury_id: ActorId,
-    pub treasury_fee: u8,
+    pub treasury_fee: u16,
 }
 
-#[derive(Debug, Encode, Decode, TypeInfo, Clone)]
-pub struct Offer {
-    pub hash: H256,
-    pub id: ActorId,
-    pub ft_contract_id: Option<ContractId>,
-    pub price: Price,
-}
-
-#[derive(Debug, Default, Encode, Decode, TypeInfo, Clone)]
+#[derive(Debug, Default, Encode, Decode, TypeInfo, Clone, PartialEq, Eq)]
 pub struct Auction {
     pub bid_period: u64,
     pub started_at: u64,
@@ -38,7 +30,7 @@ pub struct Bid {
     pub price: Price,
 }
 
-#[derive(Debug, Encode, Decode, TypeInfo, Clone, Default)]
+#[derive(Debug, Encode, Decode, TypeInfo, Clone, Default, PartialEq, Eq)]
 pub struct Item {
     pub owner_id: ActorId,
     pub ft_contract_id: Option<ContractId>,
@@ -56,6 +48,8 @@ pub enum MarketAction {
     ///
     /// # Arguments:
     /// * `nft_contract_id`: the NFT contract address
+    ///
+    /// On success replies [`MarketEvent::NftContractAdded`].
     AddNftContract(ContractId),
 
     /// Adds the contract addresses of fungible tokens with which users can pay for NFTs.
@@ -65,6 +59,8 @@ pub enum MarketAction {
     ///
     /// # Arguments:
     /// * `ft_contract_id`: the FT contract address
+    ///
+    /// On success replies [`MarketEvent::FtContractAdded`].
     AddFTContract(ContractId),
 
     /// Adds data on market item.
@@ -243,9 +239,11 @@ pub enum MarketAction {
 
 #[derive(Debug, Encode, Decode, TypeInfo)]
 pub enum MarketEvent {
+    NftContractAdded(ContractId),
+    FtContractAdded(ContractId),
     MarketDataAdded {
         nft_contract_id: ContractId,
-        owner: ActorId,
+        ft_contract_id: Option<ContractId>,
         token_id: TokenId,
         price: Option<u128>,
     },
@@ -266,6 +264,7 @@ pub enum MarketEvent {
     },
     AuctionSettled {
         nft_contract_id: ContractId,
+        winner: ActorId,
         token_id: TokenId,
         price: Price,
     },

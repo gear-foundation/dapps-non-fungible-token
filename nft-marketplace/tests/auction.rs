@@ -1,390 +1,406 @@
-use codec::Encode;
-use ft_io::*;
-use gstd::{ActorId, BTreeMap};
-use gtest::{Program, RunResult, System};
-use market_io::*;
-use nft_io::*;
-mod utils;
-use gear_lib::non_fungible_token::token::*;
-pub use utils::*;
-
-fn before_each_test(sys: &System) {
-    init_ft(sys);
-    init_nft(sys);
-    init_market(sys);
-    let nft = sys.get_program(2);
-    let market = sys.get_program(3);
-    let res = market.send(USERS[0], MarketAction::AddFTContract(1.into()));
-    assert!(res.log().is_empty());
-    let res = market.send(USERS[0], MarketAction::AddNftContract(2.into()));
-    assert!(res.log().is_empty());
-
-    let res = nft.send(
-        USERS[0],
-        NFTAction::Mint {
-            token_metadata: TokenMetadata {
-                name: "CryptoKitty".to_string(),
-                description: "Description".to_string(),
-                media: "http://".to_string(),
-                reference: "http://".to_string(),
-            },
-        },
-    );
-    assert!(!res.main_failed());
-}
-
-fn start_auction(
-    market: &Program,
-    ft_contract_id: Option<ActorId>,
-    min_price: u128,
-    bid_period: u64,
-    duration: u64,
-) -> RunResult {
-    market.send(
-        USERS[0],
-        MarketAction::CreateAuction {
-            nft_contract_id: 2.into(),
-            ft_contract_id,
-            token_id: 0.into(),
-            min_price,
-            bid_period,
-            duration,
-        },
-    )
-}
-
-fn bid(market: &Program, user: u64, price: u128) -> RunResult {
-    market.send_with_value(
-        user,
-        MarketAction::AddBid {
-            nft_contract_id: 2.into(),
-            token_id: 0.into(),
-            price,
-        },
-        price,
-    )
-}
-
-fn bid_with_token(market: &Program, user: u64, price: u128) -> RunResult {
-    market.send(
-        user,
-        MarketAction::AddBid {
-            nft_contract_id: 2.into(),
-            token_id: 0.into(),
-            price,
-        },
-    )
-}
+pub mod utils;
+use utils::prelude::*;
 
 #[test]
-fn create_auction() {
-    let sys = System::new();
-    sys.init_logger();
-    before_each_test(&sys);
-    let market = sys.get_program(3);
-    let res = start_auction(&market, None, 1000, 60_000, 86_400_000);
-    assert!(res.contains(&(
-        USERS[0],
-        MarketEvent::AuctionCreated {
-            nft_contract_id: 2.into(),
-            token_id: 0.into(),
-            price: 1000,
+fn auction_with_native_tokens() {
+    let system = utils::initialize_system();
+
+    let (ft_program, nft_program, market) = utils::initialize_programs(&system);
+
+    market
+        .add_market_data(
+            SELLER,
+            nft_program.actor_id(),
+            Some(ft_program.actor_id()),
+            TOKEN_ID.into(),
+            Some(NFT_PRICE),
+        )
+        .check((
+            nft_program.actor_id(),
+            Some(ft_program.actor_id()),
+            TOKEN_ID.into(),
+            Some(NFT_PRICE),
+        ));
+
+    market
+        .create_auction(
+            SELLER,
+            (nft_program.actor_id(), TOKEN_ID.into()),
+            None,
+            NFT_PRICE,
+            BID_PERIOD,
+            DURATION,
+        )
+        .check((nft_program.actor_id(), TOKEN_ID.into(), NFT_PRICE));
+
+    for (i, &participant) in PARTICIPANTS.iter().enumerate() {
+        let bid_price = (i as u128 + 2) * NFT_PRICE;
+        system.mint_to(participant, bid_price);
+        market
+            .add_bid(
+                participant,
+                nft_program.actor_id(),
+                TOKEN_ID.into(),
+                bid_price,
+                bid_price,
+            )
+            .check((nft_program.actor_id(), TOKEN_ID.into(), bid_price));
+
+        // check that marketplace has returned funds to the previous participant
+        if i != 0 {
+            system.claim_value_from_mailbox(PARTICIPANTS[i - 1]);
+            assert_eq!(
+                system.balance_of(PARTICIPANTS[i - 1]),
+                (i as u128 + 1) * NFT_PRICE
+            );
         }
-        .encode()
-    )));
+    }
+
+    let winner_price = 6 * NFT_PRICE;
+    let winner = PARTICIPANTS[4];
+
+    // check balance of nft marketplace contract
+    assert_eq!(system.balance_of(MARKET_ID), winner_price);
+
+    // check item state
+    let mut item = Item {
+        owner_id: SELLER.into(),
+        ft_contract_id: None,
+        price: None,
+        auction: Some(Auction {
+            bid_period: BID_PERIOD,
+            started_at: system.block_timestamp(),
+            ended_at: system.block_timestamp() + DURATION,
+            current_price: winner_price,
+            current_winner: winner.into(),
+        }),
+        offers: BTreeMap::new(),
+    };
+
+    market
+        .meta_state()
+        .item_info(nft_program.actor_id(), TOKEN_ID.into())
+        .check(item.clone());
+
+    system.spend_blocks((DURATION / 1000) as u32);
+
+    market
+        .settle_auction(SELLER, nft_program.actor_id(), TOKEN_ID.into())
+        .check(MarketEvent::AuctionSettled {
+            nft_contract_id: nft_program.actor_id(),
+            winner: winner.into(),
+            token_id: TOKEN_ID.into(),
+            price: winner_price,
+        });
+
+    item.auction = None;
+    item.owner_id = winner.into();
+
+    // check item state
+    market
+        .meta_state()
+        .item_info(nft_program.actor_id(), TOKEN_ID.into())
+        .check(item);
+
+    // check owner
+    nft_program
+        .meta_state()
+        .owner_id(TOKEN_ID)
+        .check(winner.into());
+
+    let treasury_fee = winner_price * ((TREASURY_FEE * BASE_PERCENT) as u128) / 10_000u128;
+
+    // check balance of SELLER
+    system.claim_value_from_mailbox(SELLER);
+    assert_eq!(system.balance_of(SELLER), winner_price - treasury_fee);
+
+    // check balance of TREASURY_ID
+    system.claim_value_from_mailbox(TREASURY_ID);
+    assert_eq!(system.balance_of(TREASURY_ID), treasury_fee);
 }
 
 #[test]
-fn create_auction_failures() {
-    let sys = System::new();
-    sys.init_logger();
-    before_each_test(&sys);
-    let market = sys.get_program(3);
+fn cancelled_auction() {
+    let system = utils::initialize_system();
+
+    let (ft_program, nft_program, market) = utils::initialize_programs(&system);
+
+    market
+        .add_market_data(
+            SELLER,
+            nft_program.actor_id(),
+            Some(ft_program.actor_id()),
+            TOKEN_ID.into(),
+            Some(NFT_PRICE),
+        )
+        .check((
+            nft_program.actor_id(),
+            Some(ft_program.actor_id()),
+            TOKEN_ID.into(),
+            Some(NFT_PRICE),
+        ));
+
+    market
+        .create_auction(
+            SELLER,
+            (nft_program.actor_id(), TOKEN_ID.into()),
+            None,
+            NFT_PRICE,
+            BID_PERIOD,
+            DURATION,
+        )
+        .check((nft_program.actor_id(), TOKEN_ID.into(), NFT_PRICE));
+
+    system.spend_blocks((DURATION / 1000) as u32);
+
+    market
+        .settle_auction(SELLER, nft_program.actor_id(), TOKEN_ID.into())
+        .check(MarketEvent::AuctionCancelled {
+            nft_contract_id: nft_program.actor_id(),
+            token_id: TOKEN_ID.into(),
+        });
+}
+
+#[test]
+fn auction_with_fungible_tokens() {
+    let system = utils::initialize_system();
+
+    let (ft_program, nft_program, market) = utils::initialize_programs(&system);
+
+    market
+        .add_market_data(
+            SELLER,
+            nft_program.actor_id(),
+            Some(ft_program.actor_id()),
+            TOKEN_ID.into(),
+            Some(NFT_PRICE),
+        )
+        .check((
+            nft_program.actor_id(),
+            Some(ft_program.actor_id()),
+            TOKEN_ID.into(),
+            Some(NFT_PRICE),
+        ));
+
+    market
+        .create_auction(
+            SELLER,
+            (nft_program.actor_id(), TOKEN_ID.into()),
+            Some(ft_program.actor_id()),
+            NFT_PRICE,
+            BID_PERIOD,
+            DURATION,
+        )
+        .check((nft_program.actor_id(), TOKEN_ID.into(), NFT_PRICE));
+
+    for (i, &participant) in PARTICIPANTS.iter().enumerate() {
+        let bid_price = (i as u128 + 2) * NFT_PRICE;
+        ft_program.approve(participant, market.actor_id(), bid_price);
+        ft_program.mint(participant, bid_price);
+        market
+            .add_bid(
+                participant,
+                nft_program.actor_id(),
+                TOKEN_ID.into(),
+                bid_price,
+                0,
+            )
+            .check((nft_program.actor_id(), TOKEN_ID.into(), bid_price));
+
+        // check that marketplace has returned funds to the previous participant
+        if i != 0 {
+            ft_program
+                .balance_of(PARTICIPANTS[i - 1])
+                .check((i as u128 + 1) * NFT_PRICE);
+        }
+    }
+
+    let winner_price = 6 * NFT_PRICE;
+    let winner = PARTICIPANTS[4];
+
+    // check balance of nft marketplace contract
+    ft_program.balance_of(MARKET_ID).check(winner_price);
+
+    // check item state
+    let mut item = Item {
+        owner_id: SELLER.into(),
+        ft_contract_id: Some(ft_program.actor_id()),
+        price: None,
+        auction: Some(Auction {
+            bid_period: BID_PERIOD,
+            started_at: system.block_timestamp(),
+            ended_at: system.block_timestamp() + DURATION,
+            current_price: winner_price,
+            current_winner: winner.into(),
+        }),
+        offers: BTreeMap::new(),
+    };
+
+    market
+        .meta_state()
+        .item_info(nft_program.actor_id(), TOKEN_ID.into())
+        .check(item.clone());
+
+    system.spend_blocks((DURATION / 1000) as u32);
+
+    market
+        .settle_auction(SELLER, nft_program.actor_id(), TOKEN_ID.into())
+        .check(MarketEvent::AuctionSettled {
+            nft_contract_id: nft_program.actor_id(),
+            winner: winner.into(),
+            token_id: TOKEN_ID.into(),
+            price: winner_price,
+        });
+
+    item.auction = None;
+    item.owner_id = winner.into();
+
+    // check item state
+    market
+        .meta_state()
+        .item_info(nft_program.actor_id(), TOKEN_ID.into())
+        .check(item);
+
+    // check owner
+    nft_program
+        .meta_state()
+        .owner_id(TOKEN_ID)
+        .check(winner.into());
+
+    let treasury_fee = winner_price * ((TREASURY_FEE * BASE_PERCENT) as u128) / 10_000u128;
+
+    // check balance of SELLER
+    ft_program
+        .balance_of(SELLER)
+        .check(winner_price - treasury_fee);
+
+    // check balance of TREASURY_ID
+    ft_program.balance_of(TREASURY_ID).check(treasury_fee);
+}
+
+#[test]
+fn auction_failures() {
+    let system = utils::initialize_system();
+
+    let (ft_program, nft_program, market) = utils::initialize_programs(&system);
+
+    market
+        .add_market_data(
+            SELLER,
+            nft_program.actor_id(),
+            Some(ft_program.actor_id()),
+            TOKEN_ID.into(),
+            Some(NFT_PRICE),
+        )
+        .check((
+            nft_program.actor_id(),
+            Some(ft_program.actor_id()),
+            TOKEN_ID.into(),
+            Some(NFT_PRICE),
+        ));
+
+    // create auction failures
 
     // must fail since the bid period is less than 1 minute
-    let res = start_auction(&market, None, 1_000, 50_000, 86_400_000);
-    assert!(res.main_failed());
+    market
+        .create_auction(
+            SELLER,
+            (nft_program.actor_id(), TOKEN_ID.into()),
+            None,
+            NFT_PRICE,
+            MIN_BID_PERIOD - 100,
+            DURATION,
+        )
+        .failed();
 
     // must fail since the bid period is less than 1 minute
-    let res = start_auction(&market, None, 1_000, 60_000, 50_000);
-    assert!(res.main_failed());
+    market
+        .create_auction(
+            SELLER,
+            (nft_program.actor_id(), TOKEN_ID.into()),
+            None,
+            NFT_PRICE,
+            BID_PERIOD,
+            MIN_BID_PERIOD - 100,
+        )
+        .failed();
 
     // must fail since the min price is equal to zero
-    let res = start_auction(&market, None, 0, 60_000, 86_400_000);
-    assert!(res.main_failed());
+    market
+        .create_auction(
+            SELLER,
+            (nft_program.actor_id(), TOKEN_ID.into()),
+            None,
+            0,
+            BID_PERIOD,
+            DURATION,
+        )
+        .failed();
 
     // start auction
-    let res = start_auction(&market, None, 1_000, 60_000, 86_400_000);
-    assert!(!res.main_failed());
+    market
+        .create_auction(
+            SELLER,
+            (nft_program.actor_id(), TOKEN_ID.into()),
+            None,
+            NFT_PRICE,
+            BID_PERIOD,
+            DURATION,
+        )
+        .check((nft_program.actor_id(), TOKEN_ID.into(), NFT_PRICE));
 
     // must fail since the auction is already on
-    let res = start_auction(&market, None, 1_000, 60_000, 86_400_000);
-    assert!(res.main_failed());
-}
+    market
+        .create_auction(
+            SELLER,
+            (nft_program.actor_id(), TOKEN_ID.into()),
+            None,
+            NFT_PRICE,
+            BID_PERIOD,
+            DURATION,
+        )
+        .failed();
 
-#[test]
-fn add_bid() {
-    let sys = System::new();
-    sys.init_logger();
-    before_each_test(&sys);
-    let market = sys.get_program(3);
-    // start auction
-    let res = start_auction(&market, None, 100_000, 60_000, 86_400_000);
-    assert!(!res.main_failed());
+    // add bid and create auction failures
 
-    sys.mint_to(USERS[0], 100_001);
-    let res = bid(&market, USERS[0], 100_001);
-    assert!(res.contains(&(
-        USERS[0],
-        MarketEvent::BidAdded {
-            nft_contract_id: 2.into(),
-            token_id: 0.into(),
-            price: 100_001,
-        }
-        .encode()
-    )));
-}
-
-#[test]
-fn add_bid_failures() {
-    let sys = System::new();
-    sys.init_logger();
-    before_each_test(&sys);
-    let market = sys.get_program(3);
-    // start auction
-    let res = start_auction(&market, None, 100_000, 60_000, 86_400_000);
-    assert!(!res.main_failed());
     // must fail since the price is equal to the current bid price
-    sys.mint_to(USERS[0], 200_000);
-    let res = bid(&market, USERS[0], 100_000);
-    assert!(res.main_failed());
-
-    sys.spend_blocks(86400001);
-
-    // must fail since the auction has ended
-    let res = bid(&market, USERS[0], 200_000);
-    assert!(res.main_failed());
-}
-
-#[test]
-fn settle_auction() {
-    let sys = System::new();
-    sys.init_logger();
-    before_each_test(&sys);
-    let market = sys.get_program(3);
-    let res = start_auction(&market, None, 100_000, 60_000, 86_400_000);
-    assert!(!res.main_failed());
-
-    // Users add bids
-    USERS.iter().enumerate().for_each(|(i, user)| {
-        sys.mint_to(*user, 100_001 + i as u128);
-        let res = bid(&market, *user, 100_001 + i as u128);
-        assert!(!res.main_failed());
-    });
-
-    sys.spend_blocks(86400000);
-
-    let res = market.send(
-        USERS[0],
-        MarketAction::SettleAuction {
-            nft_contract_id: 2.into(),
-            token_id: 0.into(),
-        },
-    );
-
-    assert!(res.contains(&(
-        USERS[0],
-        MarketEvent::AuctionSettled {
-            nft_contract_id: 2.into(),
-            token_id: 0.into(),
-            price: 100004,
-        }
-        .encode()
-    )));
-
-    // Checks NFT item on the marketplace
-    let res = market.send(
-        USERS[0],
-        MarketAction::Item {
-            nft_contract_id: 2.into(),
-            token_id: 0.into(),
-        },
-    );
-    assert!(res.contains(&(
-        USERS[0],
-        MarketEvent::ItemInfo(Item {
-            owner_id: USERS[3].into(),
-            ft_contract_id: None,
-            price: None,
-            auction: None,
-            offers: BTreeMap::new(),
-        })
-        .encode()
-    )));
-}
-
-#[test]
-fn auction_is_cancelled() {
-    let sys = System::new();
-    sys.init_logger();
-    before_each_test(&sys);
-    let market = sys.get_program(3);
-    let res = start_auction(&market, None, 100_000, 60_000, 86_400_000);
-    assert!(!res.main_failed());
-
-    sys.spend_blocks(86400001);
-
-    let res = market.send(
-        USERS[0],
-        MarketAction::SettleAuction {
-            nft_contract_id: 2.into(),
-            token_id: 0.into(),
-        },
-    );
-
-    assert!(res.contains(&(
-        USERS[0],
-        MarketEvent::AuctionCancelled {
-            nft_contract_id: 2.into(),
-            token_id: 0.into(),
-        }
-        .encode()
-    )));
-}
-
-#[test]
-fn settle_auction_failures() {
-    let sys = System::new();
-    sys.init_logger();
-    before_each_test(&sys);
-    let market = sys.get_program(3);
-    let res = start_auction(&market, None, 100_000, 60_000, 86_400_000);
-    assert!(!res.main_failed());
-
+    system.mint_to(BUYER, NFT_PRICE);
+    market
+        .add_bid(
+            BUYER,
+            nft_program.actor_id(),
+            TOKEN_ID.into(),
+            NFT_PRICE,
+            NFT_PRICE,
+        )
+        .failed();
     // must fail since the auction is not over
-    let res = market.send(
-        USERS[0],
-        MarketAction::SettleAuction {
-            nft_contract_id: 2.into(),
-            token_id: 0.into(),
-        },
-    );
-    assert!(res.main_failed());
+    market
+        .settle_auction(SELLER, nft_program.actor_id(), TOKEN_ID.into())
+        .failed();
 
-    let nft = sys.get_program(2);
-    let res = nft.send(
-        USERS[0],
-        NFTAction::Mint {
-            token_metadata: TokenMetadata {
-                name: "CryptoKitty".to_string(),
-                description: "Description".to_string(),
-                media: "http://".to_string(),
-                reference: "http://".to_string(),
-            },
-        },
-    );
-    assert!(!res.main_failed());
+    system.spend_blocks((DURATION as u32) / 1000);
 
-    // lists nft on the market
-    let res = market.send(
-        USERS[0],
-        MarketAction::AddMarketData {
-            nft_contract_id: 2.into(),
-            ft_contract_id: None,
-            token_id: 1.into(),
-            price: None,
-        },
-    );
-    assert!(!res.main_failed());
+    // must fail since the auction has alredy ended
+    market
+        .add_bid(
+            BUYER,
+            nft_program.actor_id(),
+            TOKEN_ID.into(),
+            NFT_PRICE,
+            NFT_PRICE,
+        )
+        .failed();
+
+    market
+        .settle_auction(SELLER, nft_program.actor_id(), TOKEN_ID.into())
+        .check(MarketEvent::AuctionCancelled {
+            nft_contract_id: nft_program.actor_id(),
+            token_id: TOKEN_ID.into(),
+        });
+
     // must fail since the auction doesn't exist
-    let res = market.send(
-        USERS[0],
-        MarketAction::SettleAuction {
-            nft_contract_id: 2.into(),
-            token_id: 1.into(),
-        },
-    );
-    assert!(res.main_failed());
-}
-
-#[test]
-fn auction_with_ft_token() {
-    let sys = System::new();
-    sys.init_logger();
-    before_each_test(&sys);
-    let ft = sys.get_program(1);
-    let market = sys.get_program(3);
-    let res = market.send(USERS[0], MarketAction::AddFTContract(1.into()));
-    assert!(res.log().is_empty());
-    let res = start_auction(&market, Some(1.into()), 10_000, 60_000, 86_400_000);
-    assert!(!res.main_failed());
-
-    // Mints tokens for users
-    USERS.iter().for_each(|user| {
-        let res = ft.send(*user, FTAction::Mint(100_000));
-        assert!(!res.main_failed());
-    });
-
-    // Users add bids
-    USERS.iter().enumerate().for_each(|(i, user)| {
-        let res = bid_with_token(&market, *user, 10_100 + 100 * i as u128);
-        assert!(!res.main_failed());
-    });
-
-    sys.spend_blocks(86_400_000);
-
-    let res = market.send(
-        USERS[0],
-        MarketAction::SettleAuction {
-            nft_contract_id: 2.into(),
-            token_id: 0.into(),
-        },
-    );
-
-    assert!(res.contains(&(
-        USERS[0],
-        MarketEvent::AuctionSettled {
-            nft_contract_id: 2.into(),
-            token_id: 0.into(),
-            price: 10400,
-        }
-        .encode()
-    )));
-
-    // check the balance of treasury account
-    let res = ft.send(USERS[0], FTAction::BalanceOf(TREASURY_ID.into()));
-    assert!(res.contains(&(USERS[0], FTEvent::Balance(104).encode())));
-
-    // check the balance of seller
-    let res = ft.send(USERS[0], FTAction::BalanceOf(USERS[0].into()));
-    println!("{:?}", res.decoded_log::<FTEvent>());
-    assert!(res.contains(&(USERS[0], FTEvent::Balance(110_296).encode())));
-
-    // check the balance of buyer
-    let res = ft.send(USERS[0], FTAction::BalanceOf(USERS[3].into()));
-    assert!(res.contains(&(USERS[0], FTEvent::Balance(89_600).encode())));
-
-    // check the balances of user who don't win auctions
-    let res = ft.send(USERS[0], FTAction::BalanceOf(USERS[1].into()));
-    assert!(res.contains(&(USERS[0], FTEvent::Balance(100_000).encode())));
-
-    // Checks NFT item on the marketplace
-    let res = market.send(
-        USERS[0],
-        MarketAction::Item {
-            nft_contract_id: 2.into(),
-            token_id: 0.into(),
-        },
-    );
-    assert!(res.contains(&(
-        USERS[0],
-        MarketEvent::ItemInfo(Item {
-            owner_id: USERS[3].into(),
-            ft_contract_id: Some(1.into()),
-            price: None,
-            auction: None,
-            offers: BTreeMap::new(),
-        })
-        .encode()
-    )));
+    market
+        .settle_auction(SELLER, nft_program.actor_id(), TOKEN_ID.into())
+        .failed();
 }

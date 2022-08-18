@@ -1,15 +1,6 @@
-use crate::{nft_messages::*, payment::*, Market, BASE_PERCENT};
-use gstd::{exec, msg, prelude::*, ActorId};
+use crate::{assert_auction_is_on, get_item, nft_messages::*, payment::*, Market, BASE_PERCENT};
+use gstd::{exec, msg, prelude::*};
 use market_io::*;
-use primitive_types::H256;
-
-pub fn get_hash(ft_contract_id: Option<ActorId>, price: u128) -> H256 {
-    let price = price.to_be_bytes();
-    let ft_id_vec: Vec<u8> = ft_contract_id
-        .map(|id| <[u8; 32]>::from(id).into())
-        .unwrap_or_default();
-    sp_core_hashing::blake2_256(&[&ft_id_vec[..], &price[..]].concat()).into()
-}
 
 impl Market {
     pub async fn add_offer(
@@ -19,24 +10,21 @@ impl Market {
         token_id: TokenId,
         price: Price,
     ) {
-        let contract_and_token_id = (nft_contract_id, token_id);
         self.check_approved_ft_contract(ft_contract_id);
-        self.on_auction(contract_and_token_id);
-        let item = self
-            .items
-            .get_mut(&contract_and_token_id)
-            .expect("Item does not exist");
+        let item = get_item(&mut self.items, nft_contract_id, token_id);
+        assert_auction_is_on(&item.auction);
+
         if price == 0 {
             panic!("Cant offer zero price");
         }
+
+        check_attached_value(ft_contract_id, price);
 
         let offer = (ft_contract_id, price);
         let mut offers = item.offers.clone();
         if offers.insert(offer, msg::source()).is_some() {
             panic!("the offer with these params already exists");
         }
-
-        check_attached_value(ft_contract_id, price);
 
         transfer_payment(msg::source(), exec::program_id(), ft_contract_id, price).await;
 
@@ -70,12 +58,8 @@ impl Market {
         ft_contract_id: Option<ContractId>,
         price: Price,
     ) {
-        let contract_and_token_id = (nft_contract_id, token_id);
-        self.on_auction(contract_and_token_id);
-        let item = self
-            .items
-            .get_mut(&contract_and_token_id)
-            .expect("Item does not exist");
+        let item = get_item(&mut self.items, nft_contract_id, token_id);
+        assert_auction_is_on(&item.auction);
         if item.owner_id != msg::source() {
             panic!("only owner can accept offer");
         }
@@ -118,11 +102,7 @@ impl Market {
         ft_contract_id: Option<ContractId>,
         price: Price,
     ) {
-        let contract_and_token_id = (nft_contract_id, token_id);
-        let item = self
-            .items
-            .get_mut(&contract_and_token_id)
-            .expect("Item does not exist");
+        let item = get_item(&mut self.items, nft_contract_id, token_id);
 
         let offer = (ft_contract_id, price);
         if let Some(id) = item.offers.remove(&offer) {

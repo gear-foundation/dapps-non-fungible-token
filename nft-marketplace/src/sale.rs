@@ -1,21 +1,19 @@
-use crate::{nft_messages::*, payment::*, ContractId, Market, MarketEvent, TokenId, BASE_PERCENT};
+use crate::{
+    assert_auction_is_on, get_item, nft_messages::*, payment::*, ContractId, Market, MarketEvent,
+    TokenId, BASE_PERCENT,
+};
 use gstd::{msg, prelude::*};
 
 impl Market {
     pub async fn buy_item(&mut self, nft_contract_id: ContractId, token_id: TokenId) {
-        let contract_and_token_id = (nft_contract_id, token_id);
-        let item = self
-            .items
-            .get_mut(&contract_and_token_id)
-            .expect("Item does not exist");
-        if item.auction.is_some() {
-            panic!("There is an opened auction");
-        }
+        let item = get_item(&mut self.items, nft_contract_id, token_id);
+        assert_auction_is_on(&item.auction);
         let price = item.price.expect("The item is not on sale");
 
         check_attached_value(item.ft_contract_id, price);
         // fee for treasury
-        let treasury_fee = price * (self.treasury_fee * BASE_PERCENT) as u128 / 10_000u128;
+        let treasury_fee =
+            price * (self.treasury_fee as u16 * BASE_PERCENT as u16) as u128 / 10_000u128;
 
         transfer_payment(
             msg::source(),

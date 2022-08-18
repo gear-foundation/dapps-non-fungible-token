@@ -3,12 +3,13 @@ use ft_io::*;
 use gstd::{exec, msg, ActorId};
 
 const MINIMUM_VALUE: u64 = 500;
+
 pub async fn transfer_tokens(contract_id: ContractId, from: ActorId, to: ActorId, amount: u128) {
     let _transfer_response: FTEvent =
         msg::send_for_reply_as(contract_id, FTAction::Transfer { from, to, amount }, 0)
-            .expect("Error in sending message to FT contract")
+            .expect("Error in sending message `FTAction::Transfer` to the fungible token contract")
             .await
-            .expect("Error in transfer");
+            .expect("Error in decoding `FTEvent`");
 }
 
 pub async fn transfer_payment(
@@ -20,7 +21,7 @@ pub async fn transfer_payment(
     if let Some(contract_id) = ft_contract_id {
         transfer_tokens(contract_id, from, to, price).await;
     } else if to != exec::program_id() && price > MINIMUM_VALUE.into() {
-            msg::send(to, "", price).expect("Error in sending payment in value");
+        msg::send(to, "", price).expect("Error in sending payment in value");
     }
 }
 

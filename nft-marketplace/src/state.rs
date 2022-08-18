@@ -1,6 +1,6 @@
 use crate::{ContractId, Item, TokenId};
 use codec::{Decode, Encode};
-use gstd::{prelude::*};
+use gstd::prelude::*;
 use scale_info::TypeInfo;
 
 #[derive(Debug, Decode, Encode, TypeInfo)]

@@ -14,30 +14,34 @@ pub mod state;
 use state::*;
 
 const MIN_TREASURY_FEE: u8 = 0;
-const MAX_TREASURT_FEE: u8 = 5;
-pub const BASE_PERCENT: u8 = 100;
+const MAX_TREASURY_FEE: u8 = 5;
+pub const BASE_PERCENT: u16 = 100;
 
 #[derive(Debug, Default, Encode, Decode, TypeInfo)]
 pub struct Market {
     pub admin_id: ActorId,
     pub treasury_id: ActorId,
-    pub treasury_fee: u8,
+    pub treasury_fee: u16,
     pub items: BTreeMap<(ContractId, TokenId), Item>,
-    pub approved_nft_contracts: BTreeSet<ActorId>,
-    pub approved_ft_contracts: BTreeSet<ActorId>,
+    pub approved_nft_contracts: BTreeSet<ContractId>,
+    pub approved_ft_contracts: BTreeSet<ContractId>,
 }
 
 static mut MARKET: Option<Market> = None;
 
 impl Market {
-    fn add_nft_contract(&mut self, nft_contract_id: &ActorId) {
+    fn add_nft_contract(&mut self, nft_contract_id: ContractId) {
         self.check_admin();
-        self.approved_nft_contracts.insert(*nft_contract_id);
+        self.approved_nft_contracts.insert(nft_contract_id);
+        msg::reply(MarketEvent::NftContractAdded(nft_contract_id), 0)
+            .expect("Error in reply `MarketEvent::NftContractAdded`");
     }
 
-    fn add_ft_contract(&mut self, ft_contract_id: &ActorId) {
+    fn add_ft_contract(&mut self, ft_contract_id: ContractId) {
         self.check_admin();
-        self.approved_ft_contracts.insert(*ft_contract_id);
+        self.approved_ft_contracts.insert(ft_contract_id);
+        msg::reply(MarketEvent::FtContractAdded(ft_contract_id), 0)
+            .expect("Error in reply `MarketEvent::FtContractAdded`");
     }
 
     pub async fn add_market_data(
@@ -50,28 +54,30 @@ impl Market {
         self.check_approved_nft_contract(nft_contract_id);
         self.check_approved_ft_contract(ft_contract_id);
         let contract_and_token_id = (nft_contract_id, token_id);
-        self.on_auction(contract_and_token_id);
+
+        if let Some(item) = self.items.get_mut(&contract_and_token_id) {
+            assert_auction_is_on(&item.auction);
+            item.price = price;
+            item.ft_contract_id = ft_contract_id
+        } else {
+            self.items.insert(
+                contract_and_token_id,
+                Item {
+                    owner_id: msg::source(),
+                    ft_contract_id,
+                    price,
+                    auction: None,
+                    offers: BTreeMap::new(),
+                },
+            );
+        }
 
         nft_approve(nft_contract_id, exec::program_id(), token_id).await;
-
-        self.items
-            .entry(contract_and_token_id)
-            .and_modify(|item| {
-                item.price = price;
-                item.ft_contract_id = ft_contract_id
-            })
-            .or_insert(Item {
-                owner_id: msg::source(),
-                ft_contract_id,
-                price,
-                auction: None,
-                offers: BTreeMap::new(),
-            });
 
         msg::reply(
             MarketEvent::MarketDataAdded {
                 nft_contract_id,
-                owner: msg::source(),
+                ft_contract_id,
                 token_id,
                 price,
             },
@@ -81,15 +87,17 @@ impl Market {
     }
 
     pub fn check_admin(&self) {
-        if msg::source() != self.admin_id {
-            panic!("Only owner can make that action");
-        }
+        assert!(
+            msg::source() == self.admin_id,
+            "Only owner can make that action"
+        );
     }
 
     pub fn check_approved_nft_contract(&self, nft_contract_id: ContractId) {
-        if !self.approved_nft_contracts.contains(&nft_contract_id) {
-            panic!("that nft contract is not approved");
-        }
+        assert!(
+            self.approved_nft_contracts.contains(&nft_contract_id),
+            "that NFT contract is not approved"
+        );
     }
 
     pub fn check_approved_ft_contract(&self, ft_contract_id: Option<ActorId>) {
@@ -98,9 +106,24 @@ impl Market {
                 .approved_ft_contracts
                 .contains(&ft_contract_id.expect("Must not be an error here"))
         {
-            panic!("that ft contract is not approved");
+            panic!("that FT contract is not approved");
         }
     }
+}
+
+pub fn get_item(
+    items: &mut BTreeMap<(ContractId, TokenId), Item>,
+    nft_contract_id: ContractId,
+    token_id: TokenId,
+) -> &mut Item {
+    let contract_and_token_id = (nft_contract_id, token_id);
+    items
+        .get_mut(&contract_and_token_id)
+        .expect("Item does not exist")
+}
+
+pub fn assert_auction_is_on(auction: &Option<Auction>) {
+    assert!(auction.is_none(), "There is an opened auction");
 }
 
 #[gstd::async_main]
@@ -109,10 +132,10 @@ async unsafe fn main() {
     let market: &mut Market = unsafe { MARKET.get_or_insert(Market::default()) };
     match action {
         MarketAction::AddNftContract(nft_contract_id) => {
-            market.add_nft_contract(&nft_contract_id);
+            market.add_nft_contract(nft_contract_id);
         }
-        MarketAction::AddFTContract(nft_contract_id) => {
-            market.add_ft_contract(&nft_contract_id);
+        MarketAction::AddFTContract(ft_contract_id) => {
+            market.add_ft_contract(ft_contract_id);
         }
         MarketAction::AddMarketData {
             nft_contract_id,
@@ -210,14 +233,16 @@ async unsafe fn main() {
 #[no_mangle]
 pub unsafe extern "C" fn init() {
     let config: InitMarket = msg::load().expect("Unable to decode InitConfig");
-    if config.treasury_fee == MIN_TREASURY_FEE || config.treasury_fee > MAX_TREASURT_FEE {
+    if config.treasury_fee == MIN_TREASURY_FEE.into()
+        || config.treasury_fee > MAX_TREASURY_FEE.into()
+    {
         panic!("Wrong treasury fee");
     }
     let market = Market {
         admin_id: config.admin_id,
         treasury_id: config.treasury_id,
         treasury_fee: config.treasury_fee,
-        ..Market::default()
+        ..Default::default()
     };
     MARKET = Some(market);
 }
