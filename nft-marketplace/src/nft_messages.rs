@@ -20,7 +20,7 @@ pub async fn nft_transfer(
         },
         0,
     )
-    .unwrap()
+    .expect("can't send message")
     .await
     .expect("error in transfer");
     let decoded_response: NFTTransferPayout =
@@ -37,7 +37,7 @@ pub async fn nft_approve(delegated_approve: &DelegatedApprove) {
         },
         0,
     )
-    .unwrap()
+    .expect("can't send message")
     .await
     .expect("error in transfer");
 }
