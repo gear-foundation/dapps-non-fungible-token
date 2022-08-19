@@ -1,56 +1,37 @@
-use crate::{nft_messages::*, payment::*, Market, BASE_PERCENT};
-use gstd::{exec, msg, prelude::*, ActorId};
+use crate::{assert_auction_is_on, get_item, nft_messages::*, payment::*, Market, BASE_PERCENT};
+use gstd::{exec, msg, prelude::*};
 use market_io::*;
-use primitive_types::{H256, U256};
-
-pub fn get_hash(ft_contract_id: Option<ActorId>, price: u128) -> H256 {
-    let price = price.to_be_bytes();
-    let ft_id_vec: Vec<u8> = ft_contract_id
-        .map(|id| <[u8; 32]>::from(id).into())
-        .unwrap_or_default();
-    sp_core_hashing::blake2_256(&[&ft_id_vec[..], &price[..]].concat()).into()
-}
 
 impl Market {
     pub async fn add_offer(
         &mut self,
-        nft_contract_id: &ActorId,
-        ft_contract_id: Option<ActorId>,
-        token_id: U256,
-        price: u128,
+        nft_contract_id: ContractId,
+        ft_contract_id: Option<ContractId>,
+        token_id: TokenId,
+        price: Price,
     ) {
-        let contract_and_token_id =
-            format!("{}{}", H256::from_slice(nft_contract_id.as_ref()), token_id);
         self.check_approved_ft_contract(ft_contract_id);
-        self.on_auction(&contract_and_token_id);
-        let item = self
-            .items
-            .get_mut(&contract_and_token_id)
-            .expect("Item does not exist");
+        let item = get_item(&mut self.items, nft_contract_id, token_id);
+        assert_auction_is_on(&item.auction);
+
         if price == 0 {
             panic!("Cant offer zero price");
         }
 
-        let hash: H256 = get_hash(ft_contract_id, price);
+        check_attached_value(ft_contract_id, price);
+
+        let offer = (ft_contract_id, price);
         let mut offers = item.offers.clone();
-        if offers.iter().any(|offer| offer.hash == hash) {
+        if offers.insert(offer, msg::source()).is_some() {
             panic!("the offer with these params already exists");
         }
 
-        check_attached_value(ft_contract_id, price);
+        transfer_payment(msg::source(), exec::program_id(), ft_contract_id, price).await;
 
-        transfer_payment(&msg::source(), &exec::program_id(), ft_contract_id, price).await;
-
-        offers.push(Offer {
-            hash,
-            id: msg::source(),
-            ft_contract_id,
-            price,
-        });
         item.offers = offers;
         msg::reply(
             MarketEvent::OfferAdded {
-                nft_contract_id: *nft_contract_id,
+                nft_contract_id,
                 ft_contract_id,
                 token_id,
                 price,
@@ -72,96 +53,75 @@ impl Market {
     /// * `offer_hash`: the offer hash
     pub async fn accept_offer(
         &mut self,
-        nft_contract_id: &ActorId,
-        token_id: U256,
-        offer_hash: H256,
+        nft_contract_id: ContractId,
+        token_id: TokenId,
+        ft_contract_id: Option<ContractId>,
+        price: Price,
     ) {
-        let contract_and_token_id =
-            format!("{}{}", H256::from_slice(nft_contract_id.as_ref()), token_id);
-        self.on_auction(&contract_and_token_id);
-        let item = self
-            .items
-            .get_mut(&contract_and_token_id)
-            .expect("Item does not exist");
+        let item = get_item(&mut self.items, nft_contract_id, token_id);
+        assert_auction_is_on(&item.auction);
         if item.owner_id != msg::source() {
             panic!("only owner can accept offer");
         }
-        let mut offers = item.offers.clone();
-        if let Some(offer) = offers.clone().iter().find(|offer| offer.hash == offer_hash) {
-            let treasury_fee =
-                offer.price * (self.treasury_fee * BASE_PERCENT) as u128 / 10_000u128;
+        let offer = (ft_contract_id, price);
+        if let Some(id) = item.offers.remove(&offer) {
+            let treasury_fee = price * (self.treasury_fee * BASE_PERCENT) as u128 / 10_000u128;
             transfer_payment(
-                &exec::program_id(),
-                &self.treasury_id,
-                offer.ft_contract_id,
+                exec::program_id(),
+                self.treasury_id,
+                ft_contract_id,
                 treasury_fee,
             )
             .await;
-
             // transfer NFT and pay royalties
-            let payouts = nft_transfer(
-                nft_contract_id,
-                &offer.id,
-                token_id,
-                offer.price - treasury_fee,
-            )
-            .await;
+            let payouts = nft_transfer(nft_contract_id, id, token_id, price - treasury_fee).await;
             for (account, amount) in payouts.iter() {
-                transfer_payment(&exec::program_id(), account, offer.ft_contract_id, *amount).await;
+                transfer_payment(exec::program_id(), *account, ft_contract_id, *amount).await;
             }
-
-            offers.retain(|offer| offer.hash != offer_hash);
-            item.offers = offers;
             item.price = None;
-            item.owner_id = offer.id;
+            item.owner_id = id;
             msg::reply(
                 MarketEvent::OfferAccepted {
-                    nft_contract_id: *nft_contract_id,
+                    nft_contract_id,
                     token_id,
-                    new_owner: offer.id,
-                    price: offer.price,
+                    new_owner: id,
+                    price,
                 },
                 0,
             )
             .expect("Error in reply [MarketEvent::OfferAccepted]");
         } else {
-            panic!("The offer with that hash does not exist");
+            panic!("The offer does not exist");
         }
     }
 
-    pub async fn withdraw(&mut self, nft_contract_id: &ActorId, token_id: U256, offer_hash: H256) {
-        let contract_and_token_id =
-            format!("{}{}", H256::from_slice(nft_contract_id.as_ref()), token_id);
-        let item = self
-            .items
-            .get_mut(&contract_and_token_id)
-            .expect("Item does not exist");
+    pub async fn withdraw(
+        &mut self,
+        nft_contract_id: ContractId,
+        token_id: TokenId,
+        ft_contract_id: Option<ContractId>,
+        price: Price,
+    ) {
+        let item = get_item(&mut self.items, nft_contract_id, token_id);
 
-        let mut offers = item.offers.clone();
-        if let Some(offer) = offers.clone().iter().find(|offer| offer.hash == offer_hash) {
-            if msg::source() != offer.id {
+        let offer = (ft_contract_id, price);
+        if let Some(id) = item.offers.remove(&offer) {
+            if msg::source() != id {
                 panic!("can't withdraw other user's tokens");
             }
-            transfer_payment(
-                &exec::program_id(),
-                &msg::source(),
-                offer.ft_contract_id,
-                offer.price,
-            )
-            .await;
-            offers.retain(|offer| offer.hash != offer_hash);
-            item.offers = offers;
+            transfer_payment(exec::program_id(), msg::source(), ft_contract_id, price).await;
             msg::reply(
                 MarketEvent::TokensWithdrawn {
-                    nft_contract_id: *nft_contract_id,
+                    nft_contract_id,
                     token_id,
-                    price: offer.price,
+                    ft_contract_id,
+                    price,
                 },
                 0,
             )
             .expect("Error in reply [MarketEvent::TokensWithdrawn]");
         } else {
-            panic!("The offer with that hash does not exist");
+            panic!("The offer does not exist");
         }
     }
 }

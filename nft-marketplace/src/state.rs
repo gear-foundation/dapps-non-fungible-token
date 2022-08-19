@@ -1,15 +1,14 @@
-use crate::Item;
+use crate::{ContractId, Item, TokenId};
 use codec::{Decode, Encode};
-use gstd::{prelude::*, ActorId};
-use primitive_types::U256;
+use gstd::prelude::*;
 use scale_info::TypeInfo;
 
 #[derive(Debug, Decode, Encode, TypeInfo)]
 pub enum State {
     AllItems,
     ItemInfo {
-        nft_contract_id: ActorId,
-        token_id: U256,
+        nft_contract_id: ContractId,
+        token_id: TokenId,
     },
 }
 
