@@ -2,6 +2,7 @@ use gstd::{msg, prelude::*, ActorId};
 pub type Payout = BTreeMap<ActorId, u128>;
 use crate::{ContractId, TokenId};
 use gear_lib::non_fungible_token::io::*;
+use market_io::DelegatedApprove;
 use nft_io::*;
 
 pub async fn nft_transfer(
@@ -19,7 +20,7 @@ pub async fn nft_transfer(
         },
         0,
     )
-    .unwrap()
+    .expect("can't send message")
     .await
     .expect("error in transfer");
     let decoded_response: NFTTransferPayout =
@@ -27,10 +28,16 @@ pub async fn nft_transfer(
     decoded_response.payouts
 }
 
-pub async fn nft_approve(nft_program_id: ContractId, to: ActorId, token_id: TokenId) {
-    let _approve_response: Vec<u8> =
-        msg::send_for_reply(nft_program_id, NFTAction::Approve { to, token_id }, 0)
-            .unwrap()
-            .await
-            .expect("error in transfer");
+pub async fn nft_approve(delegated_approve: &DelegatedApprove) {
+    msg::send_for_reply(
+        delegated_approve.message.nft_program_id,
+        NFTAction::DelegatedApprove {
+            message: delegated_approve.message.clone(),
+            signature: delegated_approve.signature,
+        },
+        0,
+    )
+    .expect("can't send message")
+    .await
+    .expect("error in transfer");
 }

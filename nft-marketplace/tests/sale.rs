@@ -9,7 +9,8 @@ fn buy_with_fungible_tokens() {
 
     market
         .add_market_data(
-            SELLER,
+            &system,
+            seller_pair(),
             nft_program.actor_id(),
             Some(ft_program.actor_id()),
             TOKEN_ID.into(),
@@ -37,7 +38,7 @@ fn buy_with_fungible_tokens() {
 
     // check balance of SELLER
     ft_program
-        .balance_of(SELLER)
+        .balance_of(seller_actor_id())
         .check(NFT_PRICE - treasury_fee);
 
     // check balance of TREASURY_ID
@@ -57,7 +58,8 @@ fn buy_with_fungible_tokens_failures() {
 
     market
         .add_market_data(
-            SELLER,
+            &system,
+            seller_pair(),
             nft_program.actor_id(),
             Some(ft_program.actor_id()),
             TOKEN_ID.into(),
@@ -77,9 +79,9 @@ fn buy_with_fungible_tokens_failures() {
 
     market
         .create_auction(
-            SELLER,
-            (nft_program.actor_id(), TOKEN_ID.into()),
-            None,
+            &system,
+            seller_pair(),
+            (nft_program.actor_id(), TOKEN_ID.into(), None),
             NFT_PRICE,
             BID_PERIOD,
             DURATION,
@@ -100,7 +102,8 @@ fn buy_with_native_tokens() {
 
     market
         .add_market_data(
-            SELLER,
+            &system,
+            seller_pair(),
             nft_program.actor_id(),
             None,
             TOKEN_ID.into(),
@@ -138,8 +141,11 @@ fn buy_with_native_tokens() {
     let treasury_fee = NFT_PRICE * ((TREASURY_FEE * BASE_PERCENT) as u128) / 10_000u128;
 
     // check balance of SELLER
-    system.claim_value_from_mailbox(SELLER);
-    assert_eq!(system.balance_of(SELLER), NFT_PRICE - treasury_fee);
+    system.claim_value_from_mailbox(seller_actor_id().as_ref());
+    assert_eq!(
+        system.balance_of(seller_actor_id().as_ref()),
+        NFT_PRICE - treasury_fee
+    );
 
     // check balance of TREASURY_ID
     system.claim_value_from_mailbox(TREASURY_ID);

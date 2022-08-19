@@ -3,6 +3,7 @@ use gstd::ActorId;
 use gtest::{Program as InnerProgram, System};
 use market_io::{InitMarket, MarketAction, MarketEvent};
 use nft_marketplace::state::{State, StateReply};
+use sp_core::{sr25519::Pair as Sr25519Pair, Pair};
 type ActionMarket<T> = Action<T, MarketEvent>;
 
 pub struct Market<'a>(InnerProgram<'a>);
@@ -60,19 +61,32 @@ impl<'a> Market<'a> {
 
     pub fn add_market_data(
         &self,
-        from: u64,
+        sys: &System,
+        from_user_pair: Sr25519Pair,
         nft_contract_id: ActorId,
         ft_contract_id: Option<ActorId>,
         token_id: TokenId,
         price: Option<u128>,
     ) -> ActionMarket<(ContractId, Option<ContractId>, TokenId, Option<Price>)> {
+        let delegated_approve = create_delegated_approve(
+            from_user_pair.clone(),
+            ActorId::new(
+                self.0
+                    .id()
+                    .as_ref()
+                    .try_into()
+                    .expect("slice with incorrect length"),
+            ),
+            nft_contract_id,
+            token_id,
+            sys.block_timestamp() + 100,
+        );
         Action(
             self.0.send(
-                from,
+                from_user_pair.public().0,
                 MarketAction::AddMarketData {
-                    nft_contract_id,
+                    delegated_approve,
                     ft_contract_id,
-                    token_id,
                     price,
                 },
             ),
@@ -111,7 +125,7 @@ impl<'a> Market<'a> {
 
     pub fn add_offer(
         &self,
-        from: u64,
+        from: ActorId,
         nft_contract_id: ContractId,
         token_id: TokenId,
         ft_contract_id: Option<ContractId>,
@@ -120,7 +134,7 @@ impl<'a> Market<'a> {
     ) -> ActionMarket<(ContractId, Option<ContractId>, TokenId, Price)> {
         Action(
             self.0.send_with_value(
-                from,
+                from.as_ref(),
                 MarketAction::AddOffer {
                     nft_contract_id,
                     ft_contract_id,
@@ -140,7 +154,7 @@ impl<'a> Market<'a> {
 
     pub fn accept_offer(
         &self,
-        from: u64,
+        from: ActorId,
         nft_contract_id: ContractId,
         token_id: TokenId,
         ft_contract_id: Option<ContractId>,
@@ -148,7 +162,7 @@ impl<'a> Market<'a> {
     ) -> ActionMarket<(ContractId, TokenId, ActorId, Price)> {
         Action(
             self.0.send(
-                from,
+                from.as_ref(),
                 MarketAction::AcceptOffer {
                     nft_contract_id,
                     token_id,
@@ -167,7 +181,7 @@ impl<'a> Market<'a> {
 
     pub fn withdraw(
         &self,
-        from: u64,
+        from: ActorId,
         nft_contract_id: ContractId,
         token_id: TokenId,
         ft_contract_id: Option<ContractId>,
@@ -175,7 +189,7 @@ impl<'a> Market<'a> {
     ) -> ActionMarket<(ContractId, TokenId, Option<ActorId>, Price)> {
         Action(
             self.0.send(
-                from,
+                from.as_ref(),
                 MarketAction::Withdraw {
                     nft_contract_id,
                     token_id,
@@ -194,20 +208,32 @@ impl<'a> Market<'a> {
 
     pub fn create_auction(
         &self,
-        from: u64,
-        (nft_contract_id, token_id): (ContractId, TokenId),
-        ft_contract_id: Option<ContractId>,
+        sys: &System,
+        from_user_pair: Sr25519Pair,
+        (nft_contract_id, token_id, ft_contract_id): (ContractId, TokenId, Option<ContractId>),
         min_price: u128,
         bid_period: u64,
         duration: u64,
     ) -> ActionMarket<(ContractId, TokenId, Price)> {
+        let delegated_approve = create_delegated_approve(
+            from_user_pair.clone(),
+            ActorId::new(
+                self.0
+                    .id()
+                    .as_ref()
+                    .try_into()
+                    .expect("slice with incorrect length"),
+            ),
+            nft_contract_id,
+            token_id,
+            sys.block_timestamp() + 100,
+        );
         Action(
             self.0.send(
-                from,
+                from_user_pair.public().0,
                 MarketAction::CreateAuction {
-                    nft_contract_id,
+                    delegated_approve,
                     ft_contract_id,
-                    token_id,
                     min_price,
                     bid_period,
                     duration,
@@ -249,13 +275,13 @@ impl<'a> Market<'a> {
 
     pub fn settle_auction(
         &self,
-        from: u64,
+        from: ActorId,
         nft_contract_id: ActorId,
         token_id: TokenId,
     ) -> ActionMarket<MarketEvent> {
         Action(
             self.0.send(
-                from,
+                from.as_ref(),
                 MarketAction::SettleAuction {
                     nft_contract_id,
                     token_id,
@@ -264,6 +290,26 @@ impl<'a> Market<'a> {
             |market_event| market_event,
         )
     }
+}
+
+fn create_delegated_approve(
+    token_owner: Sr25519Pair,
+    approved_actor_id: ActorId,
+    nft_program_id: ActorId,
+    token_id: TokenId,
+    expiration_timestamp: u64,
+) -> DelegatedApprove {
+    let message = DelegatedApproveMessage {
+        token_owner_id: token_owner.public().0.into(),
+        approved_actor_id,
+        nft_program_id,
+        token_id,
+        expiration_timestamp,
+    };
+
+    let signature = token_owner.sign(message.encode().as_slice()).0;
+
+    DelegatedApprove { message, signature }
 }
 
 pub struct MarketMetaState<'a>(&'a InnerProgram<'a>);

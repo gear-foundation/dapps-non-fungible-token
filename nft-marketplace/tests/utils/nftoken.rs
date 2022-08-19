@@ -57,6 +57,27 @@ impl<'a> NonFungibleToken<'a> {
             ));
     }
 
+    pub fn mint_actor(&self, from: [u8; 32]) {
+        assert!(self
+            .0
+            .send(
+                from,
+                NFTAction::Mint {
+                    token_metadata: Default::default()
+                }
+            )
+            .contains(
+                &Log::builder().payload(
+                    NFTTransfer {
+                        from: ActorId::zero(),
+                        to: from.into(),
+                        token_id: TOKEN_ID.into(),
+                    }
+                    .encode()
+                )
+            ));
+    }
+
     pub fn meta_state(&self) -> NonFungibleTokenMetaState {
         NonFungibleTokenMetaState(&self.0)
     }

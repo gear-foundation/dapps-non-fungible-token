@@ -3,6 +3,7 @@ use super::{FungibleToken, Market, NonFungibleToken};
 use core::fmt::Debug;
 use gstd::ActorId;
 use gtest::{Log, Program as InnerProgram, RunResult, System};
+use sp_core::Pair;
 
 pub fn initialize_system() -> System {
     let system = System::new();
@@ -14,7 +15,7 @@ pub fn initialize_programs(system: &System) -> (FungibleToken, NonFungibleToken,
     let ft_program = FungibleToken::initialize(system);
 
     let nft_program = NonFungibleToken::initialize(system);
-    nft_program.mint(SELLER);
+    nft_program.mint_actor(seller_pair().public().0);
 
     let market = Market::initialize(system);
     ft_program.approve(BUYER, market.actor_id(), NFT_PRICE);

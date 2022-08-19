@@ -11,15 +11,18 @@ const MIN_BID_PERIOD: u64 = 60_000;
 impl Market {
     pub async fn create_auction(
         &mut self,
-        nft_contract_id: ContractId,
+        delegated_approve: &DelegatedApprove,
         ft_contract_id: Option<ActorId>,
-        token_id: TokenId,
         min_price: u128,
         bid_period: u64,
         duration: u64,
     ) {
+        let nft_contract_id = delegated_approve.message.nft_program_id;
+
         self.check_approved_nft_contract(nft_contract_id);
         self.check_approved_ft_contract(ft_contract_id);
+
+        let token_id = delegated_approve.message.token_id;
 
         if bid_period < MIN_BID_PERIOD || duration < MIN_BID_PERIOD {
             panic!("bid period or auction duration can't be less than 1 minute");
@@ -31,8 +34,7 @@ impl Market {
         let item = get_item(&mut self.items, nft_contract_id, token_id);
         assert_auction_is_on(&item.auction);
         // approve nft to trade on the marketplace
-
-        nft_approve(nft_contract_id, exec::program_id(), token_id).await;
+        nft_approve(delegated_approve).await;
 
         let auction = Auction {
             bid_period,

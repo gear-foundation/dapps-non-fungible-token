@@ -1,6 +1,7 @@
 #![no_std]
 use codec::{Decode, Encode};
 use gstd::{prelude::*, ActorId};
+pub use nft_io::DelegatedApproveMessage;
 use primitive_types::U256;
 use scale_info::TypeInfo;
 
@@ -39,6 +40,12 @@ pub struct Item {
     pub offers: BTreeMap<(Option<ContractId>, Price), ActorId>,
 }
 
+#[derive(Debug, Encode, Decode, TypeInfo, Clone)]
+pub struct DelegatedApprove {
+    pub message: DelegatedApproveMessage,
+    pub signature: [u8; 64],
+}
+
 #[derive(Debug, Encode, Decode, TypeInfo)]
 pub enum MarketAction {
     /// Adds NFT contract addresses that can be listed on marketplace.
@@ -69,20 +76,18 @@ pub enum MarketAction {
     ///
     /// # Requirements
     /// * [`msg::source()`](gstd::msg::source) must be the NFT owner
-    /// * `nft_contract_id` must be in the list of `approved_nft_contracts`
+    /// * `nft_program_id` in `delegated_approve` must be in the list of `approved_nft_contracts`
     /// * if item already exists, then it cannot be changed if there is an active auction
     ///
     /// Arguments:
-    /// * `nft_contract_id`: the NFT contract address
-    /// * `token_id`: the NFT id
+    /// * `delegated_approve`: the approve message from user to give rights to marketplace
     /// * `price`: the NFT price (if it is `None` then the item is not on the sale)
     ///
     /// On success replies [`MarketEvent::MarketDataAdded`].
     AddMarketData {
-        nft_contract_id: ContractId,
-        ft_contract_id: Option<ContractId>,
-        token_id: TokenId,
-        price: Option<Price>,
+        delegated_approve: DelegatedApprove,
+        ft_contract_id: Option<ActorId>,
+        price: Option<u128>,
     },
 
     /// Sells the NFT.
@@ -108,22 +113,20 @@ pub enum MarketAction {
     ///
     /// Requirements:
     /// * Only the item owner can start auction.
-    /// * `nft_contract_id` must be in the list of `approved_nft_contracts`
+    /// * `nft_contract_id` in the `delegated_approve` must be in the list of `approved_nft_contracts`
     /// *  There must be no active auction.
     ///
     /// Arguments:
-    /// * `nft_contract_id`: the NFT contract address
+    /// * `delegated_approve`: the approve message from user to give rights to marketplace
     /// * `ft_contract_id`: the fungible token contract address that can be used for trading
-    /// * `token_id`: the NFT id
     /// * `min_price`: the starting price
     /// * `bid_period`: the time interval. If the auction ends before `exec::blocktimestamp() + bid_period`
     /// then the auction end time is delayed for `bid_period`.
     ///
     /// On success replies [`MarketEvent::AuctionCreated`].
     CreateAuction {
-        nft_contract_id: ContractId,
+        delegated_approve: DelegatedApprove,
         ft_contract_id: Option<ContractId>,
-        token_id: TokenId,
         min_price: Price,
         bid_period: u64,
         duration: u64,
