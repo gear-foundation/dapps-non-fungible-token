@@ -1,6 +1,6 @@
 #![no_std]
 
-use gear_lib::non_fungible_token::{nft_core::*, state::*, token::*};
+use gear_lib::non_fungible_token::{nft_core::*, state::*, io::*, token::*};
 use gear_lib_derive::{NFTCore, NFTMetaState, NFTStateKeeper};
 use gstd::{msg, prelude::*, ActorId};
 use nft_io::*;
@@ -79,7 +79,7 @@ gstd::metadata! {
         input: InitNFT,
     handle:
         input: NFTAction,
-        output: Vec<u8>,
+        output: NFTEvent,
     state:
         input: NFTQuery,
         output: NFTQueryReply,
