@@ -67,25 +67,6 @@ pub fn transfer(nft: &Program, from: u64, to: u64, token_id: u64) -> RunResult {
     )
 }
 
-pub fn owner_of(nft: &Program, from: u64, token_id: u64) -> RunResult {
-    nft.send(
-        from,
-        NFTAction::Owner {
-            token_id: token_id.into(),
-        },
-    )
-}
-
-pub fn is_approved_to(nft: &Program, from: u64, token_id: u64, to: u64) -> RunResult {
-    nft.send(
-        from,
-        NFTAction::IsApproved {
-            to: to.into(),
-            token_id: token_id.into(),
-        },
-    )
-}
-
 pub fn approve(nft: &Program, from: u64, to: u64, token_id: u64) -> RunResult {
     nft.send(
         from,
@@ -94,14 +75,4 @@ pub fn approve(nft: &Program, from: u64, to: u64, token_id: u64) -> RunResult {
             token_id: token_id.into(),
         },
     )
-}
-
-pub fn delegated_approve(
-    nft: &Program,
-    from: u64,
-    message: DelegatedApproveMessage,
-    signature: [u8; 64],
-) -> RunResult {
-    let action = NFTAction::DelegatedApprove { message, signature };
-    nft.send(from, action)
 }

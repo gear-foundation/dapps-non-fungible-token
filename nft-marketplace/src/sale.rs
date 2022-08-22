@@ -40,9 +40,9 @@ impl Market {
 
         msg::reply(
             MarketEvent::ItemSold {
-                owner: msg::source(),
                 nft_contract_id,
                 token_id,
+                price,
             },
             0,
         )

@@ -49,6 +49,7 @@ impl Market {
         msg::reply(
             MarketEvent::AuctionCreated {
                 nft_contract_id,
+                ft_contract_id,
                 token_id,
                 price: min_price,
             },
@@ -102,9 +103,9 @@ impl Market {
         msg::reply(
             MarketEvent::AuctionSettled {
                 nft_contract_id,
-                winner,
                 token_id,
                 price,
+                new_owner: winner,
             },
             0,
         )

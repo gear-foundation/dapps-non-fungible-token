@@ -10,7 +10,7 @@ pub async fn nft_transfer(
     token_id: TokenId,
     amount: u128,
 ) -> Payout {
-    let response: Vec<u8> = msg::send_for_reply_as(
+    let response: NFTEvent = msg::send_for_reply_as(
         nft_program_id,
         NFTAction::TransferPayout {
             to,
@@ -22,15 +22,17 @@ pub async fn nft_transfer(
     .unwrap()
     .await
     .expect("error in transfer");
-    let decoded_response: NFTTransferPayout =
-        NFTTransferPayout::decode(&mut &response[..]).expect("Error in decoding payouts");
-    decoded_response.payouts
+    if let NFTEvent::TransferPayout {payouts, ..} = response {
+        return payouts
+    } else {
+        panic!("Wrong received answer");
+    }
 }
 
 pub async fn nft_approve(nft_program_id: ContractId, to: ActorId, token_id: TokenId) {
-    let _approve_response: Vec<u8> =
-        msg::send_for_reply(nft_program_id, NFTAction::Approve { to, token_id }, 0)
+    let _approve_response: NFTEvent =
+        msg::send_for_reply_as(nft_program_id, NFTAction::Approve { to, token_id }, 0)
             .unwrap()
             .await
-            .expect("error in transfer");
+            .expect("error in approve");
 }

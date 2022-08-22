@@ -31,7 +31,7 @@ fn auction_with_native_tokens() {
             BID_PERIOD,
             DURATION,
         )
-        .check((nft_program.actor_id(), TOKEN_ID.into(), NFT_PRICE));
+        .check((nft_program.actor_id(), None, TOKEN_ID.into(), NFT_PRICE));
 
     for (i, &participant) in PARTICIPANTS.iter().enumerate() {
         let bid_price = (i as u128 + 2) * NFT_PRICE;
@@ -88,7 +88,7 @@ fn auction_with_native_tokens() {
         .settle_auction(SELLER, nft_program.actor_id(), TOKEN_ID.into())
         .check(MarketEvent::AuctionSettled {
             nft_contract_id: nft_program.actor_id(),
-            winner: winner.into(),
+            new_owner: winner.into(),
             token_id: TOKEN_ID.into(),
             price: winner_price,
         });
@@ -149,7 +149,7 @@ fn cancelled_auction() {
             BID_PERIOD,
             DURATION,
         )
-        .check((nft_program.actor_id(), TOKEN_ID.into(), NFT_PRICE));
+        .check((nft_program.actor_id(), None, TOKEN_ID.into(), NFT_PRICE));
 
     system.spend_blocks((DURATION / 1000) as u32);
 
@@ -191,7 +191,7 @@ fn auction_with_fungible_tokens() {
             BID_PERIOD,
             DURATION,
         )
-        .check((nft_program.actor_id(), TOKEN_ID.into(), NFT_PRICE));
+        .check((nft_program.actor_id(), Some(ft_program.actor_id()),TOKEN_ID.into(), NFT_PRICE));
 
     for (i, &participant) in PARTICIPANTS.iter().enumerate() {
         let bid_price = (i as u128 + 2) * NFT_PRICE;
@@ -247,7 +247,7 @@ fn auction_with_fungible_tokens() {
         .settle_auction(SELLER, nft_program.actor_id(), TOKEN_ID.into())
         .check(MarketEvent::AuctionSettled {
             nft_contract_id: nft_program.actor_id(),
-            winner: winner.into(),
+            new_owner: winner.into(),
             token_id: TOKEN_ID.into(),
             price: winner_price,
         });
@@ -347,7 +347,7 @@ fn auction_failures() {
             BID_PERIOD,
             DURATION,
         )
-        .check((nft_program.actor_id(), TOKEN_ID.into(), NFT_PRICE));
+        .check((nft_program.actor_id(), None, TOKEN_ID.into(), NFT_PRICE));
 
     // must fail since the auction is already on
     market

@@ -1,6 +1,6 @@
 use super::{prelude::*, MetaStateReply};
 use gear_lib::non_fungible_token::{
-    io::NFTTransfer,
+    io::NFTEvent,
     state::{NFTQuery, NFTQueryReply},
     token::Token,
 };
@@ -47,12 +47,11 @@ impl<'a> NonFungibleToken<'a> {
             )
             .contains(
                 &Log::builder().payload(
-                    NFTTransfer {
-                        from: ActorId::zero(),
-                        to: from.into(),
+                    NFTEvent::Minted {
+                        owner: from.into(),
                         token_id: TOKEN_ID.into(),
+                        token_metadata: Some(Default::default())
                     }
-                    .encode()
                 )
             ));
     }

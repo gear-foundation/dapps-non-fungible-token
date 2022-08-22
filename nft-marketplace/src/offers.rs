@@ -83,6 +83,7 @@ impl Market {
             msg::reply(
                 MarketEvent::OfferAccepted {
                     nft_contract_id,
+                    ft_contract_id,
                     token_id,
                     new_owner: id,
                     price,
@@ -111,7 +112,7 @@ impl Market {
             }
             transfer_payment(exec::program_id(), msg::source(), ft_contract_id, price).await;
             msg::reply(
-                MarketEvent::TokensWithdrawn {
+                MarketEvent::OfferCancelled {
                     nft_contract_id,
                     token_id,
                     ft_contract_id,

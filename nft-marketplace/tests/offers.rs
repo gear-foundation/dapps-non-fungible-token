@@ -87,6 +87,7 @@ fn offers() {
         )
         .check((
             nft_program.actor_id(),
+            Some(ft_program.actor_id()),
             TOKEN_ID.into(),
             BUYER.into(),
             accepted_price,
@@ -201,6 +202,7 @@ fn offers() {
         )
         .check((
             nft_program.actor_id(),
+            None,
             TOKEN_ID.into(),
             SELLER.into(),
             offered_value,
@@ -339,7 +341,7 @@ fn offers_failures() {
             BID_PERIOD,
             DURATION,
         )
-        .check((nft_program.actor_id(), TOKEN_ID.into(), NFT_PRICE));
+        .check((nft_program.actor_id(), None, TOKEN_ID.into(), NFT_PRICE));
 
     // must fail since auction is on
     market

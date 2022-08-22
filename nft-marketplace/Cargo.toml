@@ -13,7 +13,7 @@ primitive-types = { version = "0.11.1", default-features = false, features = ["s
 nft-io = { path = "../nft/io" }
 ft-io = { git = "https://github.com/gear-dapps/fungible-token.git", tag = "0.1.0" }
 market-io = {path = "io" }
-gear-lib = { git = "https://github.com/gear-dapps/gear-lib.git" }
+gear-lib = { git = "https://github.com/gear-dapps/gear-lib.git", branch = "lm-nft-types" }
 
 [dev-dependencies]
 gtest = { git = "https://github.com/gear-tech/gear.git"}

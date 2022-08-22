@@ -91,7 +91,7 @@ impl<'a> Market<'a> {
         nft_contract_id: ActorId,
         token_id: TokenId,
         value: u128,
-    ) -> ActionMarket<(ActorId, ContractId, TokenId)> {
+    ) -> ActionMarket<(ContractId, TokenId, u128)> {
         Action(
             self.0.send_with_value(
                 from,
@@ -101,10 +101,10 @@ impl<'a> Market<'a> {
                 },
                 value,
             ),
-            |(owner, nft_contract_id, token_id)| MarketEvent::ItemSold {
-                owner,
+            |(nft_contract_id, token_id, price)| MarketEvent::ItemSold {
                 nft_contract_id,
                 token_id,
+                price,
             },
         )
     }
@@ -145,7 +145,7 @@ impl<'a> Market<'a> {
         token_id: TokenId,
         ft_contract_id: Option<ContractId>,
         price: Price,
-    ) -> ActionMarket<(ContractId, TokenId, ActorId, Price)> {
+    ) -> ActionMarket<(ContractId, Option<ContractId>, TokenId, ActorId, Price)> {
         Action(
             self.0.send(
                 from,
@@ -156,8 +156,9 @@ impl<'a> Market<'a> {
                     price,
                 },
             ),
-            |(nft_contract_id, token_id, new_owner, price)| MarketEvent::OfferAccepted {
+            |(nft_contract_id, ft_contract_id, token_id, new_owner, price)| MarketEvent::OfferAccepted {
                 nft_contract_id,
+                ft_contract_id,
                 token_id,
                 new_owner,
                 price,
@@ -183,7 +184,7 @@ impl<'a> Market<'a> {
                     price,
                 },
             ),
-            |(nft_contract_id, token_id, ft_contract_id, price)| MarketEvent::TokensWithdrawn {
+            |(nft_contract_id, token_id, ft_contract_id, price)| MarketEvent::OfferCancelled {
                 nft_contract_id,
                 token_id,
                 ft_contract_id,
@@ -200,7 +201,7 @@ impl<'a> Market<'a> {
         min_price: u128,
         bid_period: u64,
         duration: u64,
-    ) -> ActionMarket<(ContractId, TokenId, Price)> {
+    ) -> ActionMarket<(ContractId, Option<ContractId>, TokenId, Price)> {
         Action(
             self.0.send(
                 from,
@@ -213,8 +214,9 @@ impl<'a> Market<'a> {
                     duration,
                 },
             ),
-            |(nft_contract_id, token_id, price)| MarketEvent::AuctionCreated {
+            |(nft_contract_id,ft_contract_id, token_id, price)| MarketEvent::AuctionCreated {
                 nft_contract_id,
+                ft_contract_id,
                 token_id,
                 price,
             },

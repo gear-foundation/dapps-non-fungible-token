@@ -26,7 +26,7 @@ fn buy_with_fungible_tokens() {
 
     market
         .buy_item(BUYER, nft_program.actor_id(), TOKEN_ID.into(), 0)
-        .check((BUYER.into(), nft_program.actor_id(), TOKEN_ID.into()));
+        .check((nft_program.actor_id(), TOKEN_ID.into(), NFT_PRICE));
 
     // check owner
     nft_program
@@ -84,7 +84,7 @@ fn buy_with_fungible_tokens_failures() {
             BID_PERIOD,
             DURATION,
         )
-        .check((nft_program.actor_id(), TOKEN_ID.into(), NFT_PRICE));
+        .check((nft_program.actor_id(), None, TOKEN_ID.into(), NFT_PRICE));
 
     // must fail since auction has started on that item
     market
@@ -127,7 +127,7 @@ fn buy_with_native_tokens() {
 
     market
         .buy_item(BUYER, nft_program.actor_id(), TOKEN_ID.into(), NFT_PRICE)
-        .check((BUYER.into(), nft_program.actor_id(), TOKEN_ID.into()));
+        .check((nft_program.actor_id(), TOKEN_ID.into(), NFT_PRICE));
 
     // check owner
     nft_program

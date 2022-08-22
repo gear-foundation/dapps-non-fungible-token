@@ -248,9 +248,9 @@ pub enum MarketEvent {
         price: Option<u128>,
     },
     ItemSold {
-        owner: ActorId,
         nft_contract_id: ContractId,
         token_id: TokenId,
+        price: u128,
     },
     BidAdded {
         nft_contract_id: ContractId,
@@ -259,24 +259,20 @@ pub enum MarketEvent {
     },
     AuctionCreated {
         nft_contract_id: ContractId,
+        ft_contract_id: Option<ContractId>,
         token_id: TokenId,
         price: Price,
+
     },
     AuctionSettled {
         nft_contract_id: ContractId,
-        winner: ActorId,
         token_id: TokenId,
         price: Price,
+        new_owner: ActorId,
     },
     AuctionCancelled {
         nft_contract_id: ContractId,
         token_id: TokenId,
-    },
-    NFTListed {
-        nft_contract_id: ContractId,
-        owner: ActorId,
-        token_id: TokenId,
-        price: Option<Price>,
     },
     ItemInfo(Item),
     OfferAdded {
@@ -287,11 +283,12 @@ pub enum MarketEvent {
     },
     OfferAccepted {
         nft_contract_id: ContractId,
+        ft_contract_id: Option<ContractId>,
         token_id: TokenId,
         new_owner: ActorId,
         price: Price,
     },
-    TokensWithdrawn {
+    OfferCancelled {
         nft_contract_id: ContractId,
         token_id: TokenId,
         ft_contract_id: Option<ContractId>,

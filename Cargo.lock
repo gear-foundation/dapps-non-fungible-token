@@ -625,7 +625,7 @@ dependencies = [
 [[package]]
 name = "galloc"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#469f9d46c354314816d8e26be8f4d6e3c0624a77"
+source = "git+https://github.com/gear-tech/gear.git#9c736ef0d63e6bd18f1441274c3925814ed135bb"
 dependencies = [
  "dlmalloc",
 ]
@@ -633,7 +633,7 @@ dependencies = [
 [[package]]
 name = "gcore"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#469f9d46c354314816d8e26be8f4d6e3c0624a77"
+source = "git+https://github.com/gear-tech/gear.git#9c736ef0d63e6bd18f1441274c3925814ed135bb"
 dependencies = [
  "gear-core-errors",
  "parity-scale-codec",
@@ -642,7 +642,7 @@ dependencies = [
 [[package]]
 name = "gear-backend-common"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#469f9d46c354314816d8e26be8f4d6e3c0624a77"
+source = "git+https://github.com/gear-tech/gear.git#9c736ef0d63e6bd18f1441274c3925814ed135bb"
 dependencies = [
  "derive_more",
  "gear-core",
@@ -655,7 +655,7 @@ dependencies = [
 [[package]]
 name = "gear-backend-wasmi"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#469f9d46c354314816d8e26be8f4d6e3c0624a77"
+source = "git+https://github.com/gear-tech/gear.git#9c736ef0d63e6bd18f1441274c3925814ed135bb"
 dependencies = [
  "derive_more",
  "gear-backend-common",
@@ -670,7 +670,7 @@ dependencies = [
 [[package]]
 name = "gear-core"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#469f9d46c354314816d8e26be8f4d6e3c0624a77"
+source = "git+https://github.com/gear-tech/gear.git#9c736ef0d63e6bd18f1441274c3925814ed135bb"
 dependencies = [
  "blake2-rfc",
  "derive_more",
@@ -688,7 +688,7 @@ dependencies = [
 [[package]]
 name = "gear-core-errors"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#469f9d46c354314816d8e26be8f4d6e3c0624a77"
+source = "git+https://github.com/gear-tech/gear.git#9c736ef0d63e6bd18f1441274c3925814ed135bb"
 dependencies = [
  "derive_more",
  "parity-scale-codec",
@@ -698,7 +698,7 @@ dependencies = [
 [[package]]
 name = "gear-core-processor"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#469f9d46c354314816d8e26be8f4d6e3c0624a77"
+source = "git+https://github.com/gear-tech/gear.git#9c736ef0d63e6bd18f1441274c3925814ed135bb"
 dependencies = [
  "anyhow",
  "blake2-rfc",
@@ -714,31 +714,18 @@ dependencies = [
 [[package]]
 name = "gear-lib"
 version = "0.1.0"
-source = "git+https://github.com/gear-dapps/gear-lib.git?branch=feature/delegated-approve#94ec82212d8a81b68869dcaead97b741cdda903c"
+source = "git+https://github.com/gear-dapps/gear-lib.git?branch=lm-nft-types#b9828d30c316556071ec59e9fde2970b7b17510f"
 dependencies = [
  "gstd",
  "parity-scale-codec",
  "primitive-types",
  "scale-info",
- "sp-core",
 ]
 
 [[package]]
 name = "gear-lib"
 version = "0.1.0"
-source = "git+https://github.com/gear-academy/gear-lib.git#f76f0e037bc332d17ed88bf230c6ea7611857665"
-dependencies = [
- "gstd",
- "parity-scale-codec",
- "primitive-types",
- "scale-info",
- "sp-core",
-]
-
-[[package]]
-name = "gear-lib"
-version = "0.1.0"
-source = "git+https://github.com/gear-dapps/gear-lib.git#f76f0e037bc332d17ed88bf230c6ea7611857665"
+source = "git+https://github.com/gear-academy/gear-lib.git#374afc327a0cb986c0defb32c473c0ad980e16ed"
 dependencies = [
  "gstd",
  "parity-scale-codec",
@@ -750,9 +737,9 @@ dependencies = [
 [[package]]
 name = "gear-lib-derive"
 version = "0.1.0"
-source = "git+https://github.com/gear-dapps/gear-lib.git?branch=feature/delegated-approve#94ec82212d8a81b68869dcaead97b741cdda903c"
+source = "git+https://github.com/gear-dapps/gear-lib.git?branch=lm-nft-types#b9828d30c316556071ec59e9fde2970b7b17510f"
 dependencies = [
- "gear-lib-macros 0.1.0 (git+https://github.com/gear-dapps/gear-lib.git?branch=feature/delegated-approve)",
+ "gear-lib-macros 0.1.0 (git+https://github.com/gear-dapps/gear-lib.git?branch=lm-nft-types)",
  "proc-macro2",
  "quote",
  "syn",
@@ -761,7 +748,7 @@ dependencies = [
 [[package]]
 name = "gear-lib-derive"
 version = "0.1.0"
-source = "git+https://github.com/gear-academy/gear-lib.git#f76f0e037bc332d17ed88bf230c6ea7611857665"
+source = "git+https://github.com/gear-academy/gear-lib.git#374afc327a0cb986c0defb32c473c0ad980e16ed"
 dependencies = [
  "gear-lib-macros 0.1.0 (git+https://github.com/gear-academy/gear-lib.git)",
  "proc-macro2",
@@ -772,17 +759,17 @@ dependencies = [
 [[package]]
 name = "gear-lib-macros"
 version = "0.1.0"
-source = "git+https://github.com/gear-dapps/gear-lib.git?branch=feature/delegated-approve#94ec82212d8a81b68869dcaead97b741cdda903c"
+source = "git+https://github.com/gear-dapps/gear-lib.git?branch=lm-nft-types#b9828d30c316556071ec59e9fde2970b7b17510f"
 
 [[package]]
 name = "gear-lib-macros"
 version = "0.1.0"
-source = "git+https://github.com/gear-academy/gear-lib.git#f76f0e037bc332d17ed88bf230c6ea7611857665"
+source = "git+https://github.com/gear-academy/gear-lib.git#374afc327a0cb986c0defb32c473c0ad980e16ed"
 
 [[package]]
 name = "gear-wasm-builder"
 version = "0.1.2"
-source = "git+https://github.com/gear-tech/gear.git#469f9d46c354314816d8e26be8f4d6e3c0624a77"
+source = "git+https://github.com/gear-tech/gear.git#9c736ef0d63e6bd18f1441274c3925814ed135bb"
 dependencies = [
  "anyhow",
  "cargo_metadata",
@@ -841,7 +828,7 @@ dependencies = [
 [[package]]
 name = "gstd"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#469f9d46c354314816d8e26be8f4d6e3c0624a77"
+source = "git+https://github.com/gear-tech/gear.git#9c736ef0d63e6bd18f1441274c3925814ed135bb"
 dependencies = [
  "bs58",
  "futures",
@@ -858,7 +845,7 @@ dependencies = [
 [[package]]
 name = "gstd-codegen"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#469f9d46c354314816d8e26be8f4d6e3c0624a77"
+source = "git+https://github.com/gear-tech/gear.git#9c736ef0d63e6bd18f1441274c3925814ed135bb"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -868,7 +855,7 @@ dependencies = [
 [[package]]
 name = "gtest"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#469f9d46c354314816d8e26be8f4d6e3c0624a77"
+source = "git+https://github.com/gear-tech/gear.git#9c736ef0d63e6bd18f1441274c3925814ed135bb"
 dependencies = [
  "anyhow",
  "colored",
@@ -1167,8 +1154,8 @@ dependencies = [
 name = "nft"
 version = "0.1.0"
 dependencies = [
- "gear-lib 0.1.0 (git+https://github.com/gear-dapps/gear-lib.git?branch=feature/delegated-approve)",
- "gear-lib-derive 0.1.0 (git+https://github.com/gear-dapps/gear-lib.git?branch=feature/delegated-approve)",
+ "gear-lib 0.1.0 (git+https://github.com/gear-dapps/gear-lib.git?branch=lm-nft-types)",
+ "gear-lib-derive 0.1.0 (git+https://github.com/gear-dapps/gear-lib.git?branch=lm-nft-types)",
  "gear-wasm-builder",
  "gstd",
  "gtest",
@@ -1184,7 +1171,7 @@ dependencies = [
 name = "nft-io"
 version = "0.1.0"
 dependencies = [
- "gear-lib 0.1.0 (git+https://github.com/gear-dapps/gear-lib.git?branch=feature/delegated-approve)",
+ "gear-lib 0.1.0 (git+https://github.com/gear-dapps/gear-lib.git?branch=lm-nft-types)",
  "gstd",
  "parity-scale-codec",
  "primitive-types",
@@ -1196,7 +1183,7 @@ name = "nft-marketplace"
 version = "0.1.0"
 dependencies = [
  "ft-io",
- "gear-lib 0.1.0 (git+https://github.com/gear-dapps/gear-lib.git)",
+ "gear-lib 0.1.0 (git+https://github.com/gear-dapps/gear-lib.git?branch=lm-nft-types)",
  "gear-wasm-builder",
  "gstd",
  "gtest",
@@ -1783,18 +1770,18 @@ dependencies = [
 
 [[package]]
 name = "serde"
-version = "1.0.143"
+version = "1.0.144"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "53e8e5d5b70924f74ff5c6d64d9a5acd91422117c60f48c4e07855238a254553"
+checksum = "0f747710de3dcd43b88c9168773254e809d8ddbdf9653b84e2554ab219f17860"
 dependencies = [
  "serde_derive",
 ]
 
 [[package]]
 name = "serde_derive"
-version = "1.0.143"
+version = "1.0.144"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d3d8e8de557aee63c26b85b947f5e59b690d0454c753f3adeb5cd7835ab88391"
+checksum = "94ed3a816fb1d101812f83e789f888322c34e291f894f19590dc310963e87a00"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1803,9 +1790,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.83"
+version = "1.0.85"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "38dd04e3c8279e75b31ef29dbdceebfe5ad89f4d0937213c53f7d49d01b3d5a7"
+checksum = "e55a28e3aaef9d5ce0506d0a14dbba8054ddc7e499ef522dd8b26859ec9d4a44"
 dependencies = [
  "itoa 1.0.3",
  "ryu",
@@ -2062,9 +2049,9 @@ dependencies = [
 
 [[package]]
 name = "ss58-registry"
-version = "1.25.0"
+version = "1.27.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a039906277e0d8db996cd9d1ef19278c10209d994ecfc1025ced16342873a17c"
+checksum = "8d04c6bfb58842576a5ea01b2ba9852d3d74d212d2ad5403f2789017f7db7848"
 dependencies = [
  "Inflector",
  "num-format",
