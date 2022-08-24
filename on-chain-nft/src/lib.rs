@@ -70,7 +70,8 @@ unsafe extern "C" fn handle() {
             OnChainNFTEvent::Approval(NFTCore::approve(nft, &to, token_id)),
             0,
         ),
-    }.expect("Error during replying with `OnChainNFTEvent`");
+    }
+    .expect("Error during replying with `OnChainNFTEvent`");
 }
 
 #[no_mangle]
