@@ -294,4 +294,6 @@ pub enum MarketEvent {
         ft_contract_id: Option<ContractId>,
         price: Price,
     },
+
+    Payment,
 }

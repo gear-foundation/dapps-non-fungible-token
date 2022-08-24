@@ -14,6 +14,6 @@ pub enum State {
 
 #[derive(Debug, Encode, Decode, TypeInfo)]
 pub enum StateReply {
-    AllItems(Vec<Item>),
+    AllItems(BTreeMap<(ContractId, TokenId), Item>),
     ItemInfo(Item),
 }

@@ -1,4 +1,4 @@
-use crate::ContractId;
+use crate::{ContractId, MarketEvent};
 use ft_io::*;
 use gstd::{exec, msg, ActorId};
 
@@ -20,7 +20,7 @@ pub async fn transfer_payment(
     if let Some(contract_id) = ft_contract_id {
         transfer_tokens(contract_id, from, to, price).await;
     } else if to != exec::program_id() && price > MINIMUM_VALUE.into() {
-        msg::send(to, "", price).expect("Error in sending payment in value");
+        msg::send(to, MarketEvent::Payment, price).expect("Error in sending payment in value");
     }
 }
 

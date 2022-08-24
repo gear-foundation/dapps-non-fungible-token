@@ -264,7 +264,7 @@ pub unsafe extern "C" fn meta_state() -> *mut [i32; 2] {
     let state: State = msg::load().expect("failed to decode input argument");
     let market: &mut Market = MARKET.get_or_insert(Market::default());
     let encoded = match state {
-        State::AllItems => StateReply::AllItems(market.items.values().cloned().collect()).encode(),
+        State::AllItems => StateReply::AllItems(market.items.clone()).encode(),
         State::ItemInfo {
             nft_contract_id,
             token_id,
