@@ -21,7 +21,7 @@ pub async fn nft_transfer(
     .unwrap()
     .await
     .expect("error in transfer");
-    let decoded_response =  if let NFTEvent::TransferPayout(transfer_payout) = response {
+    let decoded_response = if let NFTEvent::TransferPayout(transfer_payout) = response {
         transfer_payout
     } else {
         unreachable!("Error in decoding payouts");
@@ -31,7 +31,7 @@ pub async fn nft_transfer(
 
 pub async fn nft_approve(nft_program_id: &ActorId, to: &ActorId, token_id: U256) {
     msg::send_for_reply(*nft_program_id, NFTAction::Approve { to: *to, token_id }, 0)
-            .unwrap()
-            .await
-            .expect("error in transfer");
+        .unwrap()
+        .await
+        .expect("error in transfer");
 }
