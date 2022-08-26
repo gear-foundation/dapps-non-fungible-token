@@ -714,7 +714,7 @@ dependencies = [
 [[package]]
 name = "gear-lib"
 version = "0.2.0"
-source = "git+https://github.com/gear-dapps/gear-lib.git?branch=as-exact-types#b039a076aef7872c84e18b695cb615c91a0c547b"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.2.0#de4f599779809c8167ed6ead505ed665da6bcba4"
 dependencies = [
  "gstd",
  "parity-scale-codec",
@@ -726,7 +726,7 @@ dependencies = [
 [[package]]
 name = "gear-lib-derive"
 version = "0.2.0"
-source = "git+https://github.com/gear-dapps/gear-lib.git?branch=as-exact-types#b039a076aef7872c84e18b695cb615c91a0c547b"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.2.0#de4f599779809c8167ed6ead505ed665da6bcba4"
 dependencies = [
  "gear-lib-macros",
  "proc-macro2",
@@ -737,7 +737,7 @@ dependencies = [
 [[package]]
 name = "gear-lib-macros"
 version = "0.1.0"
-source = "git+https://github.com/gear-dapps/gear-lib.git?branch=as-exact-types#b039a076aef7872c84e18b695cb615c91a0c547b"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.2.0#de4f599779809c8167ed6ead505ed665da6bcba4"
 
 [[package]]
 name = "gear-wasm-builder"

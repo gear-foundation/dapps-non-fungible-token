@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.2.0] - 2022-08-24
+## [0.2.0] - 2022-08-26
 ### Changed
 - The NFT and OnChainNFT contracts now return their `*Event`s as a response to corresponding `*Action`s instead of opaque `Vec<u8>`.
 
