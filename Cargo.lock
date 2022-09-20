@@ -526,13 +526,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "fixed-hash"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "835c052cb0c08c1acf6ffd71c022172e18723949c8282f2b9f27efbc51e64534"
+dependencies = [
+ "static_assertions",
+]
+
+[[package]]
 name = "ft-io"
 version = "0.1.0"
 source = "git+https://github.com/gear-dapps/fungible-token.git?tag=0.1.0#6acb28899081895eb2f3072dc3a8db1ba207b0e8"
 dependencies = [
  "gstd",
  "parity-scale-codec",
- "primitive-types",
+ "primitive-types 0.11.1",
  "scale-info",
 ]
 
@@ -729,7 +738,7 @@ dependencies = [
  "gear-lib-sr25519",
  "gstd",
  "parity-scale-codec",
- "primitive-types",
+ "primitive-types 0.11.1",
  "scale-info",
 ]
 
@@ -829,7 +838,7 @@ dependencies = [
  "gstd-codegen",
  "hex",
  "parity-scale-codec",
- "primitive-types",
+ "primitive-types 0.11.1",
  "scale-info",
 ]
 
@@ -1104,7 +1113,7 @@ dependencies = [
  "gstd",
  "nft-io",
  "parity-scale-codec",
- "primitive-types",
+ "primitive-types 0.11.1",
  "scale-info",
  "sp-core-hashing 4.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -1166,7 +1175,7 @@ dependencies = [
  "hex-literal",
  "nft-io",
  "parity-scale-codec",
- "primitive-types",
+ "primitive-types 0.12.0",
  "scale-info",
  "sp-core",
 ]
@@ -1178,7 +1187,7 @@ dependencies = [
  "gear-lib",
  "gstd",
  "parity-scale-codec",
- "primitive-types",
+ "primitive-types 0.11.1",
  "scale-info",
 ]
 
@@ -1194,7 +1203,7 @@ dependencies = [
  "market-io",
  "nft-io",
  "parity-scale-codec",
- "primitive-types",
+ "primitive-types 0.12.0",
  "scale-info",
  "sp-core-hashing 4.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -1278,7 +1287,7 @@ dependencies = [
  "gtest",
  "on-chain-nft-io",
  "parity-scale-codec",
- "primitive-types",
+ "primitive-types 0.12.0",
  "scale-info",
 ]
 
@@ -1289,7 +1298,7 @@ dependencies = [
  "gear-lib",
  "gstd",
  "parity-scale-codec",
- "primitive-types",
+ "primitive-types 0.11.1",
  "scale-info",
 ]
 
@@ -1358,7 +1367,7 @@ dependencies = [
  "impl-trait-for-tuples",
  "parity-util-mem-derive",
  "parking_lot",
- "primitive-types",
+ "primitive-types 0.11.1",
  "winapi",
 ]
 
@@ -1462,9 +1471,21 @@ version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e28720988bff275df1f51b171e1b2a18c30d194c4d2b61defdacecd625a5d94a"
 dependencies = [
- "fixed-hash",
+ "fixed-hash 0.7.0",
  "impl-codec",
  "impl-serde",
+ "scale-info",
+ "uint",
+]
+
+[[package]]
+name = "primitive-types"
+version = "0.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5cfd65aea0c5fa0bfcc7c9e7ca828c921ef778f43d325325ec84bda371bfa75a"
+dependencies = [
+ "fixed-hash 0.8.0",
+ "impl-codec",
  "scale-info",
  "uint",
 ]
@@ -1916,7 +1937,7 @@ dependencies = [
  "parity-scale-codec",
  "parity-util-mem",
  "parking_lot",
- "primitive-types",
+ "primitive-types 0.11.1",
  "rand 0.7.3",
  "regex",
  "scale-info",
@@ -1995,7 +2016,7 @@ dependencies = [
  "bytes",
  "impl-trait-for-tuples",
  "parity-scale-codec",
- "primitive-types",
+ "primitive-types 0.11.1",
  "sp-externalities",
  "sp-runtime-interface-proc-macro",
  "sp-std 4.0.0 (git+https://github.com/gear-tech/substrate.git?branch=gear-stable)",
