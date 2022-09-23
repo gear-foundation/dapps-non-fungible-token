@@ -62,7 +62,7 @@ impl Market {
     pub async fn settle_auction(&mut self, nft_contract_id: ContractId, token_id: TokenId) {
         let item = get_item(&mut self.items, nft_contract_id, token_id);
 
-        let auction = item.auction.clone().expect("Auction doesn not exist");
+        let auction = item.auction.as_ref().expect("Auction does not exist");
 
         if auction.ended_at > exec::block_timestamp() {
             panic!("Auction is not over");
@@ -116,7 +116,7 @@ impl Market {
     pub async fn add_bid(&mut self, nft_contract_id: ContractId, token_id: TokenId, price: u128) {
         let item = get_item(&mut self.items, nft_contract_id, token_id);
 
-        let mut auction = item.auction.clone().expect("Auction doesn not exist");
+        let mut auction = item.auction.as_mut().expect("Auction doesn not exist");
         if auction.ended_at < exec::block_timestamp() {
             panic!("Auction has already ended");
         }
@@ -136,7 +136,6 @@ impl Market {
 
         auction.current_price = price;
         auction.current_winner = msg::source();
-        item.auction = Some(auction);
         // transfer payment from the current account to the marketplace contract
         transfer_payment(
             msg::source(),
