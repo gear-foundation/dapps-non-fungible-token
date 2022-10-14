@@ -588,7 +588,7 @@ dependencies = [
 [[package]]
 name = "ft-io"
 version = "0.1.0"
-source = "git+https://github.com/gear-dapps/fungible-token.git?tag=0.1.0#6acb28899081895eb2f3072dc3a8db1ba207b0e8"
+source = "git+https://github.com/gear-dapps/fungible-token.git?tag=0.1.1#c53e5c44252b64eb2b98bc818bfbcddc4120a974"
 dependencies = [
  "gstd",
  "parity-scale-codec",
@@ -2395,7 +2395,7 @@ checksum = "97fee6b57c6a41524a810daee9286c02d7752c4253064d0b05472833a438f675"
 dependencies = [
  "cfg-if",
  "digest 0.10.5",
- "rand 0.8.5",
+ "rand 0.7.3",
  "static_assertions",
 ]
 
