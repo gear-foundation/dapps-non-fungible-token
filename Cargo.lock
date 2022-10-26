@@ -785,7 +785,19 @@ name = "gear-lib"
 version = "0.3.0"
 source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.0#4c3d3cc93426d536b987766c14487656928618a2"
 dependencies = [
- "gear-lib-sr25519",
+ "gear-lib-sr25519 0.3.0",
+ "gstd",
+ "parity-scale-codec",
+ "primitive-types 0.11.1",
+ "scale-info",
+]
+
+[[package]]
+name = "gear-lib"
+version = "0.3.1"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.1#5363c32ffa8d6b1e7e98b93345a164ff8169ad75"
+dependencies = [
+ "gear-lib-sr25519 0.3.1",
  "gstd",
  "parity-scale-codec",
  "primitive-types 0.11.1",
@@ -812,6 +824,14 @@ source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.0#4c3d3cc93426d
 name = "gear-lib-sr25519"
 version = "0.3.0"
 source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.0#4c3d3cc93426d536b987766c14487656928618a2"
+dependencies = [
+ "schnorrkel 0.10.2",
+]
+
+[[package]]
+name = "gear-lib-sr25519"
+version = "0.3.1"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.1#5363c32ffa8d6b1e7e98b93345a164ff8169ad75"
 dependencies = [
  "schnorrkel 0.10.2",
 ]
@@ -1219,7 +1239,7 @@ dependencies = [
 name = "nft"
 version = "0.2.1"
 dependencies = [
- "gear-lib",
+ "gear-lib 0.3.1",
  "gear-lib-derive",
  "gear-wasm-builder",
  "gstd",
@@ -1236,7 +1256,7 @@ dependencies = [
 name = "nft-io"
 version = "0.2.1"
 dependencies = [
- "gear-lib",
+ "gear-lib 0.3.0",
  "gstd",
  "parity-scale-codec",
  "primitive-types 0.11.1",
