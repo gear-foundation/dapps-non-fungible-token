@@ -794,8 +794,8 @@ dependencies = [
 
 [[package]]
 name = "gear-lib-derive"
-version = "0.3.0"
-source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.0#4c3d3cc93426d536b987766c14487656928618a2"
+version = "0.3.1"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.1#5363c32ffa8d6b1e7e98b93345a164ff8169ad75"
 dependencies = [
  "gear-lib-macros",
  "proc-macro2",
@@ -805,8 +805,8 @@ dependencies = [
 
 [[package]]
 name = "gear-lib-macros"
-version = "0.1.0"
-source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.0#4c3d3cc93426d536b987766c14487656928618a2"
+version = "0.3.1"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.1#5363c32ffa8d6b1e7e98b93345a164ff8169ad75"
 
 [[package]]
 name = "gear-lib-sr25519"
