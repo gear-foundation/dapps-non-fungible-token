@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.3] - 2022-10-26
 ### Changed
-
+- Updated `gstd`, `gtest`, `gear-wasm-builder` to the current commit hash (`#d4552434`).
 
 ## [0.2.2] - 2022-10-18
 ### Changed
