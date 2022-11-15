@@ -153,3 +153,13 @@ pub fn set_user(
     };
     nft.send(from, payload)
 }
+
+pub fn user_of(nft: &Program, from: u64, token_id: TokenId) -> RunResult {
+    let payload = NFTAction::UserOf { token_id };
+    nft.send(from, payload)
+}
+
+pub fn user_expires(nft: &Program, from: u64, token_id: TokenId) -> RunResult {
+    let payload = NFTAction::UserExpires { token_id };
+    nft.send(from, payload)
+}

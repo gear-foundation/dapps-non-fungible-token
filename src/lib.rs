@@ -162,6 +162,14 @@ unsafe extern "C" fn handle() {
             };
             msg::reply(payload, 0).expect("Error during replying with `NFTEvent::SetUser`");
         }
+        NFTAction::UserOf { token_id } => {
+            let payload = NFTEvent::UserOf { token_id };
+            msg::reply(payload, 0).expect("Error during replying with `NFTEvent::UserOf`");
+        }
+        NFTAction::UserExpires { token_id } => {
+            let payload = NFTEvent::UserExpires { token_id };
+            msg::reply(payload, 0).expect("Error during replying with `NFTEvent::UserExpires`");
+        }
     };
 }
 

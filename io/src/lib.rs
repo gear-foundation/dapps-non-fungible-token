@@ -67,6 +67,12 @@ pub enum NFTAction {
         address: ActorId,
         expires: u64,
     },
+    UserOf {
+        token_id: TokenId,
+    },
+    UserExpires {
+        token_id: TokenId,
+    },
 }
 
 #[derive(Debug, Encode, Decode, TypeInfo)]
@@ -106,5 +112,11 @@ pub enum NFTEvent {
         token_id: TokenId,
         address: ActorId,
         expires: u64,
+    },
+    UserOf {
+        token_id: TokenId,
+    },
+    UserExpires {
+        token_id: TokenId,
     },
 }

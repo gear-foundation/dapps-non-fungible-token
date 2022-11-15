@@ -412,3 +412,35 @@ fn set_user() {
     .encode();
     assert!(res.contains(&(USERS[1], message)));
 }
+
+#[test]
+fn user_of() {
+    let sys = System::new();
+    init_nft(&sys);
+    let nft = sys.get_program(1);
+    let mut transaction_id = 0u64;
+    assert!(!mint(&nft, transaction_id, USERS[0]).main_failed());
+    transaction_id += 1;
+    assert!(!approve(&nft, transaction_id, USERS[0], USERS[1], 0).main_failed());
+    let token_id = 0.into();
+    let res = utils::user_of(&nft, USERS[1], token_id);
+    println!("{:?}", res.decoded_log::<NFTEvent>());
+    let message = NFTEvent::UserOf { token_id }.encode();
+    assert!(res.contains(&(USERS[1], message)));
+}
+
+#[test]
+fn user_expires() {
+    let sys = System::new();
+    init_nft(&sys);
+    let nft = sys.get_program(1);
+    let mut transaction_id = 0u64;
+    assert!(!mint(&nft, transaction_id, USERS[0]).main_failed());
+    transaction_id += 1;
+    assert!(!approve(&nft, transaction_id, USERS[0], USERS[1], 0).main_failed());
+    let token_id = 0.into();
+    let res = utils::user_expires(&nft, USERS[1], token_id);
+    println!("{:?}", res.decoded_log::<NFTEvent>());
+    let message = NFTEvent::UserExpires { token_id }.encode();
+    assert!(res.contains(&(USERS[1], message)));
+}
