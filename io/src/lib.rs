@@ -57,6 +57,11 @@ pub enum NFTAction {
     Clear {
         transaction_hash: H256,
     },
+    UpdateUser {
+        token_id: TokenId,
+        address: ActorId,
+        expires: u64, // unix timestamp
+    },
 }
 
 #[derive(Debug, Encode, Decode, TypeInfo)]
@@ -87,4 +92,11 @@ pub enum NFTEvent {
         approved: bool,
     },
     TransactionMade,
+    UpdateUser {
+        token_id: TokenId,
+        address: ActorId,
+        expires: u64,
+    },
 }
+
+ 

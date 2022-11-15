@@ -138,6 +138,18 @@ unsafe extern "C" fn handle() {
             }
         }
         NFTAction::Clear { transaction_hash } => nft.clear(transaction_hash),
+        NFTAction::UpdateUser {
+            token_id,
+            address,
+            expires,
+        } => {
+            let nft_event = NFTEvent::UpdateUser {
+                token_id,
+                address,
+                expires,
+            };
+            msg::reply(nft_event, 0).expect("Error during replying with `NFTEvent::UpdateUser`");
+        }
     };
 }
 
