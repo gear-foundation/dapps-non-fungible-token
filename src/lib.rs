@@ -191,7 +191,7 @@ impl NFT {
         assert_eq!(
             msg::source(),
             exec::program_id(),
-            "Not allowed to creal transactions"
+            "Not allowed to clear transactions"
         );
         self.transactions.remove(&transaction_hash);
     }
@@ -222,5 +222,5 @@ fn send_delayed_clear(transaction_hash: H256) {
         0,
         DELAY,
     )
-    .expect("Error in sending a delayled message `FTStorageAction::Clear`");
+    .expect("Error in sending a delayed message `FTStorageAction::Clear`");
 }
