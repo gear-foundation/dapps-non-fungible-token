@@ -62,6 +62,11 @@ pub enum NFTAction {
         address: ActorId,
         expires: u64, // unix timestamp
     },
+    SetUser {
+        token_id: TokenId,
+        address: ActorId,
+        expires: u64,
+    },
 }
 
 #[derive(Debug, Encode, Decode, TypeInfo)]
@@ -97,6 +102,9 @@ pub enum NFTEvent {
         address: ActorId,
         expires: u64,
     },
+    SetUser {
+        token_id: TokenId,
+        address: ActorId,
+        expires: u64,
+    },
 }
-
- 

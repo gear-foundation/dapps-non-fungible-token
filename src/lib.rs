@@ -143,12 +143,24 @@ unsafe extern "C" fn handle() {
             address,
             expires,
         } => {
-            let nft_event = NFTEvent::UpdateUser {
+            let payload = NFTEvent::UpdateUser {
                 token_id,
                 address,
                 expires,
             };
-            msg::reply(nft_event, 0).expect("Error during replying with `NFTEvent::UpdateUser`");
+            msg::reply(payload, 0).expect("Error during replying with `NFTEvent::UpdateUser`");
+        }
+        NFTAction::SetUser {
+            token_id,
+            address,
+            expires,
+        } => {
+            let payload = NFTEvent::SetUser {
+                token_id,
+                address,
+                expires,
+            };
+            msg::reply(payload, 0).expect("Error during replying with `NFTEvent::SetUser`");
         }
     };
 }

@@ -138,3 +138,18 @@ pub fn mint_to_actor(nft: &Program, transaction_id: u64, member: [u8; 32]) -> Ru
         },
     )
 }
+
+pub fn set_user(
+    nft: &Program,
+    from: u64,
+    address: ActorId,
+    token_id: TokenId,
+    expires: u64,
+) -> RunResult {
+    let payload = NFTAction::SetUser {
+        token_id,
+        address,
+        expires,
+    };
+    nft.send(from, payload)
+}
