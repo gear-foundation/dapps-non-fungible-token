@@ -1253,7 +1253,7 @@ dependencies = [
  "nft-io",
  "primitive-types",
  "sp-core",
- "sp-core-hashing 4.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sp-core-hashing 5.0.0",
 ]
 
 [[package]]
@@ -1970,11 +1970,11 @@ dependencies = [
  "secp256k1",
  "secrecy",
  "serde",
- "sp-core-hashing 4.0.0 (git+https://github.com/gear-tech/substrate.git?branch=gear-stable)",
+ "sp-core-hashing 4.0.0",
  "sp-debug-derive",
  "sp-externalities",
  "sp-runtime-interface",
- "sp-std 4.0.0 (git+https://github.com/gear-tech/substrate.git?branch=gear-stable)",
+ "sp-std 4.0.0",
  "sp-storage",
  "ss58-registry",
  "substrate-bip39",
@@ -1987,20 +1987,6 @@ dependencies = [
 [[package]]
 name = "sp-core-hashing"
 version = "4.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec864a6a67249f0c8dd3d5acab43623a61677e85ff4f2f9b04b802d2fe780e83"
-dependencies = [
- "blake2-rfc",
- "byteorder",
- "sha2 0.9.9",
- "sp-std 4.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "tiny-keccak",
- "twox-hash",
-]
-
-[[package]]
-name = "sp-core-hashing"
-version = "4.0.0"
 source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#988411fe2cbf47e09014c8e1512e05f28f08d941"
 dependencies = [
  "blake2",
@@ -2008,7 +1994,22 @@ dependencies = [
  "digest 0.10.5",
  "sha2 0.10.6",
  "sha3",
- "sp-std 4.0.0 (git+https://github.com/gear-tech/substrate.git?branch=gear-stable)",
+ "sp-std 4.0.0",
+ "twox-hash",
+]
+
+[[package]]
+name = "sp-core-hashing"
+version = "5.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "49b9d1daa6aebfc144729b630885e91df92ff00560490ec065a56cb538e8895a"
+dependencies = [
+ "blake2",
+ "byteorder",
+ "digest 0.10.5",
+ "sha2 0.10.6",
+ "sha3",
+ "sp-std 5.0.0",
  "twox-hash",
 ]
 
@@ -2029,7 +2030,7 @@ source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#9884
 dependencies = [
  "environmental",
  "parity-scale-codec",
- "sp-std 4.0.0 (git+https://github.com/gear-tech/substrate.git?branch=gear-stable)",
+ "sp-std 4.0.0",
  "sp-storage",
 ]
 
@@ -2044,7 +2045,7 @@ dependencies = [
  "primitive-types",
  "sp-externalities",
  "sp-runtime-interface-proc-macro",
- "sp-std 4.0.0 (git+https://github.com/gear-tech/substrate.git?branch=gear-stable)",
+ "sp-std 4.0.0",
  "sp-storage",
  "sp-tracing",
  "sp-wasm-interface",
@@ -2066,13 +2067,13 @@ dependencies = [
 [[package]]
 name = "sp-std"
 version = "4.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "14804d6069ee7a388240b665f17908d98386ffb0b5d39f89a4099fc7a2a4c03f"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#988411fe2cbf47e09014c8e1512e05f28f08d941"
 
 [[package]]
 name = "sp-std"
-version = "4.0.0"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#988411fe2cbf47e09014c8e1512e05f28f08d941"
+version = "5.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cf3fd4c1d304be101e6ebbafd3d4be9a37b320c970ef4e8df188b16873981c93"
 
 [[package]]
 name = "sp-storage"
@@ -2084,7 +2085,7 @@ dependencies = [
  "ref-cast",
  "serde",
  "sp-debug-derive",
- "sp-std 4.0.0 (git+https://github.com/gear-tech/substrate.git?branch=gear-stable)",
+ "sp-std 4.0.0",
 ]
 
 [[package]]
@@ -2093,7 +2094,7 @@ version = "5.0.0"
 source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#988411fe2cbf47e09014c8e1512e05f28f08d941"
 dependencies = [
  "parity-scale-codec",
- "sp-std 4.0.0 (git+https://github.com/gear-tech/substrate.git?branch=gear-stable)",
+ "sp-std 4.0.0",
  "tracing",
  "tracing-core",
  "tracing-subscriber",
@@ -2107,7 +2108,7 @@ dependencies = [
  "impl-trait-for-tuples",
  "log",
  "parity-scale-codec",
- "sp-std 4.0.0 (git+https://github.com/gear-tech/substrate.git?branch=gear-stable)",
+ "sp-std 4.0.0",
  "wasmi 0.13.2",
 ]
 
@@ -2253,15 +2254,6 @@ dependencies = [
  "unicode-normalization",
  "wasm-bindgen",
  "zeroize",
-]
-
-[[package]]
-name = "tiny-keccak"
-version = "2.0.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2c9d3793400a45f954c52e73d068316d76b6f4e36977e3fcebb13a2721e80237"
-dependencies = [
- "crunchy",
 ]
 
 [[package]]
