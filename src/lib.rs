@@ -138,24 +138,13 @@ unsafe extern "C" fn handle() {
             }
         }
         NFTAction::Clear { transaction_hash } => nft.clear(transaction_hash),
-        NFTAction::UpdateUser {
-            token_id,
-            address,
-            expires,
-        } => {
-            let payload = NFTEvent::UpdateUser {
-                token_id,
-                address,
-                expires,
-            };
-            msg::reply(payload, 0).expect("Error during replying with `NFTEvent::UpdateUser`");
-        }
         NFTAction::SetUser {
             token_id,
             address,
             expires,
         } => {
-            let payload = NFTEvent::SetUser {
+            nft.set_user(address, token_id, expires);
+            let payload = NFTEvent::UpdateUser {
                 token_id,
                 address,
                 expires,
@@ -163,11 +152,13 @@ unsafe extern "C" fn handle() {
             msg::reply(payload, 0).expect("Error during replying with `NFTEvent::SetUser`");
         }
         NFTAction::UserOf { token_id } => {
-            let payload = NFTEvent::UserOf { token_id };
+            let address = nft.user_of(&token_id);
+            let payload = NFTEvent::UserOf { address };
             msg::reply(payload, 0).expect("Error during replying with `NFTEvent::UserOf`");
         }
         NFTAction::UserExpires { token_id } => {
-            let payload = NFTEvent::UserExpires { token_id };
+            let expires = nft.user_expires(&token_id);
+            let payload = NFTEvent::UserExpires { expires };
             msg::reply(payload, 0).expect("Error during replying with `NFTEvent::UserExpires`");
         }
     };

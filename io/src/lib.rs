@@ -57,15 +57,10 @@ pub enum NFTAction {
     Clear {
         transaction_hash: H256,
     },
-    UpdateUser {
-        token_id: TokenId,
-        address: ActorId,
-        expires: u64, // unix timestamp
-    },
     SetUser {
         token_id: TokenId,
         address: ActorId,
-        expires: u64,
+        expires: u64, // unix timestamp
     },
     UserOf {
         token_id: TokenId,
@@ -108,15 +103,10 @@ pub enum NFTEvent {
         address: ActorId,
         expires: u64,
     },
-    SetUser {
-        token_id: TokenId,
-        address: ActorId,
-        expires: u64,
-    },
     UserOf {
-        token_id: TokenId,
+        address: ActorId,
     },
     UserExpires {
-        token_id: TokenId,
+        expires: u64,
     },
 }
