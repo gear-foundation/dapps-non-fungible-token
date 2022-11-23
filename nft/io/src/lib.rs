@@ -57,17 +57,6 @@ pub enum NFTAction {
     Clear {
         transaction_hash: H256,
     },
-    SetUser {
-        token_id: TokenId,
-        address: ActorId,
-        expires: u64, // unix timestamp
-    },
-    UserOf {
-        token_id: TokenId,
-    },
-    UserExpires {
-        token_id: TokenId,
-    },
 }
 
 #[derive(Debug, Encode, Decode, TypeInfo)]

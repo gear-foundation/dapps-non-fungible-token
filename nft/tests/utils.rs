@@ -1,5 +1,4 @@
 use gear_lib::non_fungible_token::token::*;
-use gstd::ActorId;
 use gtest::{Program, RunResult, System};
 use nft_io::*;
 
@@ -73,21 +72,6 @@ pub fn owner_of(nft: &Program, from: u64, token_id: u64) -> RunResult {
     )
 }
 
-pub fn update_user(
-    nft: &Program,
-    from: u64,
-    address: ActorId,
-    token_id: TokenId,
-    expires: u64,
-) -> RunResult {
-    let payload = NFTAction::UpdateUser {
-        token_id,
-        address,
-        expires,
-    };
-    nft.send(from, payload)
-}
-
 pub fn is_approved_to(nft: &Program, from: u64, token_id: u64, to: u64) -> RunResult {
     nft.send(
         from,
@@ -137,29 +121,4 @@ pub fn mint_to_actor(nft: &Program, transaction_id: u64, member: [u8; 32]) -> Ru
             },
         },
     )
-}
-
-pub fn set_user(
-    nft: &Program,
-    from: u64,
-    address: ActorId,
-    token_id: TokenId,
-    expires: u64,
-) -> RunResult {
-    let payload = NFTAction::SetUser {
-        token_id,
-        address,
-        expires,
-    };
-    nft.send(from, payload)
-}
-
-pub fn user_of(nft: &Program, from: u64, token_id: TokenId) -> RunResult {
-    let payload = NFTAction::UserOf { token_id };
-    nft.send(from, payload)
-}
-
-pub fn user_expires(nft: &Program, from: u64, token_id: TokenId) -> RunResult {
-    let payload = NFTAction::UserExpires { token_id };
-    nft.send(from, payload)
 }

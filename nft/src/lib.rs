@@ -3,7 +3,7 @@
 use gear_lib::non_fungible_token::{io::NFTTransfer, nft_core::*, state::*, token::*};
 use gear_lib_derive::{NFTCore, NFTMetaState, NFTStateKeeper};
 use gstd::{exec, msg, prelude::*, ActorId};
-use nft_io::*;
+use nft_io::{NFTEvent, NFTAction, InitNFT};
 use primitive_types::{H256, U256};
 
 const DELAY: u32 = 600_000;
@@ -138,29 +138,6 @@ unsafe extern "C" fn handle() {
             }
         }
         NFTAction::Clear { transaction_hash } => nft.clear(transaction_hash),
-        NFTAction::SetUser {
-            token_id,
-            address,
-            expires,
-        } => {
-            nft.set_user(address, token_id, expires);
-            let payload = NFTEvent::UpdateUser {
-                token_id,
-                address,
-                expires,
-            };
-            msg::reply(payload, 0).expect("Error during replying with `NFTEvent::SetUser`");
-        }
-        NFTAction::UserOf { token_id } => {
-            let address = nft.user_of(&token_id);
-            let payload = NFTEvent::UserOf { address };
-            msg::reply(payload, 0).expect("Error during replying with `NFTEvent::UserOf`");
-        }
-        NFTAction::UserExpires { token_id } => {
-            let expires = nft.user_expires(&token_id);
-            let payload = NFTEvent::UserExpires { expires };
-            msg::reply(payload, 0).expect("Error during replying with `NFTEvent::UserExpires`");
-        }
     };
 }
 
