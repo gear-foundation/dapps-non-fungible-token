@@ -1392,6 +1392,23 @@ dependencies = [
  "gstd",
  "gtest 0.1.0 (git+https://github.com/gear-tech/gear.git?branch=stable)",
  "hex-literal",
+ "nft-common",
+ "nft-io",
+ "primitive-types",
+ "sp-core",
+ "sp-core-hashing 5.0.0",
+]
+
+[[package]]
+name = "nft-common"
+version = "0.2.4"
+dependencies = [
+ "gear-lib",
+ "gear-lib-derive",
+ "gear-wasm-builder 0.1.2 (git+https://github.com/gear-tech/gear.git?branch=stable)",
+ "gstd",
+ "gtest 0.1.0 (git+https://github.com/gear-tech/gear.git?branch=stable)",
+ "hex-literal",
  "nft-io",
  "primitive-types",
  "sp-core",
@@ -1856,7 +1873,7 @@ dependencies = [
  "gtest 0.1.0 (git+https://github.com/gear-tech/gear.git?branch=master)",
  "hex-literal",
  "io",
- "nft",
+ "nft-common",
  "nft-io",
  "primitive-types",
  "sp-core",

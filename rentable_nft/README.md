@@ -4,7 +4,7 @@
   </a>
 </p>
 
-# Non Fungible token
+# Rentable Non Fungible token
 
 [![Build][build_badge]][build_href]
 [![License][lic_badge]][lic_href]
@@ -16,7 +16,7 @@
 [lic_href]: https://github.com/gear-dapps/non-fungible-token/blob/master/LICENSE
 
 
-An example of simple NFT.
+An example of Rentable NFT.
 
 ## Prebuilt Binaries
 

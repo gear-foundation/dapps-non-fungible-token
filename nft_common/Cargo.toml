@@ -1,5 +1,5 @@
 [package]
-name = "rentable-nft"
+name = "nft-common"
 version = "0.2.4"
 authors = ["Gear Technologies"]
 edition = "2021"
@@ -9,17 +9,15 @@ gstd = { git = "https://github.com/gear-tech/gear.git", features = [
     "debug",
 ], branch = "stable" }
 primitive-types = { version = "0.12.1", default-features = false }
-io = { path = "io" }
-nft-common = { path = "../nft_common" }
 nft-io = { path = "../nft/io" }
-gear-lib = { git = "https://github.com/gear-dapps/gear-lib.git" }
+gear-lib = { git = "https://github.com/gear-dapps/gear-lib.git"}
 gear-lib-derive = { git = "https://github.com/gear-dapps/gear-lib.git", tag = "0.3.1" }
 sp-core-hashing = { version = "5.0.0", default-features = false }
 
 [dev-dependencies]
-gtest = { git = "https://github.com/gear-tech/gear.git", branch = "master" }
+gtest = { git = "https://github.com/gear-tech/gear.git", branch = "stable" }
 hex-literal = "0.3.4"
 sp-core = { version = "6.0.0", git = "https://github.com/gear-tech/substrate.git", branch = "gear-stable" }
 
 [build-dependencies]
-gear-wasm-builder = { git = "https://github.com/gear-tech/gear.git", branch = "master" }
+gear-wasm-builder = { git = "https://github.com/gear-tech/gear.git", branch = "stable" }
