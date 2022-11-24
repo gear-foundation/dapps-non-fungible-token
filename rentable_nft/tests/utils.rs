@@ -1,7 +1,7 @@
 use gear_lib::non_fungible_token::token::*;
 use gstd::ActorId;
 use gtest::{Program, RunResult, System};
-use nft_io::{InitNFT, NFTAction};
+use nft_io::*;
 
 const USERS: &[u64] = &[3, 4, 5];
 

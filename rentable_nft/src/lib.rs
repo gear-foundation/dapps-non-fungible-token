@@ -1,14 +1,9 @@
 #![no_std]
 
-use gear_lib::non_fungible_token::{
-    nft_core::NFTCore,
-    state::{NFTQuery, NFTQueryReply},
-    token::TokenId,
-};
+use nft::NFT;
+use gear_lib::non_fungible_token::{nft_core::NFTCore, token::TokenId, state::{NFTQueryReply, NFTQuery}};
 use gstd::{exec::block_timestamp, msg, ActorId, BTreeMap, ToString};
-use io::{NFTAction, NFTEvent};
-use nft_common::{MyNFTCore, NFT};
-use nft_io::InitNFT;
+use io::{NFTAction, NFTEvent, InitNFT};
 
 #[derive(Debug, Default)]
 pub struct UserInfo {
@@ -28,102 +23,7 @@ static mut CONTRACT: Option<RentableNFT> = None;
 unsafe extern "C" fn handle() {
     let action: NFTAction = msg::load().expect("Could not load NFTAction");
     let rentable_nft = CONTRACT.get_or_insert(Default::default());
-    let nft = &mut rentable_nft.nft;
     match action {
-        NFTAction::Mint {
-            transaction_id,
-            token_metadata,
-        } => {
-            if !nft.transaction_made(transaction_id) {
-                msg::reply(NFTEvent::Transfer(MyNFTCore::mint(nft, token_metadata)), 0)
-                    .expect("Error during replying with `NFTEvent::Transfer`");
-            }
-        }
-        NFTAction::Burn {
-            transaction_id,
-            token_id,
-        } => {
-            if !nft.transaction_made(transaction_id) {
-                msg::reply(NFTEvent::Transfer(NFTCore::burn(nft, token_id)), 0)
-                    .expect("Error during replying with `NFTEvent::Transfer`");
-            }
-        }
-        NFTAction::Transfer {
-            transaction_id,
-            to,
-            token_id,
-        } => {
-            if !nft.transaction_made(transaction_id) {
-                msg::reply(NFTEvent::Transfer(NFTCore::transfer(nft, &to, token_id)), 0)
-                    .expect("Error during replying with `NFTEvent::Transfer`");
-            }
-        }
-        NFTAction::TransferPayout {
-            transaction_id,
-            to,
-            token_id,
-            amount,
-        } => {
-            if !nft.transaction_made(transaction_id) {
-                msg::reply(
-                    NFTEvent::TransferPayout(NFTCore::transfer_payout(nft, &to, token_id, amount)),
-                    0,
-                )
-                .expect("Error during replying with `NFTEvent::TransferPayout`");
-            }
-        }
-        NFTAction::NFTPayout { owner, amount } => {
-            msg::reply(
-                NFTEvent::NFTPayout(NFTCore::nft_payout(nft, &owner, amount)),
-                0,
-            )
-            .expect("Error during replying with `NFTEvent::NFTPayout`");
-        }
-        NFTAction::Approve {
-            transaction_id,
-            to,
-            token_id,
-        } => {
-            if !nft.transaction_made(transaction_id) {
-                msg::reply(NFTEvent::Approval(NFTCore::approve(nft, &to, token_id)), 0)
-                    .expect("Error during replying with `NFTEvent::Approval`");
-            }
-        }
-        NFTAction::Owner { token_id } => {
-            msg::reply(
-                NFTEvent::Owner {
-                    owner: NFTCore::owner_of(nft, token_id),
-                    token_id,
-                },
-                0,
-            )
-            .expect("Error during replying with `NFTEvent::Owner`");
-        }
-        NFTAction::IsApproved { to, token_id } => {
-            msg::reply(
-                NFTEvent::IsApproved {
-                    to,
-                    token_id,
-                    approved: NFTCore::is_approved_to(nft, &to, token_id),
-                },
-                0,
-            )
-            .expect("Error during replying with `NFTEvent::IsApproved`");
-        }
-        NFTAction::DelegatedApprove {
-            transaction_id,
-            message,
-            signature,
-        } => {
-            if !nft.transaction_made(transaction_id) {
-                msg::reply(
-                    NFTEvent::Approval(NFTCore::delegated_approve(nft, message, signature)),
-                    0,
-                )
-                .expect("Error during replying with `NFTEvent::Approval`");
-            }
-        }
-        NFTAction::Clear { transaction_hash } => nft.clear(transaction_hash),
         NFTAction::SetUser {
             token_id,
             address,

@@ -1,3 +1,3 @@
 [workspace]
 
-members = ["nft_common", "nft", "rentable_nft"]
+members = ["nft", "rentable_nft"]

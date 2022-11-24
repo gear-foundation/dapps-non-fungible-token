@@ -87,4 +87,15 @@ pub enum NFTEvent {
         approved: bool,
     },
     TransactionMade,
+    UpdateUser {
+        token_id: TokenId,
+        address: ActorId,
+        expires: u64,
+    },
+    UserOf {
+        address: ActorId,
+    },
+    UserExpires {
+        expires: u64,
+    },
 }

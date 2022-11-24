@@ -10,7 +10,7 @@ gstd = { git = "https://github.com/gear-tech/gear.git", features = [
 ], branch = "stable" }
 primitive-types = { version = "0.12.1", default-features = false }
 io = { path = "io" }
-nft-common = { path = "../nft_common" }
+nft = { path = "../nft" }
 nft-io = { path = "../nft/io" }
 gear-lib = { git = "https://github.com/gear-dapps/gear-lib.git" }
 gear-lib-derive = { git = "https://github.com/gear-dapps/gear-lib.git", tag = "0.3.1" }
