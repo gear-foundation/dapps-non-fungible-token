@@ -1856,8 +1856,6 @@ dependencies = [
  "gtest 0.1.0 (git+https://github.com/gear-tech/gear.git?branch=master)",
  "hex-literal",
  "io",
- "nft",
- "nft-io",
  "primitive-types",
  "sp-core",
  "sp-core-hashing 5.0.0",

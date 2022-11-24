@@ -1,7 +1,7 @@
 use gear_lib::non_fungible_token::token::*;
 use gstd::ActorId;
 use gtest::{Program, RunResult, System};
-use nft_io::*;
+use io::{InitNFT, NFTAction};
 
 const USERS: &[u64] = &[3, 4, 5];
 
@@ -25,7 +25,7 @@ pub fn init_nft(sys: &System) {
 pub fn mint(nft: &Program, transaction_id: u64, member: u64) -> RunResult {
     nft.send(
         member,
-        nft_io::NFTAction::Mint {
+        NFTAction::Mint {
             transaction_id,
             token_metadata: TokenMetadata {
                 name: "CryptoKitty".to_string(),
