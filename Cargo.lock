@@ -786,7 +786,7 @@ dependencies = [
 [[package]]
 name = "gear-lib"
 version = "0.3.2"
-source = "git+https://github.com/gear-dapps/gear-lib.git?branch=sy-update-deps#0098eb58debfd6398fe9f762500c6890c5bb7a8c"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.2#f78b0e3b9b0a13a3a2ed25710dbc6ad9e99d4257"
 dependencies = [
  "gear-lib-sr25519",
  "gstd",
@@ -798,7 +798,7 @@ dependencies = [
 [[package]]
 name = "gear-lib-derive"
 version = "0.3.2"
-source = "git+https://github.com/gear-dapps/gear-lib.git?branch=sy-update-deps#0098eb58debfd6398fe9f762500c6890c5bb7a8c"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.2#f78b0e3b9b0a13a3a2ed25710dbc6ad9e99d4257"
 dependencies = [
  "gear-lib-macros",
  "proc-macro2",
@@ -809,12 +809,12 @@ dependencies = [
 [[package]]
 name = "gear-lib-macros"
 version = "0.3.2"
-source = "git+https://github.com/gear-dapps/gear-lib.git?branch=sy-update-deps#0098eb58debfd6398fe9f762500c6890c5bb7a8c"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.2#f78b0e3b9b0a13a3a2ed25710dbc6ad9e99d4257"
 
 [[package]]
 name = "gear-lib-sr25519"
 version = "0.3.2"
-source = "git+https://github.com/gear-dapps/gear-lib.git?branch=sy-update-deps#0098eb58debfd6398fe9f762500c6890c5bb7a8c"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.2#f78b0e3b9b0a13a3a2ed25710dbc6ad9e99d4257"
 dependencies = [
  "schnorrkel 0.10.2",
 ]
