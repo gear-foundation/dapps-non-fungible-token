@@ -1,7 +1,6 @@
-use std::time::{Duration, Instant};
-
 use gstd::{ActorId, Encode};
 use gtest::System;
+use std::time::{Duration, Instant};
 mod utils;
 use hex_literal::hex;
 use io::NFTEvent;
