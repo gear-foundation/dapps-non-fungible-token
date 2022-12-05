@@ -328,7 +328,7 @@ async fn owner_test() -> Result<()> {
 }
 
 #[tokio::test]
-async fn approved_success() -> Result<()> {
+async fn approved() -> Result<()> {
     let api = GearApi::dev().await?;
 
     let mut listener = api.subscribe().await?; // Subscribing for events.
@@ -387,21 +387,22 @@ async fn approved_success() -> Result<()> {
     assert!(listener.blocks_running().await?);
 
     let transaction_id = transaction_id + 1;
-    let owner_payload = NFTAction::Approve {
+    let approve_payload = NFTAction::Approve {
         transaction_id,
         to: ActorId::from(3),
         token_id: 0.into(),
     };
 
     let gas_info = api
-        .calculate_handle_gas(None, program_id, owner_payload.encode(), 0, true, None)
+        .calculate_handle_gas(None, program_id, approve_payload.encode(), 0, true, None)
         .await?;
 
     let (message_id, _) = api
-        .send_message(program_id, owner_payload, gas_info.min_limit, 0)
+        .send_message(program_id, approve_payload, gas_info.min_limit, 0)
         .await?;
 
-    assert!(listener.message_processed(message_id).await?.succeed());
+    let processed = listener.message_processed(message_id).await?;
+    assert!(processed.succeed());
 
     assert!(listener.blocks_running().await?);
 

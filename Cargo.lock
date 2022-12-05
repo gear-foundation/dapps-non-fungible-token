@@ -2996,7 +2996,6 @@ dependencies = [
 name = "nft"
 version = "0.2.4"
 dependencies = [
- "blake2-rfc",
  "gclient",
  "gear-lib",
  "gear-lib-derive",
