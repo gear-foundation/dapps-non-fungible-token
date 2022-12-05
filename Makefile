@@ -31,7 +31,10 @@ linter:
 pre-commit: fmt linter test
 
 test: build
-	@if [ ! -f "./target/fungible_token-0.1.0.wasm" ]; then curl -L "https://github.com/gear-dapps/fungible-token/releases/download/0.1.0/fungible_token-0.1.0.wasm" -o "./target/fungible_token-0.1.0.wasm"; fi
+	@if [ ! -f "./target/fungible_token-0.1.0.wasm" ]; then \
+		curl -L "https://github.com/gear-dapps/fungible-token/releases/download/0.1.0/fungible_token-0.1.0.wasm" \
+		-o "./target/fungible_token-0.1.0.wasm"; \
+	fi
 	@echo ──────────── Run tests ────────────────────────
 	@cargo test --release --package nft --test nft_tests
 	@wget https://get.gear.rs/gear-nightly-linu\x-x86_64.tar.xz && \
