@@ -86,5 +86,4 @@ pub enum NFTEvent {
         token_id: TokenId,
         approved: bool,
     },
-    TransactionMade,
 }
