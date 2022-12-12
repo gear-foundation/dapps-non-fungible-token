@@ -785,8 +785,8 @@ dependencies = [
 
 [[package]]
 name = "gear-lib"
-version = "0.3.3"
-source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.3#fd1e05ee79566b1c1c13699624ad2651f44b0f94"
+version = "0.3.4"
+source = "git+https://github.com/gear-dapps/gear-lib.git?branch=as-add-cloneopy-traits#27bf6d5e182328e28a85b69bf7621284f4a53bbb"
 dependencies = [
  "gear-lib-sr25519",
  "gstd",
@@ -797,8 +797,8 @@ dependencies = [
 
 [[package]]
 name = "gear-lib-derive"
-version = "0.3.3"
-source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.3#fd1e05ee79566b1c1c13699624ad2651f44b0f94"
+version = "0.3.4"
+source = "git+https://github.com/gear-dapps/gear-lib.git?branch=as-add-cloneopy-traits#27bf6d5e182328e28a85b69bf7621284f4a53bbb"
 dependencies = [
  "gear-lib-macros",
  "proc-macro2",
@@ -809,12 +809,12 @@ dependencies = [
 [[package]]
 name = "gear-lib-macros"
 version = "0.3.2"
-source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.3#fd1e05ee79566b1c1c13699624ad2651f44b0f94"
+source = "git+https://github.com/gear-dapps/gear-lib.git?branch=as-add-cloneopy-traits#27bf6d5e182328e28a85b69bf7621284f4a53bbb"
 
 [[package]]
 name = "gear-lib-sr25519"
-version = "0.3.3"
-source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.3#fd1e05ee79566b1c1c13699624ad2651f44b0f94"
+version = "0.3.4"
+source = "git+https://github.com/gear-dapps/gear-lib.git?branch=as-add-cloneopy-traits#27bf6d5e182328e28a85b69bf7621284f4a53bbb"
 dependencies = [
  "schnorrkel 0.10.2",
 ]
@@ -1849,18 +1849,18 @@ dependencies = [
 
 [[package]]
 name = "serde"
-version = "1.0.149"
+version = "1.0.150"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "256b9932320c590e707b94576e3cc1f7c9024d0ee6612dfbcf1cb106cbe8e055"
+checksum = "e326c9ec8042f1b5da33252c8a37e9ffbd2c9bef0155215b6e6c80c790e05f91"
 dependencies = [
  "serde_derive",
 ]
 
 [[package]]
 name = "serde_derive"
-version = "1.0.149"
+version = "1.0.150"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b4eae9b04cbffdfd550eb462ed33bc6a1b68c935127d008b27444d08380f94e4"
+checksum = "42a3df25b0713732468deadad63ab9da1f1fd75a48a15024b50363f128db627e"
 dependencies = [
  "proc-macro2",
  "quote",

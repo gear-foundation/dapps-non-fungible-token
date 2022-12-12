@@ -6,8 +6,6 @@ use gstd::{exec, msg, prelude::*, ActorId};
 use nft_io::*;
 use primitive_types::{H256, U256};
 
-const DELAY: u32 = 600_000;
-
 #[derive(Debug, Default, NFTStateKeeper, NFTCore, NFTMetaState)]
 pub struct NFT {
     #[NFTStateField]
@@ -183,15 +181,12 @@ impl NFT {
         let transaction_hash = get_hash(&msg::source(), transaction_id);
 
         if let Some(nft_event) = self.transactions.get(&transaction_hash) {
-            NFTEvent::decode(&mut nft_event.encode().as_slice()).unwrap()
+            nft_event.clone()
         } else {
             let nft_event = action(self);
 
-            self.transactions.insert(
-                transaction_hash,
-                NFTEvent::decode(&mut nft_event.encode().as_slice()).unwrap(),
-            );
-            send_delayed_clear(transaction_hash);
+            self.transactions
+                .insert(transaction_hash, nft_event.clone());
 
             nft_event
         }
@@ -223,14 +218,4 @@ pub fn get_hash(account: &ActorId, transaction_id: u64) -> H256 {
     let account: [u8; 32] = (*account).into();
     let transaction_id = transaction_id.to_be_bytes();
     sp_core_hashing::blake2_256(&[account.as_slice(), transaction_id.as_slice()].concat()).into()
-}
-
-fn send_delayed_clear(transaction_hash: H256) {
-    msg::send_delayed(
-        exec::program_id(),
-        NFTAction::Clear { transaction_hash },
-        0,
-        DELAY,
-    )
-    .expect("Error in sending a delayled message `FTStorageAction::Clear`");
 }

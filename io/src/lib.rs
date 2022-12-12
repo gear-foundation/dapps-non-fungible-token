@@ -69,7 +69,7 @@ pub struct InitNFT {
     pub royalties: Option<Royalties>,
 }
 
-#[derive(Encode, Decode, TypeInfo, Debug)]
+#[derive(Encode, Decode, TypeInfo, Debug, Clone)]
 #[codec(crate = gstd::codec)]
 #[scale_info(crate = gstd::scale_info)]
 pub enum NFTEvent {
