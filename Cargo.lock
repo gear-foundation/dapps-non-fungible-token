@@ -786,7 +786,7 @@ dependencies = [
 [[package]]
 name = "gear-lib"
 version = "0.3.4"
-source = "git+https://github.com/gear-dapps/gear-lib.git?branch=as-add-cloneopy-traits#27bf6d5e182328e28a85b69bf7621284f4a53bbb"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.4#849c50ce5e6a99b21699d45df4c80add21cf54db"
 dependencies = [
  "gear-lib-sr25519",
  "gstd",
@@ -798,7 +798,7 @@ dependencies = [
 [[package]]
 name = "gear-lib-derive"
 version = "0.3.4"
-source = "git+https://github.com/gear-dapps/gear-lib.git?branch=as-add-cloneopy-traits#27bf6d5e182328e28a85b69bf7621284f4a53bbb"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.4#849c50ce5e6a99b21699d45df4c80add21cf54db"
 dependencies = [
  "gear-lib-macros",
  "proc-macro2",
@@ -809,12 +809,12 @@ dependencies = [
 [[package]]
 name = "gear-lib-macros"
 version = "0.3.2"
-source = "git+https://github.com/gear-dapps/gear-lib.git?branch=as-add-cloneopy-traits#27bf6d5e182328e28a85b69bf7621284f4a53bbb"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.4#849c50ce5e6a99b21699d45df4c80add21cf54db"
 
 [[package]]
 name = "gear-lib-sr25519"
 version = "0.3.4"
-source = "git+https://github.com/gear-dapps/gear-lib.git?branch=as-add-cloneopy-traits#27bf6d5e182328e28a85b69bf7621284f4a53bbb"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.4#849c50ce5e6a99b21699d45df4c80add21cf54db"
 dependencies = [
  "schnorrkel 0.10.2",
 ]
