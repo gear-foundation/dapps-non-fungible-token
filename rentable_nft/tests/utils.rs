@@ -59,7 +59,7 @@ pub fn set_user(
         token_id,
         address,
         duration_in_secs: expires,
-        transaction_id: None
+        transaction_id: None,
     };
     nft.send(from, payload)
 }

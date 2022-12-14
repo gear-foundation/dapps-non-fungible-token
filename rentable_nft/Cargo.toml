@@ -1,6 +1,6 @@
 [package]
 name = "rentable-nft"
-version = "0.2.4"
+version = "0.2.6"
 authors = ["Gear Technologies"]
 edition = "2021"
 
