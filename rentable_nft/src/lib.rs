@@ -1,12 +1,14 @@
 #![no_std]
 
+use core::time::Duration;
 use gear_lib::non_fungible_token::{
     nft_core::NFTCore,
     state::{NFTMetaState, NFTQuery, NFTQueryReply, NFTState, NFTStateKeeper},
     token::TokenId,
 };
 use gear_lib_derive::{NFTCore, NFTMetaState, NFTStateKeeper};
-use gstd::{exec, exec::block_timestamp, msg, prelude::*, ActorId, BTreeMap, BTreeSet, ToString};
+use gstd::{exec, exec::block_timestamp, msg, prelude::*, ActorId, BTreeSet, ToString};
+use hashbrown::HashMap;
 use io::{InitNFT, NFTAction, NFTEvent};
 use primitive_types::H256;
 
@@ -53,7 +55,7 @@ pub struct UserInfo {
 #[derive(Debug, Default)]
 pub struct RentableNFT {
     pub nft: NFT,
-    pub users_info: BTreeMap<TokenId, UserInfo>,
+    pub users_info: HashMap<TokenId, UserInfo>,
 }
 
 static mut CONTRACT: Option<RentableNFT> = None;
@@ -169,9 +171,30 @@ unsafe extern "C" fn handle() {
         NFTAction::SetUser {
             token_id,
             address,
-            expires,
+            duration_in_secs,
+            transaction_id,
         } => {
-            rentable_nft.set_user(address, token_id, expires);
+            let now = Duration::from_millis(exec::block_timestamp());
+            let duration = Duration::from_secs(duration_in_secs);
+            let expires = now + duration;
+            let expires: u64 = expires.as_secs();
+
+            if let Some(transaction_id) = transaction_id {
+                if !rentable_nft.nft.transaction_made(transaction_id) {
+                    msg::reply(
+                        NFTEvent::UpdateUser {
+                            token_id,
+                            address,
+                            expires,
+                        }
+                        .encode(),
+                        0,
+                    )
+                    .expect("Error during replying with `NFTEvent::SetUser`");
+                }
+            }
+            rentable_nft.set_user(address, token_id, expires, transaction_id);
+
             let payload = NFTEvent::UpdateUser {
                 token_id,
                 address,
@@ -205,7 +228,13 @@ gstd::metadata! {
 }
 
 impl RentableNFT {
-    fn set_user(&mut self, address: ActorId, token_id: TokenId, expires: u64) {
+    fn set_user(
+        &mut self,
+        address: ActorId,
+        token_id: TokenId,
+        expires: u64,
+        _transaction_id: Option<u64>,
+    ) {
         self.nft.assert_zero_address(&address);
 
         let owner = &self.nft.owner;

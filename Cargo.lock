@@ -51,6 +51,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "ahash"
+version = "0.8.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bf6ccdb167abbf410dcb915cabd428929d7f6a04980b54a11f26a39f1c7f7107"
+dependencies = [
+ "cfg-if",
+ "once_cell",
+ "version_check",
+]
+
+[[package]]
 name = "aho-corasick"
 version = "0.7.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1041,7 +1052,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7c24f403d068ad0b359e577a77f92392118be3f3c927538f2bb544a5ecd828c6"
 dependencies = [
  "curve25519-dalek 3.2.0",
- "hashbrown",
+ "hashbrown 0.12.3",
  "hex",
  "rand_core 0.6.4",
  "sha2 0.9.9",
@@ -1242,7 +1253,7 @@ checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
 [[package]]
 name = "frame-benchmarking"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -1265,7 +1276,7 @@ dependencies = [
 [[package]]
 name = "frame-executive"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -1293,7 +1304,7 @@ dependencies = [
 [[package]]
 name = "frame-support"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "bitflags",
  "frame-metadata",
@@ -1325,7 +1336,7 @@ dependencies = [
 [[package]]
 name = "frame-support-procedural"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "Inflector",
  "cfg-expr",
@@ -1339,7 +1350,7 @@ dependencies = [
 [[package]]
 name = "frame-support-procedural-tools"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "frame-support-procedural-tools-derive",
  "proc-macro-crate 1.2.1",
@@ -1351,7 +1362,7 @@ dependencies = [
 [[package]]
 name = "frame-support-procedural-tools-derive"
 version = "3.0.0"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1361,7 +1372,7 @@ dependencies = [
 [[package]]
 name = "frame-system"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "frame-support",
  "log",
@@ -1379,7 +1390,7 @@ dependencies = [
 [[package]]
 name = "frame-system-benchmarking"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -1394,7 +1405,7 @@ dependencies = [
 [[package]]
 name = "frame-system-rpc-runtime-api"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "parity-scale-codec",
  "sp-api",
@@ -1403,7 +1414,7 @@ dependencies = [
 [[package]]
 name = "frame-try-runtime"
 version = "0.10.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "frame-support",
  "parity-scale-codec",
@@ -1800,8 +1811,8 @@ dependencies = [
 
 [[package]]
 name = "gear-lib"
-version = "0.3.2"
-source = "git+https://github.com/gear-dapps/gear-lib.git#f78b0e3b9b0a13a3a2ed25710dbc6ad9e99d4257"
+version = "0.3.4"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.4#849c50ce5e6a99b21699d45df4c80add21cf54db"
 dependencies = [
  "gear-lib-sr25519",
  "gstd",
@@ -1812,40 +1823,24 @@ dependencies = [
 
 [[package]]
 name = "gear-lib-derive"
-version = "0.3.1"
-source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.1#8c24a322096ecd911e385a0c01df73bdec0e8b6a"
+version = "0.3.4"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.4#849c50ce5e6a99b21699d45df4c80add21cf54db"
 dependencies = [
- "gear-lib-macros 0.3.1",
+ "gear-lib-macros",
  "proc-macro2",
  "quote",
  "syn",
 ]
-
-[[package]]
-name = "gear-lib-derive"
-version = "0.3.3"
-source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.3#fd1e05ee79566b1c1c13699624ad2651f44b0f94"
-dependencies = [
- "gear-lib-macros 0.3.2",
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
-name = "gear-lib-macros"
-version = "0.3.1"
-source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.1#8c24a322096ecd911e385a0c01df73bdec0e8b6a"
 
 [[package]]
 name = "gear-lib-macros"
 version = "0.3.2"
-source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.3#fd1e05ee79566b1c1c13699624ad2651f44b0f94"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.4#849c50ce5e6a99b21699d45df4c80add21cf54db"
 
 [[package]]
 name = "gear-lib-sr25519"
-version = "0.3.2"
-source = "git+https://github.com/gear-dapps/gear-lib.git#f78b0e3b9b0a13a3a2ed25710dbc6ad9e99d4257"
+version = "0.3.4"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.4#849c50ce5e6a99b21699d45df4c80add21cf54db"
 dependencies = [
  "schnorrkel 0.10.2",
 ]
@@ -1976,22 +1971,6 @@ source = "git+https://github.com/gear-tech/gear.git?branch=master#6d5219663e8210
 dependencies = [
  "sp-core",
  "sp-runtime",
-]
-
-[[package]]
-name = "gear-wasm-builder"
-version = "0.1.2"
-source = "git+https://github.com/gear-tech/gear.git?branch=master#6d5219663e82106f172daed2b16daef0d2130672"
-dependencies = [
- "anyhow",
- "cargo_metadata 0.15.2",
- "colored",
- "log",
- "pathdiff",
- "pwasm-utils",
- "thiserror",
- "toml",
- "which",
 ]
 
 [[package]]
@@ -2138,29 +2117,6 @@ source = "git+https://github.com/gear-tech/gear.git?branch=stable#a57e3210cda835
 [[package]]
 name = "gtest"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git?branch=master#6d5219663e82106f172daed2b16daef0d2130672"
-dependencies = [
- "anyhow",
- "colored",
- "derive_more",
- "env_logger 0.10.0",
- "gear-backend-common 0.1.0 (git+https://github.com/gear-tech/gear.git?branch=master)",
- "gear-backend-wasmi 0.1.0 (git+https://github.com/gear-tech/gear.git?branch=master)",
- "gear-core 0.1.0 (git+https://github.com/gear-tech/gear.git?branch=master)",
- "gear-core-errors 0.1.0 (git+https://github.com/gear-tech/gear.git?branch=master)",
- "gear-core-processor 0.1.0 (git+https://github.com/gear-tech/gear.git?branch=master)",
- "gear-wasm-builder 0.1.2 (git+https://github.com/gear-tech/gear.git?branch=master)",
- "gear-wasm-instrument 0.1.0 (git+https://github.com/gear-tech/gear.git?branch=master)",
- "hex",
- "log",
- "parity-scale-codec",
- "path-clean",
- "rand 0.8.5",
-]
-
-[[package]]
-name = "gtest"
-version = "0.1.0"
 source = "git+https://github.com/gear-tech/gear.git?branch=stable#a57e3210cda835e86ad114e6b0cb9c259a45242c"
 dependencies = [
  "anyhow",
@@ -2172,7 +2128,7 @@ dependencies = [
  "gear-core 0.1.0 (git+https://github.com/gear-tech/gear.git?branch=stable)",
  "gear-core-errors 0.1.0 (git+https://github.com/gear-tech/gear.git?branch=stable)",
  "gear-core-processor 0.1.0 (git+https://github.com/gear-tech/gear.git?branch=stable)",
- "gear-wasm-builder 0.1.2 (git+https://github.com/gear-tech/gear.git?branch=stable)",
+ "gear-wasm-builder",
  "gear-wasm-instrument 0.1.0 (git+https://github.com/gear-tech/gear.git?branch=stable)",
  "hex",
  "log",
@@ -2221,7 +2177,16 @@ version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8a9ee70c43aaf417c914396645a0fa852624801b24ebb7ae78fe8272889ac888"
 dependencies = [
- "ahash",
+ "ahash 0.7.6",
+]
+
+[[package]]
+name = "hashbrown"
+version = "0.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "33ff8ae62cd3a9102e5637afc8452c55acf3844001bd5374e0b0bd7b6616c038"
+dependencies = [
+ "ahash 0.8.2",
 ]
 
 [[package]]
@@ -2447,7 +2412,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1885e79c1fc4b10f0e172c475f458b7f7b93061064d98c3293e98c5ba0c8b399"
 dependencies = [
  "autocfg",
- "hashbrown",
+ "hashbrown 0.12.3",
  "serde",
 ]
 
@@ -2838,7 +2803,7 @@ version = "0.7.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e999beba7b6e8345721bd280141ed958096a2e4abdf74f67ff4ce49b4b54e47a"
 dependencies = [
- "hashbrown",
+ "hashbrown 0.12.3",
 ]
 
 [[package]]
@@ -2908,7 +2873,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "34ac11bb793c28fa095b7554466f53b3a60a2cd002afdac01bcf135cbd73a269"
 dependencies = [
  "hash-db",
- "hashbrown",
+ "hashbrown 0.12.3",
  "parity-util-mem",
 ]
 
@@ -3014,10 +2979,10 @@ version = "0.2.4"
 dependencies = [
  "gclient",
  "gear-lib",
- "gear-lib-derive 0.3.3",
- "gear-wasm-builder 0.1.2 (git+https://github.com/gear-tech/gear.git?branch=stable)",
+ "gear-lib-derive",
+ "gear-wasm-builder",
  "gstd",
- "gtest 0.1.0 (git+https://github.com/gear-tech/gear.git?branch=stable)",
+ "gtest",
  "hex-literal",
  "nft-io",
  "primitive-types",
@@ -3178,7 +3143,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "21158b2c33aa6d4561f1c0a6ea283ca92bc54802a93b263e910746d679a7eb53"
 dependencies = [
  "crc32fast",
- "hashbrown",
+ "hashbrown 0.12.3",
  "indexmap",
  "memchr",
 ]
@@ -3220,7 +3185,7 @@ dependencies = [
 [[package]]
 name = "pallet-authorship"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -3235,7 +3200,7 @@ dependencies = [
 [[package]]
 name = "pallet-babe"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -3259,7 +3224,7 @@ dependencies = [
 [[package]]
 name = "pallet-balances"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -3449,7 +3414,7 @@ dependencies = [
 [[package]]
 name = "pallet-grandpa"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -3472,7 +3437,7 @@ dependencies = [
 [[package]]
 name = "pallet-session"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -3493,7 +3458,7 @@ dependencies = [
 [[package]]
 name = "pallet-sudo"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -3507,7 +3472,7 @@ dependencies = [
 [[package]]
 name = "pallet-timestamp"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -3525,7 +3490,7 @@ dependencies = [
 [[package]]
 name = "pallet-transaction-payment"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -3541,7 +3506,7 @@ dependencies = [
 [[package]]
 name = "pallet-transaction-payment-rpc-runtime-api"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "pallet-transaction-payment",
  "parity-scale-codec",
@@ -3552,7 +3517,7 @@ dependencies = [
 [[package]]
 name = "pallet-utility"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -3599,7 +3564,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0d32c34f4f5ca7f9196001c0aba5a1f9a5a12382c8944b8b0f90233282d1e8f8"
 dependencies = [
  "cfg-if",
- "hashbrown",
+ "hashbrown 0.12.3",
  "impl-trait-for-tuples",
  "parity-util-mem-derive",
  "parking_lot",
@@ -4094,10 +4059,11 @@ dependencies = [
  "blake2-rfc",
  "gclient",
  "gear-lib",
- "gear-lib-derive 0.3.1",
- "gear-wasm-builder 0.1.2 (git+https://github.com/gear-tech/gear.git?branch=master)",
+ "gear-lib-derive",
+ "gear-wasm-builder",
  "gstd",
- "gtest 0.1.0 (git+https://github.com/gear-tech/gear.git?branch=master)",
+ "gtest",
+ "hashbrown 0.13.1",
  "hex-literal",
  "io",
  "primitive-types",
@@ -4676,7 +4642,7 @@ dependencies = [
 [[package]]
 name = "sp-api"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "hash-db",
  "log",
@@ -4694,7 +4660,7 @@ dependencies = [
 [[package]]
 name = "sp-api-proc-macro"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "blake2",
  "proc-macro-crate 1.2.1",
@@ -4706,7 +4672,7 @@ dependencies = [
 [[package]]
 name = "sp-application-crypto"
 version = "6.0.0"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "parity-scale-codec",
  "scale-info",
@@ -4719,7 +4685,7 @@ dependencies = [
 [[package]]
 name = "sp-arithmetic"
 version = "5.0.0"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "integer-sqrt",
  "num-traits",
@@ -4734,7 +4700,7 @@ dependencies = [
 [[package]]
 name = "sp-authorship"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "async-trait",
  "parity-scale-codec",
@@ -4746,7 +4712,7 @@ dependencies = [
 [[package]]
 name = "sp-block-builder"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "parity-scale-codec",
  "sp-api",
@@ -4758,7 +4724,7 @@ dependencies = [
 [[package]]
 name = "sp-consensus"
 version = "0.10.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "async-trait",
  "futures",
@@ -4777,7 +4743,7 @@ dependencies = [
 [[package]]
 name = "sp-consensus-babe"
 version = "0.10.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "async-trait",
  "merlin 2.0.1",
@@ -4800,7 +4766,7 @@ dependencies = [
 [[package]]
 name = "sp-consensus-slots"
 version = "0.10.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "parity-scale-codec",
  "scale-info",
@@ -4814,7 +4780,7 @@ dependencies = [
 [[package]]
 name = "sp-consensus-vrf"
 version = "0.10.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "parity-scale-codec",
  "scale-info",
@@ -4827,7 +4793,7 @@ dependencies = [
 [[package]]
 name = "sp-core"
 version = "6.0.0"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "array-bytes",
  "base58",
@@ -4873,7 +4839,7 @@ dependencies = [
 [[package]]
 name = "sp-core-hashing"
 version = "4.0.0"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "blake2",
  "byteorder",
@@ -4902,7 +4868,7 @@ dependencies = [
 [[package]]
 name = "sp-core-hashing-proc-macro"
 version = "5.0.0"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -4913,7 +4879,7 @@ dependencies = [
 [[package]]
 name = "sp-debug-derive"
 version = "4.0.0"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -4923,7 +4889,7 @@ dependencies = [
 [[package]]
 name = "sp-externalities"
 version = "0.12.0"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "environmental",
  "parity-scale-codec",
@@ -4934,7 +4900,7 @@ dependencies = [
 [[package]]
 name = "sp-finality-grandpa"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "finality-grandpa",
  "log",
@@ -4952,7 +4918,7 @@ dependencies = [
 [[package]]
 name = "sp-inherents"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "async-trait",
  "impl-trait-for-tuples",
@@ -4966,7 +4932,7 @@ dependencies = [
 [[package]]
 name = "sp-io"
 version = "6.0.0"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "bytes",
  "futures",
@@ -4992,7 +4958,7 @@ dependencies = [
 [[package]]
 name = "sp-keystore"
 version = "0.12.0"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "async-trait",
  "futures",
@@ -5008,7 +4974,7 @@ dependencies = [
 [[package]]
 name = "sp-maybe-compressed-blob"
 version = "4.1.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "thiserror",
  "zstd",
@@ -5017,7 +4983,7 @@ dependencies = [
 [[package]]
 name = "sp-offchain"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "sp-api",
  "sp-core",
@@ -5027,7 +4993,7 @@ dependencies = [
 [[package]]
 name = "sp-panic-handler"
 version = "4.0.0"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "backtrace",
  "lazy_static",
@@ -5060,7 +5026,7 @@ dependencies = [
 [[package]]
 name = "sp-runtime-interface"
 version = "6.0.0"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "bytes",
  "impl-trait-for-tuples",
@@ -5078,7 +5044,7 @@ dependencies = [
 [[package]]
 name = "sp-runtime-interface-proc-macro"
 version = "5.0.0"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "Inflector",
  "proc-macro-crate 1.2.1",
@@ -5090,7 +5056,7 @@ dependencies = [
 [[package]]
 name = "sp-sandbox"
 version = "0.10.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "log",
  "parity-scale-codec",
@@ -5104,7 +5070,7 @@ dependencies = [
 [[package]]
 name = "sp-session"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "parity-scale-codec",
  "scale-info",
@@ -5118,7 +5084,7 @@ dependencies = [
 [[package]]
 name = "sp-staking"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "parity-scale-codec",
  "scale-info",
@@ -5129,7 +5095,7 @@ dependencies = [
 [[package]]
 name = "sp-state-machine"
 version = "0.12.0"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "hash-db",
  "log",
@@ -5151,7 +5117,7 @@ dependencies = [
 [[package]]
 name = "sp-std"
 version = "4.0.0"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 
 [[package]]
 name = "sp-std"
@@ -5162,7 +5128,7 @@ checksum = "cf3fd4c1d304be101e6ebbafd3d4be9a37b320c970ef4e8df188b16873981c93"
 [[package]]
 name = "sp-storage"
 version = "6.0.0"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "impl-serde",
  "parity-scale-codec",
@@ -5175,7 +5141,7 @@ dependencies = [
 [[package]]
 name = "sp-timestamp"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "async-trait",
  "futures-timer",
@@ -5191,7 +5157,7 @@ dependencies = [
 [[package]]
 name = "sp-tracing"
 version = "5.0.0"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "parity-scale-codec",
  "sp-std 4.0.0",
@@ -5203,7 +5169,7 @@ dependencies = [
 [[package]]
 name = "sp-transaction-pool"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "sp-api",
  "sp-runtime",
@@ -5212,11 +5178,11 @@ dependencies = [
 [[package]]
 name = "sp-trie"
 version = "6.0.0"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
- "ahash",
+ "ahash 0.7.6",
  "hash-db",
- "hashbrown",
+ "hashbrown 0.12.3",
  "lazy_static",
  "lru",
  "memory-db",
@@ -5235,7 +5201,7 @@ dependencies = [
 [[package]]
 name = "sp-version"
 version = "5.0.0"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "impl-serde",
  "parity-scale-codec",
@@ -5252,7 +5218,7 @@ dependencies = [
 [[package]]
 name = "sp-version-proc-macro"
 version = "4.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "parity-scale-codec",
  "proc-macro2",
@@ -5263,7 +5229,7 @@ dependencies = [
 [[package]]
 name = "sp-wasm-interface"
 version = "6.0.0"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "impl-trait-for-tuples",
  "log",
@@ -5275,7 +5241,7 @@ dependencies = [
 [[package]]
 name = "sp-weights"
 version = "4.0.0"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "impl-trait-for-tuples",
  "parity-scale-codec",
@@ -5400,7 +5366,7 @@ dependencies = [
 [[package]]
 name = "substrate-wasm-builder"
 version = "5.0.0-dev"
-source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#3941d3027cd94417688ec34109ed01bb10c81af3"
+source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
 dependencies = [
  "ansi_term",
  "build-helper",
@@ -5497,9 +5463,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "1.0.104"
+version = "1.0.105"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ae548ec36cf198c0ef7710d3c230987c2d6d7bd98ad6edc0274462724c585ce"
+checksum = "60b9b43d45702de4c839cb9b51d9f529c5dd26a4aff255b42b1ebc03e88ee908"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -5618,9 +5584,9 @@ checksum = "cda74da7e1a664f795bb1f8a87ec406fb89a02522cf6e50620d016add6dbbf5c"
 
 [[package]]
 name = "tokio"
-version = "1.22.0"
+version = "1.23.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d76ce4a75fb488c605c54bf610f221cea8b0dafb53333c1a67e8ee199dcd2ae3"
+checksum = "eab6d665857cc6ca78d6e80303a02cea7a7851e85dfbd77cbdc09bd129f1ef46"
 dependencies = [
  "autocfg",
  "bytes",
@@ -5633,7 +5599,7 @@ dependencies = [
  "signal-hook-registry",
  "socket2",
  "tokio-macros",
- "winapi",
+ "windows-sys 0.42.0",
 ]
 
 [[package]]
@@ -5781,7 +5747,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "004e1e8f92535694b4cb1444dc5a8073ecf0815e3357f729638b9f8fc4062908"
 dependencies = [
  "hash-db",
- "hashbrown",
+ "hashbrown 0.12.3",
  "log",
  "rustc-hex",
  "smallvec",

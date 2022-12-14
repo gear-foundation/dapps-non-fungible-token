@@ -60,7 +60,8 @@ pub enum NFTAction {
     SetUser {
         token_id: TokenId,
         address: ActorId,
-        expires: u64, // unix timestamp
+        duration_in_secs: u64, // unix timestamp
+        transaction_id: Option<u64>,
     },
     UserOf {
         token_id: TokenId,

@@ -58,7 +58,8 @@ pub fn set_user(
     let payload = io::NFTAction::SetUser {
         token_id,
         address,
-        expires,
+        duration_in_secs: expires,
+        transaction_id: None
     };
     nft.send(from, payload)
 }
