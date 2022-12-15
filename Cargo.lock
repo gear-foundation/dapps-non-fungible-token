@@ -2983,6 +2983,7 @@ dependencies = [
  "gear-wasm-builder",
  "gstd",
  "gtest",
+ "hashbrown 0.13.1",
  "hex-literal",
  "nft-io",
  "primitive-types",

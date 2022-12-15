@@ -3,16 +3,16 @@
 use gear_lib::non_fungible_token::{io::NFTTransfer, nft_core::*, state::*, token::*};
 use gear_lib_derive::{NFTCore, NFTMetaState, NFTStateKeeper};
 use gstd::{exec, msg, prelude::*, ActorId};
+use hashbrown::HashMap;
 use nft_io::{InitNFT, NFTAction, NFTEvent};
 use primitive_types::{H256, U256};
-
 #[derive(Debug, Default, NFTStateKeeper, NFTCore, NFTMetaState)]
 pub struct NFT {
     #[NFTStateField]
     pub token: NFTState,
     pub token_id: TokenId,
     pub owner: ActorId,
-    pub transactions: BTreeMap<H256, NFTEvent>,
+    pub transactions: HashMap<H256, NFTEvent>,
 }
 
 static mut CONTRACT: Option<NFT> = None;
