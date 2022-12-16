@@ -1,6 +1,6 @@
 [workspace]
 
-members = ["nft", "rentable_nft"]
+members = ["nft", "nft-street-art", "rentable_nft"]
 
 [patch.crates-io]
 # Two dependecies below goes for subxt v0.22.0
