@@ -193,10 +193,13 @@ unsafe extern "C" fn meta_state() -> *mut [i32; 2] {
     let nft = CONTRACT.get_or_insert(NFT::default());
     let encoded = match query {
         MyNFTQuery::Token { token_id } => {
-
-            let metadata = nft.id_to_metadata.get(&token_id).unwrap_or(&Default::default()).clone();
+            let metadata = nft
+                .id_to_metadata
+                .get(&token_id)
+                .unwrap_or(&Default::default())
+                .clone();
             MyNFTQueryReply::Token { metadata }
-        },
+        }
         MyNFTQuery::TokensForOwner { owner } => {
             let mut tokens: Vec<TokenId> = Vec::new();
             if let Some(token_ids) = nft.get().tokens_for_owner.get(&owner) {
@@ -205,20 +208,21 @@ unsafe extern "C" fn meta_state() -> *mut [i32; 2] {
                 }
             }
             MyNFTQueryReply::TokensForOwner { tokens }
-        },
+        }
         MyNFTQuery::TotalSupply => {
             let total_supply = nft.get().owner_by_id.len() as u128;
             MyNFTQueryReply::TotalSupply { total_supply }
-        },
+        }
         MyNFTQuery::SupplyForOwner { owner } => {
-            let supply =  nft.get()
-            .tokens_for_owner
-            .get(&owner)
-            .map(|tokens| tokens.len() as u128)
-            .unwrap_or(0);
+            let supply = nft
+                .get()
+                .tokens_for_owner
+                .get(&owner)
+                .map(|tokens| tokens.len() as u128)
+                .unwrap_or(0);
             MyNFTQueryReply::SupplyForOwner { supply }
-
-        },
-    }.encode();
+        }
+    }
+    .encode();
     gstd::util::to_leak_ptr(encoded)
 }
