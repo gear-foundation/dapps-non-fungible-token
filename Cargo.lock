@@ -1811,10 +1811,22 @@ dependencies = [
 
 [[package]]
 name = "gear-lib"
+version = "0.3.3"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.3#fd1e05ee79566b1c1c13699624ad2651f44b0f94"
+dependencies = [
+ "gear-lib-sr25519 0.3.3",
+ "gstd",
+ "parity-scale-codec",
+ "primitive-types",
+ "scale-info",
+]
+
+[[package]]
+name = "gear-lib"
 version = "0.3.4"
 source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.4#849c50ce5e6a99b21699d45df4c80add21cf54db"
 dependencies = [
- "gear-lib-sr25519",
+ "gear-lib-sr25519 0.3.4",
  "gstd",
  "parity-scale-codec",
  "primitive-types",
@@ -1823,10 +1835,21 @@ dependencies = [
 
 [[package]]
 name = "gear-lib-derive"
+version = "0.3.3"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.3#fd1e05ee79566b1c1c13699624ad2651f44b0f94"
+dependencies = [
+ "gear-lib-macros 0.3.2 (git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.3)",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "gear-lib-derive"
 version = "0.3.4"
 source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.4#849c50ce5e6a99b21699d45df4c80add21cf54db"
 dependencies = [
- "gear-lib-macros",
+ "gear-lib-macros 0.3.2 (git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.4)",
  "proc-macro2",
  "quote",
  "syn",
@@ -1835,7 +1858,20 @@ dependencies = [
 [[package]]
 name = "gear-lib-macros"
 version = "0.3.2"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.3#fd1e05ee79566b1c1c13699624ad2651f44b0f94"
+
+[[package]]
+name = "gear-lib-macros"
+version = "0.3.2"
 source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.4#849c50ce5e6a99b21699d45df4c80add21cf54db"
+
+[[package]]
+name = "gear-lib-sr25519"
+version = "0.3.3"
+source = "git+https://github.com/gear-dapps/gear-lib.git?tag=0.3.3#fd1e05ee79566b1c1c13699624ad2651f44b0f94"
+dependencies = [
+ "schnorrkel 0.10.2",
+]
 
 [[package]]
 name = "gear-lib-sr25519"
@@ -2444,7 +2480,7 @@ dependencies = [
 name = "io"
 version = "0.2.5"
 dependencies = [
- "gear-lib",
+ "gear-lib 0.3.4",
  "gstd",
  "primitive-types",
 ]
@@ -2978,8 +3014,8 @@ name = "nft"
 version = "0.2.4"
 dependencies = [
  "gclient",
- "gear-lib",
- "gear-lib-derive",
+ "gear-lib 0.3.4",
+ "gear-lib-derive 0.3.4",
  "gear-wasm-builder",
  "gstd",
  "gtest",
@@ -2993,12 +3029,37 @@ dependencies = [
 ]
 
 [[package]]
+name = "nft-art-io"
+version = "0.2.5"
+dependencies = [
+ "gear-lib 0.3.3",
+ "gstd",
+ "primitive-types",
+]
+
+[[package]]
 name = "nft-io"
 version = "0.2.6"
 dependencies = [
- "gear-lib",
+ "gear-lib 0.3.4",
  "gstd",
  "primitive-types",
+]
+
+[[package]]
+name = "nft-street-art"
+version = "0.1.0"
+dependencies = [
+ "gear-lib 0.3.3",
+ "gear-lib-derive 0.3.3",
+ "gear-wasm-builder",
+ "gstd",
+ "gtest",
+ "hex-literal",
+ "nft-art-io",
+ "primitive-types",
+ "sp-core",
+ "sp-core-hashing 5.0.0",
 ]
 
 [[package]]
@@ -4059,8 +4120,8 @@ version = "0.2.6"
 dependencies = [
  "blake2-rfc",
  "gclient",
- "gear-lib",
- "gear-lib-derive",
+ "gear-lib 0.3.4",
+ "gear-lib-derive 0.3.4",
  "gear-wasm-builder",
  "gstd",
  "gtest",
