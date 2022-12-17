@@ -226,3 +226,15 @@ unsafe extern "C" fn meta_state() -> *mut [i32; 2] {
     .encode();
     gstd::util::to_leak_ptr(encoded)
 }
+
+gstd::metadata! {
+    title: "NFT Street Art",
+    init:
+        input: InitNFT,
+    handle:
+        input: NFTAction,
+        output: NFTEvent,
+    state:
+        input: MyNFTQuery,
+        output: MyNFTQueryReply,
+}
