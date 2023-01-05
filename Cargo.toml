@@ -5,6 +5,6 @@ members = [
     "rentable-nft",
 ]
 
-[patch.crates-io]
-sp-core = { git = "https://github.com/gear-tech/substrate.git", branch = "gear-stable" }
-sp-runtime = { git = "https://github.com/gear-tech/substrate.git", branch = "gear-stable" }
+# [patch.crates-io]
+# sp-core = { git = "https://github.com/gear-tech/substrate.git", branch = "gear-stable" }
+# sp-runtime = { git = "https://github.com/gear-tech/substrate.git", branch = "gear-stable" }

@@ -10,7 +10,7 @@ use gmeta::{In, InOut, Metadata};
 use gstd::{prelude::*, ActorId};
 
 pub use gear_lib::non_fungible_token::delegated::DelegatedApproveMessage;
-use primitive_types::{H256, U256};
+use primitive_types::H256;
 
 pub struct NFTMetadata;
 
@@ -21,6 +21,10 @@ impl Metadata for NFTMetadata {
     type Others = ();
     type Signal = ();
     type State = NFTQuery;
+}
+
+pub fn foo(_state: <NFTMetadata as Metadata>::State) -> u64 {
+    0
 }
 
 #[derive(Debug, Encode, Decode, TypeInfo)]
@@ -138,36 +142,34 @@ impl From<&NFTState> for IoNFTState {
             royalties,
         } = value;
 
-        let mut owner_by_id_vec: Vec<(U256, ActorId)> = Vec::with_capacity(owner_by_id.len());
-        for (hash, actor_id) in owner_by_id {
-            owner_by_id_vec.push((*hash, *actor_id))
-        }
-        let mut token_approvals_vec = Vec::with_capacity(token_approvals.len());
-        for (key, approvals) in token_approvals {
-            let mut approvals_vec = Vec::with_capacity(approvals.len());
-            for actor_id in approvals {
-                approvals_vec.push(*actor_id);
-            }
-            let value = (*key, approvals_vec);
-            token_approvals_vec.push(value)
-        }
-        let mut token_metadata_by_id_vec = Vec::with_capacity(token_metadata_by_id.len());
-        for (hash, metadata) in token_metadata_by_id {
-            token_metadata_by_id_vec.push((*hash, metadata.clone()));
-        }
-        let mut tokens_for_owner_vec = Vec::with_capacity(tokens_for_owner.len());
-        for (actor_id, tokens) in tokens_for_owner {
-            tokens_for_owner_vec.push((*actor_id, tokens.clone()));
-        }
+        let owner_by_id = owner_by_id
+            .iter()
+            .map(|(hash, actor_id)| (*hash, *actor_id))
+            .collect();
+
+        let token_approvals = token_approvals
+            .iter()
+            .map(|(key, approvals)| (*key, approvals.iter().copied().collect()))
+            .collect();
+
+        let token_metadata_by_id = token_metadata_by_id
+            .iter()
+            .map(|(id, metadata)| (*id, metadata.clone()))
+            .collect();
+
+        let tokens_for_owner = tokens_for_owner
+            .iter()
+            .map(|(id, tokens)| (*id, tokens.clone()))
+            .collect();
 
         Self {
             name: name.clone(),
             symbol: symbol.clone(),
             base_uri: base_uri.clone(),
-            owner_by_id: owner_by_id_vec,
-            token_approvals: token_approvals_vec,
-            token_metadata_by_id: token_metadata_by_id_vec,
-            tokens_for_owner: tokens_for_owner_vec,
+            owner_by_id,
+            token_approvals,
+            token_metadata_by_id,
+            tokens_for_owner,
             royalties: royalties.clone(),
         }
     }
