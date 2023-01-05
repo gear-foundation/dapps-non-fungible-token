@@ -3,12 +3,25 @@
 use gear_lib::non_fungible_token::{
     io::{NFTApproval, NFTTransfer, NFTTransferPayout},
     royalties::*,
+    state::{NFTQuery, NFTState},
     token::*,
 };
+use gmeta::{In, InOut, Metadata};
 use gstd::{prelude::*, ActorId};
 
 pub use gear_lib::non_fungible_token::delegated::DelegatedApproveMessage;
-use primitive_types::H256;
+use primitive_types::{H256, U256};
+
+pub struct NFTMetadata;
+
+impl Metadata for NFTMetadata {
+    type Init = In<InitNFT>;
+    type Handle = InOut<NFTAction, NFTEvent>;
+    type Reply = ();
+    type Others = ();
+    type Signal = ();
+    type State = NFTQuery;
+}
 
 #[derive(Debug, Encode, Decode, TypeInfo)]
 #[codec(crate = gstd::codec)]
@@ -86,4 +99,76 @@ pub enum NFTEvent {
         token_id: TokenId,
         approved: bool,
     },
+}
+
+#[derive(Debug, Clone, Default, Encode, Decode, TypeInfo)]
+#[codec(crate = gstd::codec)]
+#[scale_info(crate = gstd::scale_info)]
+pub struct IoNFTState {
+    pub name: String,
+    pub symbol: String,
+    pub base_uri: String,
+    pub owner_by_id: Vec<(TokenId, ActorId)>,
+    pub token_approvals: Vec<(TokenId, Vec<ActorId>)>,
+    pub token_metadata_by_id: Vec<(TokenId, Option<TokenMetadata>)>,
+    pub tokens_for_owner: Vec<(ActorId, Vec<TokenId>)>,
+    pub royalties: Option<Royalties>,
+}
+
+#[derive(Debug, Clone, Default, Encode, Decode, TypeInfo)]
+#[codec(crate = gstd::codec)]
+#[scale_info(crate = gstd::scale_info)]
+pub struct IoNFT {
+    pub token: IoNFTState,
+    pub token_id: TokenId,
+    pub owner: ActorId,
+    pub transactions: Vec<(H256, NFTEvent)>,
+}
+
+impl From<&NFTState> for IoNFTState {
+    fn from(value: &NFTState) -> Self {
+        let NFTState {
+            name,
+            symbol,
+            base_uri,
+            owner_by_id,
+            token_approvals,
+            token_metadata_by_id,
+            tokens_for_owner,
+            royalties,
+        } = value;
+
+        let mut owner_by_id_vec: Vec<(U256, ActorId)> = Vec::with_capacity(owner_by_id.len());
+        for (hash, actor_id) in owner_by_id {
+            owner_by_id_vec.push((*hash, *actor_id))
+        }
+        let mut token_approvals_vec = Vec::with_capacity(token_approvals.len());
+        for (key, approvals) in token_approvals {
+            let mut approvals_vec = Vec::with_capacity(approvals.len());
+            for actor_id in approvals {
+                approvals_vec.push(*actor_id);
+            }
+            let value = (*key, approvals_vec);
+            token_approvals_vec.push(value)
+        }
+        let mut token_metadata_by_id_vec = Vec::with_capacity(token_metadata_by_id.len());
+        for (hash, metadata) in token_metadata_by_id {
+            token_metadata_by_id_vec.push((*hash, metadata.clone()));
+        }
+        let mut tokens_for_owner_vec = Vec::with_capacity(tokens_for_owner.len());
+        for (actor_id, tokens) in tokens_for_owner {
+            tokens_for_owner_vec.push((*actor_id, tokens.clone()));
+        }
+
+        Self {
+            name: name.clone(),
+            symbol: symbol.clone(),
+            base_uri: base_uri.clone(),
+            owner_by_id: owner_by_id_vec,
+            token_approvals: token_approvals_vec,
+            token_metadata_by_id: token_metadata_by_id_vec,
+            tokens_for_owner: tokens_for_owner_vec,
+            royalties: royalties.clone(),
+        }
+    }
 }

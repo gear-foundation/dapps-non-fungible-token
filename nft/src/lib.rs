@@ -4,8 +4,9 @@ use gear_lib::non_fungible_token::{io::NFTTransfer, nft_core::*, state::*, token
 use gear_lib_derive::{NFTCore, NFTMetaState, NFTStateKeeper};
 use gstd::{exec, msg, prelude::*, ActorId};
 use hashbrown::HashMap;
-use nft_io::{InitNFT, NFTAction, NFTEvent};
+use nft_io::{InitNFT, IoNFT, NFTAction, NFTEvent};
 use primitive_types::{H256, U256};
+
 #[derive(Debug, Default, NFTStateKeeper, NFTCore, NFTMetaState)]
 pub struct NFT {
     #[NFTStateField]
@@ -21,7 +22,7 @@ static mut CONTRACT: Option<NFT> = None;
 unsafe extern "C" fn init() {
     let config: InitNFT = msg::load().expect("Unable to decode InitNFT");
     if config.royalties.is_some() {
-        config.royalties.as_ref().unwrap().validate();
+        config.royalties.as_ref().expect("Unable to g").validate();
     }
     let nft = NFT {
         token: NFTState {
@@ -202,6 +203,27 @@ impl NFT {
     }
 }
 
+#[no_mangle]
+extern "C" fn metahash() {
+    let metahash: [u8; 32] = include!("../.metahash");
+    msg::reply(metahash, 0).expect("Failed to share metahash");
+}
+
+#[no_mangle]
+extern "C" fn state() {
+    unsafe {
+        match &CONTRACT {
+            Some(nft) => {
+                let reply_nft: IoNFT = nft.into();
+                let payload = reply_nft.encode();
+
+                msg::reply(payload, 0).expect("Failed to share state");
+            }
+            None => panic!("Uninitialized NFT state"),
+        }
+    }
+}
+
 gstd::metadata! {
     title: "NFT",
     init:
@@ -218,4 +240,26 @@ pub fn get_hash(account: &ActorId, transaction_id: u64) -> H256 {
     let account: [u8; 32] = (*account).into();
     let transaction_id = transaction_id.to_be_bytes();
     sp_core_hashing::blake2_256(&[account.as_slice(), transaction_id.as_slice()].concat()).into()
+}
+
+impl From<&NFT> for IoNFT {
+    fn from(value: &NFT) -> Self {
+        let NFT {
+            token,
+            token_id,
+            owner,
+            transactions,
+        } = value;
+
+        let mut transactions_vec = Vec::with_capacity(transactions.len());
+        for (hash, event) in transactions {
+            transactions_vec.push((*hash, event.clone()));
+        }
+        Self {
+            token: token.into(),
+            token_id: *token_id,
+            owner: *owner,
+            transactions: transactions_vec,
+        }
+    }
 }
