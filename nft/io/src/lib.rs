@@ -3,7 +3,7 @@
 use gear_lib::non_fungible_token::{
     io::{NFTApproval, NFTTransfer, NFTTransferPayout},
     royalties::*,
-    state::{NFTQuery, NFTState},
+    state::NFTState,
     token::*,
 };
 use gmeta::{In, InOut, Metadata};
@@ -20,11 +20,7 @@ impl Metadata for NFTMetadata {
     type Reply = ();
     type Others = ();
     type Signal = ();
-    type State = NFTQuery;
-}
-
-pub fn foo(_state: <NFTMetadata as Metadata>::State) -> u64 {
-    0
+    type State = IoNFT;
 }
 
 #[derive(Debug, Encode, Decode, TypeInfo)]

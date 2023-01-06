@@ -207,19 +207,22 @@ extern "C" fn metahash() {
     msg::reply(metahash, 0).expect("Failed to share metahash");
 }
 
+fn static_mut_state() -> &'static mut NFT {
+    unsafe { CONTRACT.get_or_insert(Default::default()) }
+}
+
+fn common_state() -> <NFTMetadata as Metadata>::State {
+    static_mut_state().into();
+}
+
 #[no_mangle]
 extern "C" fn state() {
-    unsafe {
-        match &CONTRACT {
-            Some(nft) => {
-                let reply_nft: IoNFT = nft.into();
-                let payload = reply_nft.encode();
+    reply(common_state())
+        .expect("Failed to encode or reply with `<NFTMetadata as Metadata>::State` from `state()`");
+}
 
-                msg::reply(payload, 0).expect("Failed to share state");
-            }
-            None => panic!("Uninitialized NFT state"),
-        }
-    }
+fn reply(payload: impl Encode) -> GstdResult<MessageId> {
+    msg::reply(payload, 0)
 }
 
 gstd::metadata! {
