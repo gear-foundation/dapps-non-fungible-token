@@ -1,12 +1,13 @@
 use gear_lib::non_fungible_token::{io::NFTTransfer, nft_core::*, state::*, token::*};
 use gear_lib_derive::{NFTCore, NFTMetaState, NFTStateKeeper};
-use gstd::{exec, msg, prelude::*, ActorId};
+use gmeta::Metadata;
+use gstd::{errors::Result as GstdResult, exec, msg, prelude::*, ActorId, MessageId};
 use hashbrown::HashMap;
-use nft_io::{InitNFT, IoNFT, NFTAction, NFTEvent};
+use nft_io::{InitNFT, IoNFT, NFTAction, NFTEvent, NFTMetadata};
 use primitive_types::{H256, U256};
 
 #[derive(Debug, Default, NFTStateKeeper, NFTCore, NFTMetaState)]
-pub struct NFT {
+pub struct Nft {
     #[NFTStateField]
     pub token: NFTState,
     pub token_id: TokenId,
@@ -14,7 +15,7 @@ pub struct NFT {
     pub transactions: HashMap<H256, NFTEvent>,
 }
 
-static mut CONTRACT: Option<NFT> = None;
+static mut CONTRACT: Option<Nft> = None;
 
 #[no_mangle]
 unsafe extern "C" fn init() {
@@ -22,7 +23,7 @@ unsafe extern "C" fn init() {
     if config.royalties.is_some() {
         config.royalties.as_ref().expect("Unable to g").validate();
     }
-    let nft = NFT {
+    let nft = Nft {
         token: NFTState {
             name: config.name,
             symbol: config.symbol,
@@ -153,9 +154,9 @@ unsafe extern "C" fn handle() {
 #[no_mangle]
 unsafe extern "C" fn meta_state() -> *mut [i32; 2] {
     let query: NFTQuery = msg::load().expect("failed to decode input argument");
-    let nft = CONTRACT.get_or_insert(NFT::default());
+    let nft = CONTRACT.get_or_insert(Nft::default());
     let encoded =
-        NFTMetaState::proc_state(nft, query).expect("Error in reading NFT contract state");
+        NFTMetaState::proc_state(nft, query).expect("Error in reading Nft contract state");
     gstd::util::to_leak_ptr(encoded)
 }
 
@@ -163,7 +164,7 @@ pub trait MyNFTCore: NFTCore {
     fn mint(&mut self, token_metadata: TokenMetadata) -> NFTTransfer;
 }
 
-impl MyNFTCore for NFT {
+impl MyNFTCore for Nft {
     fn mint(&mut self, token_metadata: TokenMetadata) -> NFTTransfer {
         let transfer = NFTCore::mint(self, &msg::source(), self.token_id, Some(token_metadata));
         self.token_id = self.token_id.saturating_add(U256::one());
@@ -171,11 +172,11 @@ impl MyNFTCore for NFT {
     }
 }
 
-impl NFT {
+impl Nft {
     fn process_transaction(
         &mut self,
         transaction_id: u64,
-        action: impl FnOnce(&mut NFT) -> NFTEvent,
+        action: impl FnOnce(&mut Nft) -> NFTEvent,
     ) -> NFTEvent {
         let transaction_hash = get_hash(&msg::source(), transaction_id);
 
@@ -207,12 +208,12 @@ extern "C" fn metahash() {
     msg::reply(metahash, 0).expect("Failed to share metahash");
 }
 
-fn static_mut_state() -> &'static mut NFT {
+fn static_mut_state() -> &'static Nft {
     unsafe { CONTRACT.get_or_insert(Default::default()) }
 }
 
 fn common_state() -> <NFTMetadata as Metadata>::State {
-    static_mut_state().into();
+    static_mut_state().into()
 }
 
 #[no_mangle]
@@ -226,7 +227,7 @@ fn reply(payload: impl Encode) -> GstdResult<MessageId> {
 }
 
 gstd::metadata! {
-    title: "NFT",
+    title: "Nft",
     init:
         input: InitNFT,
     handle:
@@ -243,9 +244,9 @@ pub fn get_hash(account: &ActorId, transaction_id: u64) -> H256 {
     sp_core_hashing::blake2_256(&[account.as_slice(), transaction_id.as_slice()].concat()).into()
 }
 
-impl From<&NFT> for IoNFT {
-    fn from(value: &NFT) -> Self {
-        let NFT {
+impl From<&Nft> for IoNFT {
+    fn from(value: &Nft) -> Self {
+        let Nft {
             token,
             token_id,
             owner,

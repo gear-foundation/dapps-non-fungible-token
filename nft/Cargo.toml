@@ -14,6 +14,7 @@ gear-lib = { git = "https://github.com/gear-dapps/gear-lib.git", tag = "0.3.4" }
 gear-lib-derive = { git = "https://github.com/gear-dapps/gear-lib.git", tag = "0.3.4" }
 sp-core-hashing = { version = "6.0.0", default-features = false }
 hashbrown = "0.13.1"
+gmeta = { git = "https://github.com/gear-tech/gear.git", features = ["codegen"] }
 
 [dev-dependencies]
 gtest = { git = "https://github.com/gear-tech/gear.git", branch = "stable" }
@@ -25,9 +26,6 @@ tokio = { version = "1.23.0", features = ["full"] }
 [build-dependencies]
 gear-wasm-builder = { git = "https://github.com/gear-tech/gear.git" }
 nft-io = { path = "io" }
-nft-state = { path = "state" }
 
 [features]
 binary-vendor = []
-
- 

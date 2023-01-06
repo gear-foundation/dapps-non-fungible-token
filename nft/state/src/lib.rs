@@ -1,8 +1,8 @@
-#![no_std]
+// #![no_std]
 
-use gmeta::metawasm;
+// use gmeta::metawasm;
 
-#[metawasm]
-pub trait Metawasm {
-    type State = <NFTMetadata as Metadata>::State;
-}
+// #[metawasm]
+// pub trait Metawasm {
+//     type State = <NFTMetadata as Metadata>::State;
+// }
