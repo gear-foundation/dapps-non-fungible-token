@@ -5,14 +5,14 @@ authors = ["Gear Technologies"]
 edition = "2021"
 
 [dependencies]
-gstd = { git = "https://github.com/gear-tech/gear.git", features = ["debug"] }
+gstd = { git = "https://github.com/gear-tech/gear.git", features = ["debug"], branch = "stable" }
 primitive-types = { version = "0.12.1", default-features = false }
 nft-io = { path = "io" }
 gear-lib = { git = "https://github.com/gear-dapps/gear-lib.git", tag = "0.3.4" }
 gear-lib-derive = { git = "https://github.com/gear-dapps/gear-lib.git", tag = "0.3.4" }
 sp-core-hashing = { version = "6.0.0", default-features = false }
 hashbrown = "0.13.1"
-gmeta = { git = "https://github.com/gear-tech/gear.git", features = ["codegen"] }
+gmeta = { git = "https://github.com/gear-tech/gear", features = ["codegen"] }
 
 [dev-dependencies]
 gtest = { git = "https://github.com/gear-tech/gear.git", branch = "stable" }
@@ -24,6 +24,9 @@ tokio = { version = "1.23.0", features = ["full"] }
 [build-dependencies]
 gear-wasm-builder = { git = "https://github.com/gear-tech/gear.git" }
 nft-io = { path = "io" }
+
+[workspace]
+members = ["state"]
 
 [features]
 binary-vendor = []

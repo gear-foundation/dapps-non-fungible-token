@@ -52,8 +52,9 @@ node-test: build
 	rm gear-nightly-linux-x86_64.tar.xz
 	@./gear --dev --tmp > /dev/null 2>&1  & echo "$$!" > gear.pid
 	cat gear.pid;
-	@cargo +nightly t -Fbinary-vendor -- --include-ignored --test-threads=1 kill `(cat gear.pid)`; rm gear; rm gear.pid
+	@cargo +nightly t -Fbinary-vendor -- --include-ignored --test node_tests --test-threads=1 kill `(cat gear.pid)`;
+	rm gear; rm gear.pid
 
-full-test: build
+full-test:
 	@echo ⚙️ Running all tests...
-	@cargo +nightly t -Fbinary-vendor -- --include-ignored --test-threads=1
+	@cargo +nightly t --release -Fbinary-vendor -- --include-ignored --test-threads=1

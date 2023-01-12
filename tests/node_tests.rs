@@ -4,6 +4,7 @@ use nft::WASM_BINARY_OPT;
 use nft_io::*;
 
 #[tokio::test]
+#[ignore]
 async fn mint_test() -> Result<()> {
     let api = GearApi::dev().await?;
 
@@ -20,14 +21,7 @@ async fn mint_test() -> Result<()> {
     }
     .encode();
     let gas_info = api
-        .calculate_upload_gas(
-            None,
-            WASM_BINARY_OPT.to_vec(),
-            init_nft.clone(),
-            0,
-            true,
-            None,
-        )
+        .calculate_upload_gas(None, WASM_BINARY_OPT.to_vec(), init_nft.clone(), 0, true)
         .await?;
 
     let (message_id, program_id, _hash) = api
@@ -57,7 +51,7 @@ async fn mint_test() -> Result<()> {
     };
 
     let gas_info = api
-        .calculate_handle_gas(None, program_id, mint_payload.encode(), 0, true, None)
+        .calculate_handle_gas(None, program_id, mint_payload.encode(), 0, true)
         .await?;
 
     let (message_id, _) = api
@@ -72,6 +66,7 @@ async fn mint_test() -> Result<()> {
 }
 
 #[tokio::test]
+#[ignore]
 async fn burn_test() -> Result<()> {
     let api = GearApi::dev().await?;
 
@@ -88,14 +83,7 @@ async fn burn_test() -> Result<()> {
     }
     .encode();
     let gas_info = api
-        .calculate_upload_gas(
-            None,
-            WASM_BINARY_OPT.to_vec(),
-            init_nft.clone(),
-            0,
-            true,
-            None,
-        )
+        .calculate_upload_gas(None, WASM_BINARY_OPT.to_vec(), init_nft.clone(), 0, true)
         .await?;
 
     let (message_id, program_id, _hash) = api
@@ -125,7 +113,7 @@ async fn burn_test() -> Result<()> {
     };
 
     let gas_info = api
-        .calculate_handle_gas(None, program_id, mint_payload.encode(), 0, true, None)
+        .calculate_handle_gas(None, program_id, mint_payload.encode(), 0, true)
         .await?;
 
     let (message_id, _) = api
@@ -144,7 +132,7 @@ async fn burn_test() -> Result<()> {
     };
 
     let gas_info = api
-        .calculate_handle_gas(None, program_id, burn_payload.encode(), 0, true, None)
+        .calculate_handle_gas(None, program_id, burn_payload.encode(), 0, true)
         .await?;
 
     let (message_id, _) = api
@@ -162,7 +150,7 @@ async fn burn_test() -> Result<()> {
     };
 
     let gas_info = api
-        .calculate_handle_gas(None, program_id, burn_payload.encode(), 0, true, None)
+        .calculate_handle_gas(None, program_id, burn_payload.encode(), 0, true)
         .await?;
 
     let (message_id, _) = api
@@ -177,6 +165,7 @@ async fn burn_test() -> Result<()> {
 }
 
 #[tokio::test]
+#[ignore]
 async fn transfer_test() -> Result<()> {
     let api = GearApi::dev().await?;
 
@@ -193,14 +182,7 @@ async fn transfer_test() -> Result<()> {
     }
     .encode();
     let gas_info = api
-        .calculate_upload_gas(
-            None,
-            WASM_BINARY_OPT.to_vec(),
-            init_nft.clone(),
-            0,
-            true,
-            None,
-        )
+        .calculate_upload_gas(None, WASM_BINARY_OPT.to_vec(), init_nft.clone(), 0, true)
         .await?;
 
     let (message_id, program_id, _hash) = api
@@ -230,7 +212,7 @@ async fn transfer_test() -> Result<()> {
     };
 
     let gas_info = api
-        .calculate_handle_gas(None, program_id, mint_payload.encode(), 0, true, None)
+        .calculate_handle_gas(None, program_id, mint_payload.encode(), 0, true)
         .await?;
 
     let (message_id, _) = api
@@ -250,7 +232,7 @@ async fn transfer_test() -> Result<()> {
     };
 
     let gas_info = api
-        .calculate_handle_gas(None, program_id, transfer_payload.encode(), 0, true, None)
+        .calculate_handle_gas(None, program_id, transfer_payload.encode(), 0, true)
         .await?;
 
     let (message_id, _) = api
@@ -265,6 +247,7 @@ async fn transfer_test() -> Result<()> {
 }
 
 #[tokio::test]
+#[ignore]
 async fn owner_test() -> Result<()> {
     let api = GearApi::dev().await?;
 
@@ -281,14 +264,7 @@ async fn owner_test() -> Result<()> {
     }
     .encode();
     let gas_info = api
-        .calculate_upload_gas(
-            None,
-            WASM_BINARY_OPT.to_vec(),
-            init_nft.clone(),
-            0,
-            true,
-            None,
-        )
+        .calculate_upload_gas(None, WASM_BINARY_OPT.to_vec(), init_nft.clone(), 0, true)
         .await?;
 
     let (message_id, program_id, _hash) = api
@@ -318,7 +294,7 @@ async fn owner_test() -> Result<()> {
     };
 
     let gas_info = api
-        .calculate_handle_gas(None, program_id, mint_payload.encode(), 0, true, None)
+        .calculate_handle_gas(None, program_id, mint_payload.encode(), 0, true)
         .await?;
 
     let (message_id, _) = api
@@ -332,7 +308,7 @@ async fn owner_test() -> Result<()> {
     let owner_payload = NFTAction::Owner { token_id: 0.into() };
 
     let gas_info = api
-        .calculate_handle_gas(None, program_id, owner_payload.encode(), 0, true, None)
+        .calculate_handle_gas(None, program_id, owner_payload.encode(), 0, true)
         .await?;
 
     let (message_id, _) = api
@@ -347,6 +323,7 @@ async fn owner_test() -> Result<()> {
 }
 
 #[tokio::test]
+#[ignore]
 async fn approved() -> Result<()> {
     let api = GearApi::dev().await?;
 
@@ -363,14 +340,7 @@ async fn approved() -> Result<()> {
     }
     .encode();
     let gas_info = api
-        .calculate_upload_gas(
-            None,
-            WASM_BINARY_OPT.to_vec(),
-            init_nft.clone(),
-            0,
-            true,
-            None,
-        )
+        .calculate_upload_gas(None, WASM_BINARY_OPT.to_vec(), init_nft.clone(), 0, true)
         .await?;
 
     let (message_id, program_id, _hash) = api
@@ -400,7 +370,7 @@ async fn approved() -> Result<()> {
     };
 
     let gas_info = api
-        .calculate_handle_gas(None, program_id, mint_payload.encode(), 0, true, None)
+        .calculate_handle_gas(None, program_id, mint_payload.encode(), 0, true)
         .await?;
 
     let (message_id, _) = api
@@ -419,7 +389,7 @@ async fn approved() -> Result<()> {
     };
 
     let gas_info = api
-        .calculate_handle_gas(None, program_id, approve_payload.encode(), 0, true, None)
+        .calculate_handle_gas(None, program_id, approve_payload.encode(), 0, true)
         .await?;
 
     let (message_id, _) = api

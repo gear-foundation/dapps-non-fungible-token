@@ -41,14 +41,14 @@ jobs:
 
       - name: Run linter
         run: make linter
+      
+      - name: Build
+        run: make build
 
       - name: Run tests
-        run: make test
-
-      - name: Build
         run: |
-         curl -OL https://github.com/gear-tech/gear/releases/download/gear-stable/gear-stable.tar.gz
-          tar -xf gear-stable.tar.gz
+          curl -OL https://github.com/gear-tech/gear/releases/download/build/gear
+          chmod +x gear
           ./gear --tmp --dev &> /dev/null & echo -n $! > gear.pid
           make full-test
           kill `cat gear.pid`
