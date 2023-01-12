@@ -1635,6 +1635,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "galloc"
+version = "0.1.0"
+source = "git+https://github.com/gear-tech/gear.git#1d73ef1e0e48c2756f826b251664e31bcbfaf6d7"
+dependencies = [
+ "dlmalloc",
+]
+
+[[package]]
 name = "gclient"
 version = "0.1.0"
 source = "git+https://github.com/gear-tech/gear.git?branch=master#af690a6eea0f5c3b87091b5a2122d290d9667096"
@@ -1670,6 +1678,17 @@ source = "git+https://github.com/gear-tech/gear.git?branch=stable#ec8de75d6001cd
 dependencies = [
  "gear-core-errors 0.1.0 (git+https://github.com/gear-tech/gear.git?branch=stable)",
  "gsys 0.1.0 (git+https://github.com/gear-tech/gear.git?branch=stable)",
+ "parity-scale-codec",
+ "static_assertions",
+]
+
+[[package]]
+name = "gcore"
+version = "0.1.0"
+source = "git+https://github.com/gear-tech/gear.git#1d73ef1e0e48c2756f826b251664e31bcbfaf6d7"
+dependencies = [
+ "gear-core-errors 0.1.0 (git+https://github.com/gear-tech/gear.git)",
+ "gsys 0.1.0 (git+https://github.com/gear-tech/gear.git)",
  "parity-scale-codec",
  "static_assertions",
 ]
@@ -1830,6 +1849,16 @@ dependencies = [
 name = "gear-core-errors"
 version = "0.1.0"
 source = "git+https://github.com/gear-tech/gear.git?branch=stable#ec8de75d6001cdd477ac2a7e0251fe24c947c232"
+dependencies = [
+ "derive_more",
+ "parity-scale-codec",
+ "scale-info",
+]
+
+[[package]]
+name = "gear-core-errors"
+version = "0.1.0"
+source = "git+https://github.com/gear-tech/gear.git#1d73ef1e0e48c2756f826b251664e31bcbfaf6d7"
 dependencies = [
  "derive_more",
  "parity-scale-codec",
@@ -2284,6 +2313,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "gstd"
+version = "0.1.0"
+source = "git+https://github.com/gear-tech/gear.git#1d73ef1e0e48c2756f826b251664e31bcbfaf6d7"
+dependencies = [
+ "bs58",
+ "futures",
+ "galloc 0.1.0 (git+https://github.com/gear-tech/gear.git)",
+ "gcore 0.1.0 (git+https://github.com/gear-tech/gear.git)",
+ "gear-core-errors 0.1.0 (git+https://github.com/gear-tech/gear.git)",
+ "gstd-codegen 0.1.0 (git+https://github.com/gear-tech/gear.git)",
+ "hashbrown 0.13.1",
+ "hex",
+ "parity-scale-codec",
+ "primitive-types",
+ "scale-info",
+ "static_assertions",
+]
+
+[[package]]
 name = "gstd-codegen"
 version = "0.1.0"
 source = "git+https://github.com/gear-tech/gear.git?branch=master#af690a6eea0f5c3b87091b5a2122d290d9667096"
@@ -2304,6 +2352,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "gstd-codegen"
+version = "0.1.0"
+source = "git+https://github.com/gear-tech/gear.git#1d73ef1e0e48c2756f826b251664e31bcbfaf6d7"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "gsys"
 version = "0.1.0"
 source = "git+https://github.com/gear-tech/gear.git?branch=master#af690a6eea0f5c3b87091b5a2122d290d9667096"
@@ -2312,6 +2370,11 @@ source = "git+https://github.com/gear-tech/gear.git?branch=master#af690a6eea0f5c
 name = "gsys"
 version = "0.1.0"
 source = "git+https://github.com/gear-tech/gear.git?branch=stable#ec8de75d6001cdd477ac2a7e0251fe24c947c232"
+
+[[package]]
+name = "gsys"
+version = "0.1.0"
+source = "git+https://github.com/gear-tech/gear.git#1d73ef1e0e48c2756f826b251664e31bcbfaf6d7"
 
 [[package]]
 name = "gtest"
@@ -2646,15 +2709,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "276ec31bcb4a9ee45f58bec6f9ec700ae4cf4f4f8f2fa7e06cb406bd5ffdd770"
 dependencies = [
  "num-traits",
-]
-
-[[package]]
-name = "io"
-version = "0.2.7"
-dependencies = [
- "gear-lib",
- "gstd 0.1.0 (git+https://github.com/gear-tech/gear.git?branch=stable)",
- "primitive-types",
 ]
 
 [[package]]
@@ -3198,7 +3252,7 @@ dependencies = [
  "gear-lib-derive",
  "gear-wasm-builder 0.1.2 (git+https://github.com/gear-tech/gear.git)",
  "gmeta 0.1.0 (git+https://github.com/gear-tech/gear.git)",
- "gstd 0.1.0 (git+https://github.com/gear-tech/gear.git?branch=stable)",
+ "gstd 0.1.0 (git+https://github.com/gear-tech/gear.git)",
  "gtest",
  "hashbrown 0.13.1",
  "hex-literal",
@@ -3215,7 +3269,7 @@ version = "0.2.8"
 dependencies = [
  "gear-lib",
  "gmeta 0.1.0 (git+https://github.com/gear-tech/gear.git)",
- "gstd 0.1.0 (git+https://github.com/gear-tech/gear.git?branch=stable)",
+ "gstd 0.1.0 (git+https://github.com/gear-tech/gear.git)",
  "primitive-types",
 ]
 
@@ -4273,26 +4327,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3acd125665422973a33ac9d3dd2df85edad0f4ae9b00dafb1a05e43a9f5ef8e7"
 dependencies = [
  "winapi",
-]
-
-[[package]]
-name = "rentable-nft"
-version = "0.2.7"
-dependencies = [
- "blake2-rfc",
- "gclient",
- "gear-lib",
- "gear-lib-derive",
- "gear-wasm-builder 0.1.2 (git+https://github.com/gear-tech/gear.git?branch=stable)",
- "gstd 0.1.0 (git+https://github.com/gear-tech/gear.git?branch=stable)",
- "gtest",
- "hashbrown 0.13.1",
- "hex-literal",
- "io",
- "primitive-types",
- "sp-core 6.0.0",
- "sp-core-hashing 6.0.0",
- "tokio",
 ]
 
 [[package]]

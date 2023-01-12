@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-gstd = { git = "https://github.com/gear-tech/gear", branch = "stable" }
+gstd = { git = "https://github.com/gear-tech/gear" }
 gmeta = { git = "https://github.com/gear-tech/gear", features = ["codegen"] }
 nft-io = { path = "../io" }
 

@@ -151,15 +151,6 @@ unsafe extern "C" fn handle() {
     };
 }
 
-#[no_mangle]
-unsafe extern "C" fn meta_state() -> *mut [i32; 2] {
-    let query: NFTQuery = msg::load().expect("failed to decode input argument");
-    let nft = CONTRACT.get_or_insert(Nft::default());
-    let encoded =
-        NFTMetaState::proc_state(nft, query).expect("Error in reading Nft contract state");
-    gstd::util::to_leak_ptr(encoded)
-}
-
 pub trait MyNFTCore: NFTCore {
     fn mint(&mut self, token_metadata: TokenMetadata) -> NFTTransfer;
 }

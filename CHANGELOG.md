@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.8] - 2023-01-10
+### Added
+- Separate Rentable NFT program in another repository
+- Add new meta
+
 ## [0.2.7] - 2022-12-17
 ### Added
 - Rentable NFT program.

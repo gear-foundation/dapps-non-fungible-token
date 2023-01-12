@@ -1,12 +1,7 @@
 use gclient::{EventProcessor, GearApi, Result};
 use gstd::{ActorId, Encode};
+use nft::WASM_BINARY_OPT;
 use nft_io::*;
-
-#[cfg(debug_assertions)]
-const PATH: &str = "../target/wasm32-unknown-unknown/debug/nft.opt.wasm";
-
-#[cfg(not(debug_assertions))]
-const PATH: &str = "../target/wasm32-unknown-unknown/release/nft.opt.wasm";
 
 #[tokio::test]
 async fn mint_test() -> Result<()> {
@@ -27,7 +22,7 @@ async fn mint_test() -> Result<()> {
     let gas_info = api
         .calculate_upload_gas(
             None,
-            gclient::code_from_os(PATH)?,
+            WASM_BINARY_OPT.to_vec(),
             init_nft.clone(),
             0,
             true,
@@ -36,7 +31,13 @@ async fn mint_test() -> Result<()> {
         .await?;
 
     let (message_id, program_id, _hash) = api
-        .upload_program_bytes_by_path(PATH, gclient::bytes_now(), init_nft, gas_info.min_limit, 0)
+        .upload_program_bytes(
+            WASM_BINARY_OPT.to_vec(),
+            gclient::bytes_now(),
+            init_nft,
+            gas_info.min_limit,
+            0,
+        )
         .await?;
 
     assert!(listener.message_processed(message_id).await?.succeed());
@@ -89,7 +90,7 @@ async fn burn_test() -> Result<()> {
     let gas_info = api
         .calculate_upload_gas(
             None,
-            gclient::code_from_os(PATH)?,
+            WASM_BINARY_OPT.to_vec(),
             init_nft.clone(),
             0,
             true,
@@ -98,7 +99,13 @@ async fn burn_test() -> Result<()> {
         .await?;
 
     let (message_id, program_id, _hash) = api
-        .upload_program_bytes_by_path(PATH, gclient::bytes_now(), init_nft, gas_info.min_limit, 0)
+        .upload_program_bytes(
+            WASM_BINARY_OPT.to_vec(),
+            gclient::bytes_now(),
+            init_nft,
+            gas_info.min_limit,
+            0,
+        )
         .await?;
 
     assert!(listener.message_processed(message_id).await?.succeed());
@@ -188,7 +195,7 @@ async fn transfer_test() -> Result<()> {
     let gas_info = api
         .calculate_upload_gas(
             None,
-            gclient::code_from_os(PATH)?,
+            WASM_BINARY_OPT.to_vec(),
             init_nft.clone(),
             0,
             true,
@@ -197,7 +204,13 @@ async fn transfer_test() -> Result<()> {
         .await?;
 
     let (message_id, program_id, _hash) = api
-        .upload_program_bytes_by_path(PATH, gclient::bytes_now(), init_nft, gas_info.min_limit, 0)
+        .upload_program_bytes(
+            WASM_BINARY_OPT.to_vec(),
+            gclient::bytes_now(),
+            init_nft,
+            gas_info.min_limit,
+            0,
+        )
         .await?;
 
     assert!(listener.message_processed(message_id).await?.succeed());
@@ -270,7 +283,7 @@ async fn owner_test() -> Result<()> {
     let gas_info = api
         .calculate_upload_gas(
             None,
-            gclient::code_from_os(PATH)?,
+            WASM_BINARY_OPT.to_vec(),
             init_nft.clone(),
             0,
             true,
@@ -279,7 +292,13 @@ async fn owner_test() -> Result<()> {
         .await?;
 
     let (message_id, program_id, _hash) = api
-        .upload_program_bytes_by_path(PATH, gclient::bytes_now(), init_nft, gas_info.min_limit, 0)
+        .upload_program_bytes(
+            WASM_BINARY_OPT.to_vec(),
+            gclient::bytes_now(),
+            init_nft,
+            gas_info.min_limit,
+            0,
+        )
         .await?;
 
     assert!(listener.message_processed(message_id).await?.succeed());
@@ -346,7 +365,7 @@ async fn approved() -> Result<()> {
     let gas_info = api
         .calculate_upload_gas(
             None,
-            gclient::code_from_os(PATH)?,
+            WASM_BINARY_OPT.to_vec(),
             init_nft.clone(),
             0,
             true,
@@ -355,7 +374,13 @@ async fn approved() -> Result<()> {
         .await?;
 
     let (message_id, program_id, _hash) = api
-        .upload_program_bytes_by_path(PATH, gclient::bytes_now(), init_nft, gas_info.min_limit, 0)
+        .upload_program_bytes(
+            WASM_BINARY_OPT.to_vec(),
+            gclient::bytes_now(),
+            init_nft,
+            gas_info.min_limit,
+            0,
+        )
         .await?;
 
     assert!(listener.message_processed(message_id).await?.succeed());
