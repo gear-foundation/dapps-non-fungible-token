@@ -196,7 +196,7 @@ impl Nft {
 #[no_mangle]
 extern "C" fn metahash() {
     let metahash: [u8; 32] = include!("../.metahash");
-    msg::reply(metahash, 0).expect("Failed to share metahash");
+    reply(metahash).expect("Failed to encode or reply with `[u8; 32]` from `metahash()`");
 }
 
 fn static_mut_state() -> &'static Nft {
@@ -215,18 +215,6 @@ extern "C" fn state() {
 
 fn reply(payload: impl Encode) -> GstdResult<MessageId> {
     msg::reply(payload, 0)
-}
-
-gstd::metadata! {
-    title: "Nft",
-    init:
-        input: InitNFT,
-    handle:
-        input: NFTAction,
-        output: NFTEvent,
-    state:
-        input: NFTQuery,
-        output: NFTQueryReply,
 }
 
 pub fn get_hash(account: &ActorId, transaction_id: u64) -> H256 {
