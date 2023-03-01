@@ -2035,7 +2035,7 @@ dependencies = [
 
 [[package]]
 name = "nft"
-version = "0.2.9"
+version = "0.2.10"
 dependencies = [
  "gclient",
  "gear-lib",
@@ -2055,7 +2055,7 @@ dependencies = [
 
 [[package]]
 name = "nft-io"
-version = "0.2.9"
+version = "0.2.10"
 dependencies = [
  "gear-lib",
  "gmeta",
@@ -2065,7 +2065,7 @@ dependencies = [
 
 [[package]]
 name = "nft-state"
-version = "0.2.9"
+version = "0.2.10"
 dependencies = [
  "gear-lib",
  "gear-wasm-builder",
