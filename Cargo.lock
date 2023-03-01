@@ -2049,7 +2049,7 @@ dependencies = [
  "nft-io",
  "primitive-types",
  "sp-core 6.0.0",
- "sp-core-hashing 6.0.0",
+ "sp-core-hashing 7.0.0",
  "tokio",
 ]
 
@@ -3250,6 +3250,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "sp-core-hashing"
+version = "7.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d607f7209b1b9571177fc3722a03312df03606bb65f89317ba686d5fa59d438f"
+dependencies = [
+ "blake2",
+ "byteorder",
+ "digest 0.10.6",
+ "sha2 0.10.6",
+ "sha3",
+ "sp-std 7.0.0",
+ "twox-hash",
+]
+
+[[package]]
 name = "sp-debug-derive"
 version = "4.0.0"
 source = "git+https://github.com/gear-tech/substrate.git?branch=gear-stable#0dfdf6f7722f776c30978b9be29057be3206bc89"
@@ -3460,6 +3475,12 @@ name = "sp-std"
 version = "6.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "af0ee286f98455272f64ac5bb1384ff21ac029fbb669afbaf48477faff12760e"
+
+[[package]]
+name = "sp-std"
+version = "7.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1de8eef39962b5b97478719c493bed2926cf70cb621005bbf68ebe58252ff986"
 
 [[package]]
 name = "sp-storage"
