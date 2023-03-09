@@ -1,11 +1,10 @@
-import { useAccount, useSendMessage } from '@gear-js/react-hooks';
+import { useAccount, useSendMessage, useReadWasmState } from '@gear-js/react-hooks';
 import { ADDRESS } from 'consts';
 import { Params, Token } from 'types';
 import { useParams } from 'react-router-dom';
 import stateMetaWasm from 'assets/wasm/state.meta.wasm';
 import metaTxt from 'assets/meta/meta.txt';
 import { useMetadata, useWasmMetadata } from './useMetadata';
-import { useReadWasmState } from './useReadWasmState';
 
 function useNFTMetadata() {
   return useMetadata(metaTxt);
@@ -25,12 +24,11 @@ function useNFTState<T>(functionName: string, payload?: any) {
 function useNFT() {
   const { id } = useParams() as Params;
   const { state } = useNFTState<Token>('token', id);
-  console.log(state);
   return state;
 }
 
 function useNFTs() {
-  const { state } = useNFTState<Token[]>('all_tokens');
+  const { state } = useNFTState<Token[]>('all_tokens', null);
   return state;
 }
 

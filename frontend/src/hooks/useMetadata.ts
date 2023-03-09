@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   getProgramMetadata,
-  getStateMetadata,
-  ProgramMetadata,
-  StateMetadata,
+  ProgramMetadata
 } from '@gear-js/api';
 import { Buffer } from 'buffer';
 import { useAlert } from '@gear-js/react-hooks';
