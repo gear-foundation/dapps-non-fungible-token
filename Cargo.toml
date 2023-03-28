@@ -19,7 +19,7 @@ gtest = { git = "https://github.com/gear-tech/gear.git", branch = "testnet" }
 hex-literal = "0.3.4"
 sp-core = { version = "6.0.0", git = "https://github.com/gear-tech/substrate.git", branch = "gear-stable" }
 gclient = { git = "https://github.com/gear-tech/gear.git", branch = "testnet" }
-tokio = { version = "1.23.0", features = ["full"] }
+tokio = { version = "1.27.0", features = ["full"] }
 
 [build-dependencies]
 gear-wasm-builder = { git = "https://github.com/gear-tech/gear.git", branch = "testnet" }
