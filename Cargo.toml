@@ -10,16 +10,16 @@ primitive-types = { version = "0.12.1", default-features = false }
 nft-io = { path = "io" }
 gear-lib = { git = "https://github.com/gear-dapps/gear-lib.git", tag = "0.3.5" }
 gear-lib-derive = { git = "https://github.com/gear-dapps/gear-lib.git", tag = "0.3.5" }
-sp-core-hashing = { version = "7.0.0", default-features = false }
-hashbrown = "0.13.1"
+sp-core-hashing = { version = "8.0.0", default-features = false }
+hashbrown = "0.13"
 gmeta = { git = "https://github.com/gear-tech/gear", branch = "testnet", features = ["codegen"] }
 
 [dev-dependencies]
 gtest = { git = "https://github.com/gear-tech/gear.git", branch = "testnet" }
 hex-literal = "0.3.4"
 sp-core = { version = "6.0.0", git = "https://github.com/gear-tech/substrate.git", branch = "gear-stable" }
-gclient = { git = "https://github.com/gear-tech/gear.git", branch = "testnet" }
-tokio = { version = "1.23.0", features = ["full"] }
+gclient = { git = "https://github.com/gear-tech/gear.git" }
+tokio = { version = "1", features = ["full"] }
 
 [build-dependencies]
 gear-wasm-builder = { git = "https://github.com/gear-tech/gear.git", branch = "testnet" }
