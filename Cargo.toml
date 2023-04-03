@@ -16,7 +16,7 @@ gmeta = { git = "https://github.com/gear-tech/gear", branch = "testnet", feature
 
 [dev-dependencies]
 gtest = { git = "https://github.com/gear-tech/gear.git", branch = "testnet" }
-hex-literal = "0.3.4"
+hex-literal = "0.4.0"
 sp-core = { version = "6.0.0", git = "https://github.com/gear-tech/substrate.git", branch = "gear-stable" }
 gclient = { git = "https://github.com/gear-tech/gear.git", branch = "testnet" }
 tokio = { version = "1.23.0", features = ["full"] }
