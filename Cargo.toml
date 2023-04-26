@@ -18,7 +18,7 @@ gmeta = { git = "https://github.com/gear-tech/gear", rev = "5c685d0f15c412ab6ee0
 gtest = { git = "https://github.com/gear-tech/gear.git", rev = "5c685d0f15c412ab6ee019ceaf7ce084426dfb68" }
 hex-literal = "0.4"
 sp-core = { version = "6.0.0", git = "https://github.com/gear-tech/substrate.git", branch = "gear-stable" }
-gclient = { git = "https://github.com/gear-tech/gear.git" }
+gclient = { git = "https://github.com/gear-tech/gear.git", rev = "5c685d0f15c412ab6ee019ceaf7ce084426dfb68" }
 tokio = { version = "1", features = ["full"] }
 
 [build-dependencies]
