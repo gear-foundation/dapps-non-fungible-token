@@ -1038,7 +1038,7 @@ dependencies = [
 [[package]]
 name = "galloc"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#4e027d8ae3656c5ee5e250d545d3f0ada2c574dd"
+source = "git+https://github.com/gear-tech/gear.git#5e05d464e8c853af2e5e739d05609adbd29ab9c8"
 dependencies = [
  "dlmalloc",
 ]
@@ -1046,7 +1046,7 @@ dependencies = [
 [[package]]
 name = "gclient"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#4e027d8ae3656c5ee5e250d545d3f0ada2c574dd"
+source = "git+https://github.com/gear-tech/gear.git#5e05d464e8c853af2e5e739d05609adbd29ab9c8"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1078,7 +1078,7 @@ dependencies = [
 [[package]]
 name = "gcore"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#4e027d8ae3656c5ee5e250d545d3f0ada2c574dd"
+source = "git+https://github.com/gear-tech/gear.git#5e05d464e8c853af2e5e739d05609adbd29ab9c8"
 dependencies = [
  "gear-core-errors 0.1.0 (git+https://github.com/gear-tech/gear.git)",
  "gsys 0.1.0 (git+https://github.com/gear-tech/gear.git)",
@@ -1137,7 +1137,7 @@ dependencies = [
 [[package]]
 name = "gear-core"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#4e027d8ae3656c5ee5e250d545d3f0ada2c574dd"
+source = "git+https://github.com/gear-tech/gear.git#5e05d464e8c853af2e5e739d05609adbd29ab9c8"
 dependencies = [
  "blake2-rfc",
  "derive_more",
@@ -1165,7 +1165,7 @@ dependencies = [
 [[package]]
 name = "gear-core-errors"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#4e027d8ae3656c5ee5e250d545d3f0ada2c574dd"
+source = "git+https://github.com/gear-tech/gear.git#5e05d464e8c853af2e5e739d05609adbd29ab9c8"
 dependencies = [
  "derive_more",
  "enum-iterator",
@@ -1227,7 +1227,7 @@ dependencies = [
 [[package]]
 name = "gear-utils"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#4e027d8ae3656c5ee5e250d545d3f0ada2c574dd"
+source = "git+https://github.com/gear-tech/gear.git#5e05d464e8c853af2e5e739d05609adbd29ab9c8"
 dependencies = [
  "env_logger",
  "nonempty",
@@ -1263,7 +1263,7 @@ dependencies = [
 [[package]]
 name = "gear-wasm-instrument"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#4e027d8ae3656c5ee5e250d545d3f0ada2c574dd"
+source = "git+https://github.com/gear-tech/gear.git#5e05d464e8c853af2e5e739d05609adbd29ab9c8"
 dependencies = [
  "enum-iterator",
  "wasm-instrument",
@@ -1361,7 +1361,7 @@ dependencies = [
 [[package]]
 name = "gsdk"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#4e027d8ae3656c5ee5e250d545d3f0ada2c574dd"
+source = "git+https://github.com/gear-tech/gear.git#5e05d464e8c853af2e5e739d05609adbd29ab9c8"
 dependencies = [
  "anyhow",
  "async-recursion",
@@ -1403,7 +1403,7 @@ dependencies = [
 [[package]]
 name = "gstd"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#4e027d8ae3656c5ee5e250d545d3f0ada2c574dd"
+source = "git+https://github.com/gear-tech/gear.git#5e05d464e8c853af2e5e739d05609adbd29ab9c8"
 dependencies = [
  "bs58",
  "futures",
@@ -1431,7 +1431,7 @@ dependencies = [
 [[package]]
 name = "gstd-codegen"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#4e027d8ae3656c5ee5e250d545d3f0ada2c574dd"
+source = "git+https://github.com/gear-tech/gear.git#5e05d464e8c853af2e5e739d05609adbd29ab9c8"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1446,7 +1446,7 @@ source = "git+https://github.com/gear-tech/gear?branch=testnet#dc864658433dd320b
 [[package]]
 name = "gsys"
 version = "0.1.0"
-source = "git+https://github.com/gear-tech/gear.git#4e027d8ae3656c5ee5e250d545d3f0ada2c574dd"
+source = "git+https://github.com/gear-tech/gear.git#5e05d464e8c853af2e5e739d05609adbd29ab9c8"
 
 [[package]]
 name = "gtest"
@@ -1567,9 +1567,9 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 
 [[package]]
 name = "hex-literal"
-version = "0.3.4"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7ebdb29d2ea9ed0083cd8cece49bbd968021bd99b0849edb4a9a7ee0fdf6a4e0"
+checksum = "6fe2267d4ed49bc07b63801559be28c718ea06c4738b7a03c94df7386d2cde46"
 
 [[package]]
 name = "hmac"
