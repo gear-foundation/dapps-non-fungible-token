@@ -8,8 +8,8 @@ edition = "2021"
 gstd = { git = "https://github.com/gear-tech/gear.git", features = ["debug"], rev = "5c685d0f15c412ab6ee019ceaf7ce084426dfb68" }
 primitive-types = { version = "0.12.1", default-features = false }
 nft-io = { path = "io" }
-gear-lib = { git = "https://github.com/gear-dapps/gear-lib.git", tag = "0.3.5" }
-gear-lib-derive = { git = "https://github.com/gear-dapps/gear-lib.git", tag = "0.3.5" }
+gear-lib = { git = "https://github.com/gear-dapps/gear-lib.git", tag = "0.3.6" }
+gear-lib-derive = { git = "https://github.com/gear-dapps/gear-lib.git", tag = "0.3.6" }
 sp-core-hashing = { version = "8.0.0", default-features = false }
 hashbrown = "0.13"
 gmeta = { git = "https://github.com/gear-tech/gear", rev = "5c685d0f15c412ab6ee019ceaf7ce084426dfb68", features = ["codegen"] }
