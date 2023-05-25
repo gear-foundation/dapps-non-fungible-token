@@ -6,7 +6,7 @@ edition.workspace = true
 license.workspace = true
 
 [dependencies]
-gstd.workspace = true
+gstd = { workspace = true, features = ["debug"] }
 primitive-types.workspace = true
 nft-io.workspace = true
 gear-lib.workspace = true
@@ -23,13 +23,13 @@ gclient.workspace = true
 gtest.workspace = true
 tokio.workspace = true
 
+[features]
+binary-vendor = []
+
 [build-dependencies]
 nft-io.workspace = true
 gear-wasm-builder.workspace = true
 gmeta.workspace = true
-
-[features]
-binary-vendor = []
 
 [workspace.package]
 version = "0.1.1"
@@ -41,8 +41,8 @@ authors = ["Gear Technologies"]
 members = ["state"]
 
 [workspace.dependencies]
-gstd = { git = "https://github.com/gear-tech/gear.git", features = ["debug"], rev = "78dfa07" }
-gmeta = { git = "https://github.com/gear-tech/gear", rev = "78dfa07", features = ["codegen"] }
+gstd = { git = "https://github.com/gear-tech/gear.git", rev = "78dfa07" }
+gmeta = { git = "https://github.com/gear-tech/gear", rev = "78dfa07" }
 gear-wasm-builder = { git = "https://github.com/gear-tech/gear", rev = "78dfa07" }
 gtest = { git = "https://github.com/gear-tech/gear", rev = "78dfa07" }
 gclient = { git = "https://github.com/gear-tech/gear.git", rev = "78dfa07" }
@@ -55,4 +55,4 @@ sp-core-hashing = { version = "8.0.0", default-features = false }
 hashbrown = "0.13"
 hex-literal = "0.4"
 sp-core = { git = "https://github.com/gear-tech/substrate.git", rev = "36699c4478ce8ae05517bb42a1b115403313e083" }
-tokio = { version = "1", features = ["full"] }
+tokio = "1"
