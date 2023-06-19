@@ -8,15 +8,17 @@ pub fn init_nft(sys: &System) {
     sys.init_logger();
     let nft = Program::current(sys);
 
-    let res = nft.send(
-        USERS[0],
-        InitNFT {
-            name: String::from("MyToken"),
-            symbol: String::from("MTK"),
-            base_uri: String::from(""),
-            royalties: None,
-        },
-    );
+    let collection = Collection {
+        name: String::from("MyToken"),
+        description: String::from("My token"),
+    };
+
+    let init_nft = InitNFT {
+        collection,
+        royalties: None,
+    };
+
+    let res = nft.send(USERS[0], init_nft);
 
     assert!(res.log().is_empty());
 }
