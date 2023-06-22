@@ -20,6 +20,7 @@ async fn mint_test() -> Result<()> {
     let init_nft = InitNFT {
         collection,
         royalties: None,
+        constraints: Default::default(),
     }
     .encode();
     let gas_info = api
@@ -84,6 +85,7 @@ async fn burn_test() -> Result<()> {
     let init_nft = InitNFT {
         collection,
         royalties: None,
+        constraints: Default::default(),
     }
     .encode();
     let gas_info = api
@@ -186,6 +188,7 @@ async fn transfer_test() -> Result<()> {
     let init_nft = InitNFT {
         collection,
         royalties: None,
+        constraints: Default::default(),
     }
     .encode();
     let gas_info = api
@@ -271,6 +274,7 @@ async fn owner_test() -> Result<()> {
     let init_nft = InitNFT {
         collection,
         royalties: None,
+        constraints: Default::default(),
     }
     .encode();
     let gas_info = api
@@ -350,6 +354,7 @@ async fn approved() -> Result<()> {
     let init_nft = InitNFT {
         collection,
         royalties: None,
+        constraints: Default::default(),
     }
     .encode();
     let gas_info = api

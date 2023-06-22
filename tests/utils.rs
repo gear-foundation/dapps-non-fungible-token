@@ -16,6 +16,7 @@ pub fn init_nft(sys: &System) {
     let init_nft = InitNFT {
         collection,
         royalties: None,
+        constraints: Default::default(),
     };
 
     let res = nft.send(USERS[0], init_nft);

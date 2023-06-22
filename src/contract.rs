@@ -3,7 +3,9 @@ use gear_lib_derive::{NFTCore, NFTMetaState, NFTStateKeeper};
 use gmeta::Metadata;
 use gstd::{errors::Result as GstdResult, exec, msg, prelude::*, ActorId, MessageId};
 use hashbrown::HashMap;
-use nft_io::{Collection, InitNFT, IoNFT, NFTAction, NFTEvent, NFTMetadata, Nft, State};
+use nft_io::{
+    Collection, Constraints, InitNFT, IoNFT, NFTAction, NFTEvent, NFTMetadata, Nft, State,
+};
 use primitive_types::{H256, U256};
 
 #[derive(Debug, Default, NFTStateKeeper, NFTCore, NFTMetaState)]
@@ -14,6 +16,7 @@ pub struct Contract {
     pub owner: ActorId,
     pub transactions: HashMap<H256, NFTEvent>,
     pub collection: Collection,
+    pub constraints: Constraints,
 }
 
 static mut CONTRACT: Option<Contract> = None;
@@ -33,6 +36,7 @@ unsafe extern "C" fn init() {
             ..Default::default()
         },
         collection: config.collection,
+        constraints: config.constraints,
         owner: msg::source(),
         ..Default::default()
     };
@@ -48,6 +52,27 @@ unsafe extern "C" fn handle() {
             transaction_id,
             token_metadata,
         } => {
+            if let Some(max_mint_count) = nft.constraints.max_mint_count {
+                if max_mint_count <= nft.token.token_metadata_by_id.len() as u32 {
+                    panic!(
+                        "Mint impossible because max minting count {} limit exceeded",
+                        max_mint_count
+                    );
+                }
+            }
+            if let Some(authorized_minters) = &nft.constraints.authorized_minters {
+                let current_minter = msg::source();
+                let is_authorized_minter = authorized_minters
+                    .iter()
+                    .any(|authorized_minter| authorized_minter.eq(&current_minter));
+
+                if !is_authorized_minter {
+                    panic!(
+                        "Current minter {:?} is not authorized at initialization",
+                        current_minter
+                    );
+                }
+            }
             msg::reply(
                 nft.process_transaction(transaction_id, |nft| {
                     NFTEvent::Transfer(MyNFTCore::mint(nft, token_metadata))
@@ -256,6 +281,7 @@ impl From<&Contract> for State {
             owner,
             transactions,
             collection,
+            constraints,
         } = value;
 
         let owners = token
@@ -292,6 +318,7 @@ impl From<&Contract> for State {
             owners,
             owner: *owner,
             transactions,
+            constraints: constraints.clone(),
         }
     }
 }

@@ -28,6 +28,104 @@ fn mint_success() {
 }
 
 #[test]
+fn mint_limit_exceed() {
+    let sys = System::new();
+    sys.init_logger();
+    let nft = gtest::Program::current(&sys);
+
+    let collection = Collection {
+        name: String::from("MyToken"),
+        description: String::from("My token"),
+    };
+
+    let init_nft = InitNFT {
+        collection,
+        royalties: None,
+        constraints: Constraints {
+            max_mint_count: Some(1),
+            authorized_minters: None,
+        },
+    };
+
+    let res = nft.send(USERS[0], init_nft);
+
+    assert!(res.log().is_empty());
+
+    let nft = sys.get_program(1);
+    let transaction_id: u64 = 0;
+    let res = mint(&nft, transaction_id, USERS[0]);
+    assert!(!res.main_failed());
+    let res = mint(&nft, transaction_id + 1, USERS[0]);
+    assert!(res.main_failed())
+}
+
+#[test]
+fn mint_authorized() {
+    let sys = System::new();
+    sys.init_logger();
+    let nft = gtest::Program::current(&sys);
+
+    let collection = Collection {
+        name: String::from("MyToken"),
+        description: String::from("My token"),
+    };
+
+    let authorized_minters: Vec<ActorId> = vec![USERS[0].into()];
+    let init_nft = InitNFT {
+        collection,
+        royalties: None,
+        constraints: Constraints {
+            max_mint_count: None,
+            authorized_minters: Some(authorized_minters),
+        },
+    };
+
+    let res = nft.send(USERS[0], init_nft);
+
+    assert!(res.log().is_empty());
+
+    let nft = sys.get_program(1);
+    let transaction_id: u64 = 0;
+    let res = mint(&nft, transaction_id, USERS[0]);
+    assert!(!res.main_failed());
+    let res = mint(&nft, transaction_id + 1, USERS[0]);
+    assert!(!res.main_failed())
+}
+
+#[test]
+fn mint_not_authorized() {
+    let sys = System::new();
+    sys.init_logger();
+    let nft = gtest::Program::current(&sys);
+
+    let collection = Collection {
+        name: String::from("MyToken"),
+        description: String::from("My token"),
+    };
+
+    let authorized_minters: Vec<ActorId> = vec![USERS[0].into()];
+    let init_nft = InitNFT {
+        collection,
+        royalties: None,
+        constraints: Constraints {
+            max_mint_count: None,
+            authorized_minters: Some(authorized_minters),
+        },
+    };
+
+    let res = nft.send(USERS[0], init_nft);
+
+    assert!(res.log().is_empty());
+
+    let nft = sys.get_program(1);
+    let transaction_id: u64 = 0;
+    let res = mint(&nft, transaction_id, USERS[0]);
+    assert!(!res.main_failed());
+    let res = mint(&nft, transaction_id + 1, USERS[1]);
+    assert!(res.main_failed())
+}
+
+#[test]
 fn burn_success() {
     let sys = System::new();
     init_nft(&sys);

@@ -14,10 +14,17 @@ use primitive_types::H256;
 
 pub struct NFTMetadata;
 
+#[derive(Debug, Default, Encode, Decode, TypeInfo, Clone)]
+pub struct Constraints {
+    pub max_mint_count: Option<u32>,
+    pub authorized_minters: Option<Vec<ActorId>>,
+}
+
 #[derive(Debug, Encode, Decode, TypeInfo)]
 pub struct InitNFT {
     pub collection: Collection,
     pub royalties: Option<Royalties>,
+    pub constraints: Constraints,
 }
 
 #[derive(Debug, Default, Clone, Encode, Decode, TypeInfo)]
@@ -182,4 +189,5 @@ pub struct State {
     pub owners: Vec<(ActorId, TokenId)>,
     pub collection: Collection,
     pub nonce: TokenId,
+    pub constraints: Constraints,
 }
