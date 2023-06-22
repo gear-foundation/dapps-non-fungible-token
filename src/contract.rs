@@ -52,27 +52,7 @@ unsafe extern "C" fn handle() {
             transaction_id,
             token_metadata,
         } => {
-            if let Some(max_mint_count) = nft.constraints.max_mint_count {
-                if max_mint_count <= nft.token.token_metadata_by_id.len() as u32 {
-                    panic!(
-                        "Mint impossible because max minting count {} limit exceeded",
-                        max_mint_count
-                    );
-                }
-            }
-            if let Some(authorized_minters) = &nft.constraints.authorized_minters {
-                let current_minter = msg::source();
-                let is_authorized_minter = authorized_minters
-                    .iter()
-                    .any(|authorized_minter| authorized_minter.eq(&current_minter));
-
-                if !is_authorized_minter {
-                    panic!(
-                        "Current minter {:?} is not authorized at initialization",
-                        current_minter
-                    );
-                }
-            }
+            nft.check_constraints();
             msg::reply(
                 nft.process_transaction(transaction_id, |nft| {
                     NFTEvent::Transfer(MyNFTCore::mint(nft, token_metadata))
@@ -175,6 +155,20 @@ unsafe extern "C" fn handle() {
             .expect("Error during replying with `NFTEvent::Approval`");
         }
         NFTAction::Clear { transaction_hash } => nft.clear(transaction_hash),
+        NFTAction::AddMinter {
+            transaction_id,
+            minter_id,
+        } => {
+            nft.check_constraints();
+            msg::reply(
+                nft.process_transaction(transaction_id, |nft| {
+                    nft.constraints.authorized_minters.push(minter_id);
+                    NFTEvent::MinterAdded { minter_id }
+                }),
+                0,
+            )
+            .expect("Error during replying with `NFTEvent::Approval`");
+        }
     };
 }
 
@@ -217,6 +211,33 @@ impl Contract {
             "Not allowed to clear transactions"
         );
         self.transactions.remove(&transaction_hash);
+    }
+
+    fn check_constraints(&self) {
+        // gstd::debug!("self.constraints: {:?}", self.constraints);
+        if let Some(max_mint_count) = self.constraints.max_mint_count {
+            if max_mint_count <= self.token.token_metadata_by_id.len() as u32 {
+                panic!(
+                    "Mint impossible because max minting count {} limit exceeded",
+                    max_mint_count
+                );
+            }
+        }
+
+        let current_minter = msg::source();
+        // gstd::debug!("current_minter: {:?}", current_minter);
+        let is_authorized_minter = self
+            .constraints
+            .authorized_minters
+            .iter()
+            .any(|authorized_minter| authorized_minter.eq(&current_minter));
+
+        if !is_authorized_minter {
+            panic!(
+                "Current minter {:?} is not authorized at initialization",
+                current_minter
+            );
+        }
     }
 }
 

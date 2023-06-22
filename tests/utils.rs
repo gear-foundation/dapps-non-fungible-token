@@ -1,4 +1,5 @@
 use gear_lib::non_fungible_token::token::*;
+use gstd::ActorId;
 use gtest::{Program, RunResult, System};
 use nft_io::*;
 
@@ -16,7 +17,10 @@ pub fn init_nft(sys: &System) {
     let init_nft = InitNFT {
         collection,
         royalties: None,
-        constraints: Default::default(),
+        constraints: Constraints {
+            max_mint_count: Some(100),
+            authorized_minters: vec![USERS[0].into()],
+        },
     };
 
     let res = nft.send(USERS[0], init_nft);
@@ -35,6 +39,21 @@ pub fn mint(nft: &Program, transaction_id: u64, member: u64) -> RunResult {
                 media: "http://".to_string(),
                 reference: "http://".to_string(),
             },
+        },
+    )
+}
+
+pub fn add_minter(
+    nft: &Program,
+    transaction_id: u64,
+    minter_id: ActorId,
+    member: u64,
+) -> RunResult {
+    nft.send(
+        member,
+        NFTAction::AddMinter {
+            transaction_id,
+            minter_id,
         },
     )
 }

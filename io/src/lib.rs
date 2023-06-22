@@ -17,7 +17,7 @@ pub struct NFTMetadata;
 #[derive(Debug, Default, Encode, Decode, TypeInfo, Clone)]
 pub struct Constraints {
     pub max_mint_count: Option<u32>,
-    pub authorized_minters: Option<Vec<ActorId>>,
+    pub authorized_minters: Vec<ActorId>,
 }
 
 #[derive(Debug, Encode, Decode, TypeInfo)]
@@ -87,6 +87,10 @@ pub enum NFTAction {
     Clear {
         transaction_hash: H256,
     },
+    AddMinter {
+        transaction_id: u64,
+        minter_id: ActorId,
+    },
 }
 
 #[derive(Encode, Decode, TypeInfo, Debug, Clone)]
@@ -103,6 +107,9 @@ pub enum NFTEvent {
         to: ActorId,
         token_id: TokenId,
         approved: bool,
+    },
+    MinterAdded {
+        minter_id: ActorId,
     },
 }
 
