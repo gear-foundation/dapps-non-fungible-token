@@ -17,10 +17,14 @@ async fn mint_test() -> Result<()> {
         name: String::from("MyToken"),
         description: String::from("My token"),
     };
+    let actor_id = ActorId::from_slice(&api.account_id().encode()).unwrap();
     let init_nft = InitNFT {
         collection,
         royalties: None,
-        constraints: Default::default(),
+        constraints: Constraints {
+            max_mint_count: Some(100),
+            authorized_minters: vec![actor_id],
+        },
     }
     .encode();
     let gas_info = api
@@ -82,10 +86,14 @@ async fn burn_test() -> Result<()> {
         description: String::from("My token"),
     };
 
+    let actor_id = ActorId::from_slice(&api.account_id().encode()).unwrap();
     let init_nft = InitNFT {
         collection,
         royalties: None,
-        constraints: Default::default(),
+        constraints: Constraints {
+            max_mint_count: Some(100),
+            authorized_minters: vec![actor_id],
+        },
     }
     .encode();
     let gas_info = api
@@ -185,10 +193,14 @@ async fn transfer_test() -> Result<()> {
         description: String::from("My token"),
     };
 
+    let actor_id = ActorId::from_slice(&api.account_id().encode()).unwrap();
     let init_nft = InitNFT {
         collection,
         royalties: None,
-        constraints: Default::default(),
+        constraints: Constraints {
+            max_mint_count: Some(100),
+            authorized_minters: vec![actor_id],
+        },
     }
     .encode();
     let gas_info = api
@@ -271,10 +283,14 @@ async fn owner_test() -> Result<()> {
         description: String::from("My token"),
     };
 
+    let actor_id = ActorId::from_slice(&api.account_id().encode()).unwrap();
     let init_nft = InitNFT {
         collection,
         royalties: None,
-        constraints: Default::default(),
+        constraints: Constraints {
+            max_mint_count: Some(100),
+            authorized_minters: vec![actor_id],
+        },
     }
     .encode();
     let gas_info = api
@@ -351,10 +367,14 @@ async fn approved() -> Result<()> {
         description: String::from("My token"),
     };
 
+    let actor_id = ActorId::from_slice(&api.account_id().encode()).unwrap();
     let init_nft = InitNFT {
         collection,
         royalties: None,
-        constraints: Default::default(),
+        constraints: Constraints {
+            max_mint_count: Some(100),
+            authorized_minters: vec![actor_id],
+        },
     }
     .encode();
     let gas_info = api
