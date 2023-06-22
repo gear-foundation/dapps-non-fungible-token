@@ -232,7 +232,7 @@ impl From<&Contract> for IoNFT {
             token_id,
             owner,
             transactions,
-            ...
+            ..
         } = value;
 
         let transactions = transactions
