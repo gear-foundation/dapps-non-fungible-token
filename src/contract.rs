@@ -30,8 +30,6 @@ unsafe extern "C" fn init() {
     let nft = Contract {
         token: NFTState {
             name: config.collection.name.clone(),
-            symbol: "".to_string(),
-            base_uri: "".to_string(),
             royalties: config.royalties,
             ..Default::default()
         },
@@ -214,7 +212,6 @@ impl Contract {
     }
 
     fn check_constraints(&self) {
-        // gstd::debug!("self.constraints: {:?}", self.constraints);
         if let Some(max_mint_count) = self.constraints.max_mint_count {
             if max_mint_count <= self.token.token_metadata_by_id.len() as u32 {
                 panic!(
@@ -225,7 +222,6 @@ impl Contract {
         }
 
         let current_minter = msg::source();
-        // gstd::debug!("current_minter: {:?}", current_minter);
         let is_authorized_minter = self
             .constraints
             .authorized_minters
@@ -322,7 +318,7 @@ impl From<&Contract> for State {
             .map(|(id, metadata)| {
                 let metadata = metadata.as_ref().unwrap();
                 let nft = Nft {
-                    owner: *token.owner_by_id.get(id).unwrap(),
+                    owner: token.owner_by_id[id],
                     name: metadata.name.clone(),
                     description: metadata.description.clone(),
                     media_url: metadata.media.clone(),
