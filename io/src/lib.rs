@@ -40,7 +40,7 @@ impl Metadata for NFTMetadata {
     type Reply = ();
     type Others = ();
     type Signal = ();
-    type State = IoNFT;
+    type State = State;
 }
 
 #[derive(Debug, Encode, Decode, TypeInfo)]
