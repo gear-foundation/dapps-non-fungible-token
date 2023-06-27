@@ -38,12 +38,14 @@ fn mint_limit_exceed() {
         description: String::from("My token"),
     };
 
+    let referrals: Vec<ActorId> = vec![USERS[0].into()];
     let init_nft = InitNFT {
         collection,
         royalties: None,
         constraints: Constraints {
             max_mint_count: Some(1),
             authorized_minters: vec![USERS[0].into()],
+            referrals,
         },
     };
 
@@ -71,12 +73,14 @@ fn mint_authorized() {
     };
 
     let authorized_minters: Vec<ActorId> = vec![USERS[0].into()];
+    let referrals: Vec<ActorId> = vec![USERS[0].into()];
     let init_nft = InitNFT {
         collection,
         royalties: None,
         constraints: Constraints {
             max_mint_count: None,
             authorized_minters,
+            referrals,
         },
     };
 
@@ -104,12 +108,14 @@ fn mint_not_authorized() {
     };
 
     let authorized_minters: Vec<ActorId> = vec![USERS[0].into()];
+    let referrals: Vec<ActorId> = vec![USERS[0].into()];
     let init_nft = InitNFT {
         collection,
         royalties: None,
         constraints: Constraints {
             max_mint_count: None,
             authorized_minters,
+            referrals,
         },
     };
 
@@ -137,12 +143,122 @@ fn mint_added() {
     };
 
     let authorized_minters: Vec<ActorId> = vec![USERS[0].into()];
+    let referrals: Vec<ActorId> = vec![USERS[0].into()];
     let init_nft = InitNFT {
         collection,
         royalties: None,
         constraints: Constraints {
             max_mint_count: None,
             authorized_minters,
+            referrals,
+        },
+    };
+
+    let res = nft.send(USERS[0], init_nft);
+
+    assert!(res.log().is_empty());
+
+    let nft = sys.get_program(1);
+    let transaction_id: u64 = 0;
+    let res = add_minter(&nft, transaction_id, USERS[1].into(), USERS[0]);
+    assert!(!res.main_failed());
+    let res = add_minter(&nft, transaction_id + 1, USERS[2].into(), USERS[1]);
+    assert!(!res.main_failed());
+
+    let res = add_minter(&nft, transaction_id + 1, 5.into(), 7);
+    assert!(res.main_failed())
+}
+
+#[test]
+fn mint_referral() {
+    let sys = System::new();
+    sys.init_logger();
+    let nft = gtest::Program::current(&sys);
+
+    let collection = Collection {
+        name: String::from("MyToken"),
+        description: String::from("My token"),
+    };
+
+    let authorized_minters: Vec<ActorId> = vec![];
+    let referrals: Vec<ActorId> = vec![USERS[0].into()];
+    let init_nft = InitNFT {
+        collection,
+        royalties: None,
+        constraints: Constraints {
+            max_mint_count: None,
+            authorized_minters,
+            referrals,
+        },
+    };
+
+    let res = nft.send(USERS[0], init_nft);
+
+    assert!(res.log().is_empty());
+
+    let nft = sys.get_program(1);
+    let transaction_id: u64 = 0;
+    let res = mint(&nft, transaction_id, USERS[0]);
+    assert!(!res.main_failed());
+    let res = mint(&nft, transaction_id + 1, USERS[0]);
+    assert!(!res.main_failed())
+}
+
+#[test]
+fn mint_not_referral() {
+    let sys = System::new();
+    sys.init_logger();
+    let nft = gtest::Program::current(&sys);
+
+    let collection = Collection {
+        name: String::from("MyToken"),
+        description: String::from("My token"),
+    };
+
+    let authorized_minters: Vec<ActorId> = vec![];
+    let referrals: Vec<ActorId> = vec![USERS[0].into()];
+    let init_nft = InitNFT {
+        collection,
+        royalties: None,
+        constraints: Constraints {
+            max_mint_count: None,
+            authorized_minters,
+            referrals,
+        },
+    };
+
+    let res = nft.send(USERS[0], init_nft);
+
+    assert!(res.log().is_empty());
+
+    let nft = sys.get_program(1);
+    let transaction_id: u64 = 0;
+    let res = mint(&nft, transaction_id, USERS[0]);
+    assert!(!res.main_failed());
+    let res = mint(&nft, transaction_id + 1, USERS[1]);
+    assert!(res.main_failed())
+}
+
+#[test]
+fn referal_added() {
+    let sys = System::new();
+    sys.init_logger();
+    let nft = gtest::Program::current(&sys);
+
+    let collection = Collection {
+        name: String::from("MyToken"),
+        description: String::from("My token"),
+    };
+
+    let authorized_minters: Vec<ActorId> = vec![USERS[0].into()];
+    let referrals: Vec<ActorId> = vec![USERS[0].into()];
+    let init_nft = InitNFT {
+        collection,
+        royalties: None,
+        constraints: Constraints {
+            max_mint_count: None,
+            authorized_minters,
+            referrals,
         },
     };
 

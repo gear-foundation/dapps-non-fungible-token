@@ -24,6 +24,7 @@ async fn mint_test() -> Result<()> {
         constraints: Constraints {
             max_mint_count: Some(100),
             authorized_minters: vec![actor_id],
+            referrals: vec![actor_id],
         },
     }
     .encode();
@@ -93,6 +94,7 @@ async fn burn_test() -> Result<()> {
         constraints: Constraints {
             max_mint_count: Some(100),
             authorized_minters: vec![actor_id],
+            referrals: vec![actor_id],
         },
     }
     .encode();
@@ -200,6 +202,7 @@ async fn transfer_test() -> Result<()> {
         constraints: Constraints {
             max_mint_count: Some(100),
             authorized_minters: vec![actor_id],
+            referrals: vec![actor_id],
         },
     }
     .encode();
@@ -290,6 +293,7 @@ async fn owner_test() -> Result<()> {
         constraints: Constraints {
             max_mint_count: Some(100),
             authorized_minters: vec![actor_id],
+            referrals: vec![actor_id],
         },
     }
     .encode();
@@ -374,6 +378,7 @@ async fn approved() -> Result<()> {
         constraints: Constraints {
             max_mint_count: Some(100),
             authorized_minters: vec![actor_id],
+            referrals: vec![actor_id],
         },
     }
     .encode();

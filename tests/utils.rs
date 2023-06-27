@@ -20,6 +20,7 @@ pub fn init_nft(sys: &System) {
         constraints: Constraints {
             max_mint_count: Some(100),
             authorized_minters: vec![USERS[0].into()],
+            referrals: vec![USERS[0].into()],
         },
     };
 

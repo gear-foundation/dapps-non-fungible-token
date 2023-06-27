@@ -18,6 +18,7 @@ pub struct NFTMetadata;
 pub struct Constraints {
     pub max_mint_count: Option<u32>,
     pub authorized_minters: Vec<ActorId>,
+    pub referrals: Vec<ActorId>,
 }
 
 #[derive(Debug, Encode, Decode, TypeInfo)]
@@ -91,6 +92,10 @@ pub enum NFTAction {
         transaction_id: u64,
         minter_id: ActorId,
     },
+    AddReferrals {
+        transaction_id: u64,
+        referral_id: ActorId,
+    },
 }
 
 #[derive(Encode, Decode, TypeInfo, Debug, Clone)]
@@ -110,6 +115,9 @@ pub enum NFTEvent {
     },
     MinterAdded {
         minter_id: ActorId,
+    },
+    ReferralAdded {
+        referral_id: ActorId,
     },
 }
 

@@ -1,11 +1,8 @@
 use gear_lib::non_fungible_token::{io::NFTTransfer, nft_core::*, state::*, token::*};
 use gear_lib_derive::{NFTCore, NFTMetaState, NFTStateKeeper};
-use gmeta::Metadata;
 use gstd::{errors::Result as GstdResult, exec, msg, prelude::*, ActorId, MessageId};
 use hashbrown::HashMap;
-use nft_io::{
-    Collection, Constraints, InitNFT, IoNFT, NFTAction, NFTEvent, NFTMetadata, Nft, State,
-};
+use nft_io::{Collection, Constraints, InitNFT, IoNFT, NFTAction, NFTEvent, Nft, State};
 use primitive_types::{H256, U256};
 
 #[derive(Debug, Default, NFTStateKeeper, NFTCore, NFTMetaState)]
@@ -45,19 +42,26 @@ unsafe extern "C" fn init() {
 unsafe extern "C" fn handle() {
     let action: NFTAction = msg::load().expect("Could not load NFTAction");
     let nft = CONTRACT.get_or_insert(Default::default());
+    let msg_src = msg::source();
     match action {
         NFTAction::Mint {
             transaction_id,
             token_metadata,
         } => {
-            nft.check_constraints();
-            msg::reply(
-                nft.process_transaction(transaction_id, |nft| {
-                    NFTEvent::Transfer(MyNFTCore::mint(nft, token_metadata))
-                }),
-                0,
-            )
-            .expect("Error during replying with `NFTEvent::Transfer`");
+            if nft.is_authorized_minter(&msg_src) || nft.is_referral(&msg_src) {
+                msg::reply(
+                    nft.process_transaction(transaction_id, |nft| {
+                        NFTEvent::Transfer(MyNFTCore::mint(nft, token_metadata))
+                    }),
+                    0,
+                )
+                .expect("Error during replying with `NFTEvent::Transfer`");
+            } else {
+                panic!(
+                    "Current ID {:?} is not authorized ar minter or referral",
+                    msg_src
+                );
+            }
         }
         NFTAction::Burn {
             transaction_id,
@@ -157,11 +161,30 @@ unsafe extern "C" fn handle() {
             transaction_id,
             minter_id,
         } => {
-            nft.check_constraints();
+            if nft.is_authorized_minter(&msg_src) {
+                msg::reply(
+                    nft.process_transaction(transaction_id, |nft| {
+                        nft.constraints.authorized_minters.push(minter_id);
+                        NFTEvent::MinterAdded { minter_id }
+                    }),
+                    0,
+                )
+                .expect("Error during replying with `NFTEvent::Approval`");
+            } else {
+                panic!(
+                    "Current ID {:?} is not authorized and does not have the right to add another ID as a minter",
+                    msg_src
+                );
+            }
+        }
+        NFTAction::AddReferrals {
+            transaction_id,
+            referral_id,
+        } => {
             msg::reply(
                 nft.process_transaction(transaction_id, |nft| {
-                    nft.constraints.authorized_minters.push(minter_id);
-                    NFTEvent::MinterAdded { minter_id }
+                    nft.constraints.referrals.push(referral_id);
+                    NFTEvent::ReferralAdded { referral_id }
                 }),
                 0,
             )
@@ -211,7 +234,7 @@ impl Contract {
         self.transactions.remove(&transaction_hash);
     }
 
-    fn check_constraints(&self) {
+    fn is_authorized_minter(&self, current_minter: &ActorId) -> bool {
         if let Some(max_mint_count) = self.constraints.max_mint_count {
             if max_mint_count <= self.token.token_metadata_by_id.len() as u32 {
                 panic!(
@@ -221,19 +244,17 @@ impl Contract {
             }
         }
 
-        let current_minter = msg::source();
-        let is_authorized_minter = self
-            .constraints
+        self.constraints
             .authorized_minters
             .iter()
-            .any(|authorized_minter| authorized_minter.eq(&current_minter));
+            .any(|authorized_minter| authorized_minter.eq(current_minter))
+    }
 
-        if !is_authorized_minter {
-            panic!(
-                "Current minter {:?} is not authorized at initialization",
-                current_minter
-            );
-        }
+    fn is_referral(&self, current_referral: &ActorId) -> bool {
+        self.constraints
+            .referrals
+            .iter()
+            .any(|referral| current_referral.eq(referral))
     }
 }
 
@@ -247,14 +268,10 @@ fn static_mut_state() -> &'static Contract {
     unsafe { CONTRACT.get_or_insert(Default::default()) }
 }
 
-fn common_state() -> <NFTMetadata as Metadata>::State {
-    static_mut_state().into()
-}
-
 #[no_mangle]
 extern "C" fn state() {
-    reply(common_state())
-        .expect("Failed to encode or reply with `<NFTMetadata as Metadata>::State` from `state()`");
+    let payload: nft_io::State = static_mut_state().into();
+    reply(payload).expect("Unable to reply `nft_io::State`");
 }
 
 fn reply(payload: impl Encode) -> GstdResult<MessageId> {
