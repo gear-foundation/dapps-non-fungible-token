@@ -1,5 +1,7 @@
 #![no_std]
 
+use core::cmp::Ordering;
+
 use gear_lib::non_fungible_token::{
     io::{NFTApproval, NFTTransfer, NFTTransferPayout},
     royalties::*,
@@ -17,7 +19,8 @@ pub struct NFTMetadata;
 #[derive(Debug, Default, Encode, Decode, TypeInfo, Clone)]
 pub struct Constraints {
     pub max_mint_count: Option<u32>,
-    pub authorized_minters: Vec<ActorId>,
+    pub authorized_minters: BTreeSet<ActorId>,
+    pub referrals: BTreeSet<Referral>,
 }
 
 #[derive(Debug, Encode, Decode, TypeInfo)]
@@ -39,7 +42,7 @@ impl Metadata for NFTMetadata {
     type Reply = ();
     type Others = ();
     type Signal = ();
-    type State = IoNFT;
+    type State = State;
 }
 
 #[derive(Debug, Encode, Decode, TypeInfo)]
@@ -48,20 +51,12 @@ pub enum NFTAction {
         transaction_id: u64,
         token_metadata: TokenMetadata,
     },
+    MintReferral {
+        transaction_id: u64,
+    },
     Burn {
         transaction_id: u64,
         token_id: TokenId,
-    },
-    Transfer {
-        transaction_id: u64,
-        to: ActorId,
-        token_id: TokenId,
-    },
-    TransferPayout {
-        transaction_id: u64,
-        to: ActorId,
-        token_id: TokenId,
-        amount: u128,
     },
     NFTPayout {
         owner: ActorId,
@@ -91,6 +86,11 @@ pub enum NFTAction {
         transaction_id: u64,
         minter_id: ActorId,
     },
+    AddReferral {
+        transaction_id: u64,
+        referral_id: ActorId,
+    },
+    AddReferralMetadata(TokenMetadata),
 }
 
 #[derive(Encode, Decode, TypeInfo, Debug, Clone)]
@@ -110,6 +110,9 @@ pub enum NFTEvent {
     },
     MinterAdded {
         minter_id: ActorId,
+    },
+    ReferralAdded {
+        referral_id: ActorId,
     },
 }
 
@@ -197,4 +200,29 @@ pub struct State {
     pub collection: Collection,
     pub nonce: TokenId,
     pub constraints: Constraints,
+}
+
+#[derive(Debug, Encode, Decode, TypeInfo, Clone, Copy)]
+pub struct Referral {
+    pub id: ActorId,
+}
+
+impl PartialEq for Referral {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
+}
+
+impl Eq for Referral {}
+
+impl PartialOrd for Referral {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Referral {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.id.cmp(&other.id)
+    }
 }

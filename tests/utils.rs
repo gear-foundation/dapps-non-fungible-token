@@ -1,5 +1,5 @@
 use gear_lib::non_fungible_token::token::*;
-use gstd::ActorId;
+use gstd::{ActorId, BTreeSet};
 use gtest::{Program, RunResult, System};
 use nft_io::*;
 
@@ -14,12 +14,14 @@ pub fn init_nft(sys: &System) {
         description: String::from("My token"),
     };
 
+    let referrals: BTreeSet<Referral> = BTreeSet::new();
     let init_nft = InitNFT {
         collection,
         royalties: None,
         constraints: Constraints {
             max_mint_count: Some(100),
-            authorized_minters: vec![USERS[0].into()],
+            authorized_minters: [USERS[0].into(); 1].into(),
+            referrals,
         },
     };
 
@@ -43,6 +45,10 @@ pub fn mint(nft: &Program, transaction_id: u64, member: u64) -> RunResult {
     )
 }
 
+pub fn mint_referral(nft: &Program, transaction_id: u64, member: u64) -> RunResult {
+    nft.send(member, NFTAction::MintReferral { transaction_id })
+}
+
 pub fn add_minter(
     nft: &Program,
     transaction_id: u64,
@@ -58,28 +64,30 @@ pub fn add_minter(
     )
 }
 
+pub fn add_referral(
+    nft: &Program,
+    transaction_id: u64,
+    referral_id: ActorId,
+    member: u64,
+) -> RunResult {
+    nft.send(
+        member,
+        NFTAction::AddReferral {
+            transaction_id,
+            referral_id,
+        },
+    )
+}
+
+pub fn add_media(nft: &Program, token_metadata: TokenMetadata, member: u64) -> RunResult {
+    nft.send(member, NFTAction::AddReferralMetadata(token_metadata))
+}
+
 pub fn burn(nft: &Program, transaction_id: u64, member: u64, token_id: u64) -> RunResult {
     nft.send(
         member,
         NFTAction::Burn {
             transaction_id,
-            token_id: token_id.into(),
-        },
-    )
-}
-
-pub fn transfer(
-    nft: &Program,
-    transaction_id: u64,
-    from: u64,
-    to: u64,
-    token_id: u64,
-) -> RunResult {
-    nft.send(
-        from,
-        NFTAction::Transfer {
-            transaction_id,
-            to: to.into(),
             token_id: token_id.into(),
         },
     )

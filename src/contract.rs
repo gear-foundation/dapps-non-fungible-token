@@ -1,11 +1,8 @@
 use gear_lib::non_fungible_token::{io::NFTTransfer, nft_core::*, state::*, token::*};
 use gear_lib_derive::{NFTCore, NFTMetaState, NFTStateKeeper};
-use gmeta::Metadata;
 use gstd::{errors::Result as GstdResult, exec, msg, prelude::*, ActorId, MessageId};
 use hashbrown::HashMap;
-use nft_io::{
-    Collection, Constraints, InitNFT, IoNFT, NFTAction, NFTEvent, NFTMetadata, Nft, State,
-};
+use nft_io::{Collection, Constraints, InitNFT, IoNFT, NFTAction, NFTEvent, Nft, Referral, State};
 use primitive_types::{H256, U256};
 
 #[derive(Debug, Default, NFTStateKeeper, NFTCore, NFTMetaState)]
@@ -17,6 +14,7 @@ pub struct Contract {
     pub transactions: HashMap<H256, NFTEvent>,
     pub collection: Collection,
     pub constraints: Constraints,
+    pub referral_metadata: Vec<TokenMetadata>,
 }
 
 static mut CONTRACT: Option<Contract> = None;
@@ -45,19 +43,43 @@ unsafe extern "C" fn init() {
 unsafe extern "C" fn handle() {
     let action: NFTAction = msg::load().expect("Could not load NFTAction");
     let nft = CONTRACT.get_or_insert(Default::default());
+    let msg_src = msg::source();
     match action {
         NFTAction::Mint {
             transaction_id,
             token_metadata,
         } => {
-            nft.check_constraints();
-            msg::reply(
-                nft.process_transaction(transaction_id, |nft| {
-                    NFTEvent::Transfer(MyNFTCore::mint(nft, token_metadata))
-                }),
-                0,
-            )
-            .expect("Error during replying with `NFTEvent::Transfer`");
+            if nft.is_authorized_minter(&msg_src) {
+                msg::reply(
+                    nft.process_transaction(transaction_id, |nft| {
+                        NFTEvent::Transfer(MyNFTCore::mint(nft, token_metadata))
+                    }),
+                    0,
+                )
+                .expect("Error during replying with `NFTEvent::Transfer`");
+            } else {
+                panic!(
+                    "Current ID {:?} is not authorized ar minter or referral",
+                    msg_src
+                );
+            }
+        }
+        NFTAction::MintReferral { transaction_id } => {
+            let index = random() as usize % nft.referral_metadata.len();
+            let token_metadata = nft.referral_metadata.swap_remove(index);
+
+            if nft.is_valid_referral(&msg_src) {
+                msg::reply(
+                    nft.process_transaction(transaction_id, |nft| {
+                        NFTEvent::Transfer(MyNFTCore::mint(nft, token_metadata))
+                    }),
+                    0,
+                )
+                .expect("Error during replying with `NFTEvent::Transfer`");
+                nft.constraints.referrals.insert(Referral { id: msg_src });
+            } else {
+                panic!("Current ID {:?} is not referral or already minted", msg_src);
+            }
         }
         NFTAction::Burn {
             transaction_id,
@@ -70,33 +92,6 @@ unsafe extern "C" fn handle() {
                 0,
             )
             .expect("Error during replying with `NFTEvent::Transfer`");
-        }
-        NFTAction::Transfer {
-            transaction_id,
-            to,
-            token_id,
-        } => {
-            msg::reply(
-                nft.process_transaction(transaction_id, |nft| {
-                    NFTEvent::Transfer(NFTCore::transfer(nft, &to, token_id))
-                }),
-                0,
-            )
-            .expect("Error during replying with `NFTEvent::Transfer`");
-        }
-        NFTAction::TransferPayout {
-            transaction_id,
-            to,
-            token_id,
-            amount,
-        } => {
-            msg::reply(
-                nft.process_transaction(transaction_id, |nft| {
-                    NFTEvent::TransferPayout(NFTCore::transfer_payout(nft, &to, token_id, amount))
-                }),
-                0,
-            )
-            .expect("Error during replying with `NFTEvent::TransferPayout`");
         }
         NFTAction::NFTPayout { owner, amount } => {
             msg::reply(
@@ -157,15 +152,38 @@ unsafe extern "C" fn handle() {
             transaction_id,
             minter_id,
         } => {
-            nft.check_constraints();
+            if nft.is_authorized_minter(&msg_src) {
+                msg::reply(
+                    nft.process_transaction(transaction_id, |nft| {
+                        nft.constraints.authorized_minters.insert(minter_id);
+                        NFTEvent::MinterAdded { minter_id }
+                    }),
+                    0,
+                )
+                .expect("Error during replying with `NFTEvent::Approval`");
+            } else {
+                panic!(
+                    "Current ID {:?} is not authorized and does not have the right to add another ID as a minter",
+                    msg_src
+                );
+            }
+        }
+        NFTAction::AddReferral {
+            transaction_id,
+            referral_id,
+        } => {
             msg::reply(
                 nft.process_transaction(transaction_id, |nft| {
-                    nft.constraints.authorized_minters.push(minter_id);
-                    NFTEvent::MinterAdded { minter_id }
+                    let referral = Referral { id: referral_id };
+                    nft.constraints.referrals.insert(referral);
+                    NFTEvent::ReferralAdded { referral_id }
                 }),
                 0,
             )
             .expect("Error during replying with `NFTEvent::Approval`");
+        }
+        NFTAction::AddReferralMetadata(metadata) => {
+            nft.referral_metadata.push(metadata);
         }
     };
 }
@@ -182,6 +200,9 @@ impl MyNFTCore for Contract {
     }
 }
 
+// Добавить загрузку ссылок на картинки, загрузить картинки в контракт.
+// Выдача - посылается сообщения Mint без полей, контракт генерирует число 1-1000 и если такое число не выдано то выдаётся NFT под этим номером
+// referrals can mint only 1 time то что прошел по реферальной ссылке, то что один раз сминтил, и выдать NFT которую
 impl Contract {
     fn process_transaction(
         &mut self,
@@ -211,7 +232,7 @@ impl Contract {
         self.transactions.remove(&transaction_hash);
     }
 
-    fn check_constraints(&self) {
+    fn is_authorized_minter(&self, current_minter: &ActorId) -> bool {
         if let Some(max_mint_count) = self.constraints.max_mint_count {
             if max_mint_count <= self.token.token_metadata_by_id.len() as u32 {
                 panic!(
@@ -221,19 +242,22 @@ impl Contract {
             }
         }
 
-        let current_minter = msg::source();
-        let is_authorized_minter = self
-            .constraints
+        self.constraints
             .authorized_minters
             .iter()
-            .any(|authorized_minter| authorized_minter.eq(&current_minter));
+            .any(|authorized_minter| authorized_minter.eq(current_minter))
+    }
 
-        if !is_authorized_minter {
-            panic!(
-                "Current minter {:?} is not authorized at initialization",
-                current_minter
-            );
-        }
+    fn is_valid_referral(&self, current_referral: &ActorId) -> bool {
+        let is_exist = self
+            .constraints
+            .referrals
+            .iter()
+            .any(|referral| current_referral.eq(&referral.id));
+
+        let can_mint = self.tokens_for_owner(current_referral).is_empty();
+
+        is_exist && can_mint
     }
 }
 
@@ -247,14 +271,10 @@ fn static_mut_state() -> &'static Contract {
     unsafe { CONTRACT.get_or_insert(Default::default()) }
 }
 
-fn common_state() -> <NFTMetadata as Metadata>::State {
-    static_mut_state().into()
-}
-
 #[no_mangle]
 extern "C" fn state() {
-    reply(common_state())
-        .expect("Failed to encode or reply with `<NFTMetadata as Metadata>::State` from `state()`");
+    let payload: nft_io::State = static_mut_state().into();
+    reply(payload).expect("Unable to reply `nft_io::State`");
 }
 
 fn reply(payload: impl Encode) -> GstdResult<MessageId> {
@@ -299,6 +319,7 @@ impl From<&Contract> for State {
             transactions,
             collection,
             constraints,
+            referral_metadata: _,
         } = value;
 
         let owners = token
@@ -338,4 +359,16 @@ impl From<&Contract> for State {
             constraints: constraints.clone(),
         }
     }
+}
+
+fn random() -> u64 {
+    use rand_chacha::ChaCha20Rng;
+    use rand_core::{RngCore, SeedableRng};
+
+    let subject: [u8; 32] = core::array::from_fn(|i| i as u8 + 1);
+    let (seed, _block_number) = exec::random(subject).expect("Error in random");
+
+    let mut rng = ChaCha20Rng::from_seed(seed);
+
+    rng.next_u64()
 }
