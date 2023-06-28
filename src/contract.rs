@@ -93,33 +93,6 @@ unsafe extern "C" fn handle() {
             )
             .expect("Error during replying with `NFTEvent::Transfer`");
         }
-        NFTAction::Transfer {
-            transaction_id,
-            to,
-            token_id,
-        } => {
-            msg::reply(
-                nft.process_transaction(transaction_id, |nft| {
-                    NFTEvent::Transfer(NFTCore::transfer(nft, &to, token_id))
-                }),
-                0,
-            )
-            .expect("Error during replying with `NFTEvent::Transfer`");
-        }
-        NFTAction::TransferPayout {
-            transaction_id,
-            to,
-            token_id,
-            amount,
-        } => {
-            msg::reply(
-                nft.process_transaction(transaction_id, |nft| {
-                    NFTEvent::TransferPayout(NFTCore::transfer_payout(nft, &to, token_id, amount))
-                }),
-                0,
-            )
-            .expect("Error during replying with `NFTEvent::TransferPayout`");
-        }
         NFTAction::NFTPayout { owner, amount } => {
             msg::reply(
                 NFTEvent::NFTPayout(NFTCore::nft_payout(nft, &owner, amount)),
@@ -346,7 +319,7 @@ impl From<&Contract> for State {
             transactions,
             collection,
             constraints,
-            referral_metadata,
+            referral_metadata: _,
         } = value;
 
         let owners = token
@@ -393,7 +366,7 @@ fn random() -> u64 {
     use rand_core::{RngCore, SeedableRng};
 
     let subject: [u8; 32] = core::array::from_fn(|i| i as u8 + 1);
-    let (seed, block_number) = exec::random(subject).expect("Error in random");
+    let (seed, _block_number) = exec::random(subject).expect("Error in random");
 
     let mut rng = ChaCha20Rng::from_seed(seed);
 

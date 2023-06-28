@@ -93,23 +93,6 @@ pub fn burn(nft: &Program, transaction_id: u64, member: u64, token_id: u64) -> R
     )
 }
 
-pub fn transfer(
-    nft: &Program,
-    transaction_id: u64,
-    from: u64,
-    to: u64,
-    token_id: u64,
-) -> RunResult {
-    nft.send(
-        from,
-        NFTAction::Transfer {
-            transaction_id,
-            to: to.into(),
-            token_id: token_id.into(),
-        },
-    )
-}
-
 pub fn owner_of(nft: &Program, from: u64, token_id: u64) -> RunResult {
     nft.send(
         from,

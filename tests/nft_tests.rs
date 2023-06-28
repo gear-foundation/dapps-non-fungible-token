@@ -397,43 +397,6 @@ fn burn_failures() {
 }
 
 #[test]
-fn transfer_success() {
-    let sys = System::new();
-    init_nft(&sys);
-    let nft = sys.get_program(1);
-    let mut transaction_id: u64 = 0;
-    assert!(!mint(&nft, transaction_id, USERS[0]).main_failed());
-    transaction_id += 1;
-    let res = transfer(&nft, transaction_id, USERS[0], USERS[1], 0);
-    let message = NFTEvent::Transfer(NFTTransfer {
-        from: USERS[0].into(),
-        to: USERS[1].into(),
-        token_id: 0.into(),
-    })
-    .encode();
-    assert!(res.contains(&(USERS[0], message)));
-}
-
-#[test]
-fn transfer_failures() {
-    let sys = System::new();
-    init_nft(&sys);
-    let nft = sys.get_program(1);
-    let mut transaction_id: u64 = 0;
-    assert!(!mint(&nft, transaction_id, USERS[0]).main_failed());
-
-    // must fail since the token doesn't exist
-    transaction_id += 1;
-    assert!(transfer(&nft, transaction_id, USERS[0], USERS[1], 1).main_failed());
-    // must fail since the caller is not the token owner
-    transaction_id += 1;
-    assert!(transfer(&nft, transaction_id, USERS[1], USERS[0], 0).main_failed());
-    // must fail since transfer to the zero address
-    transaction_id += 1;
-    assert!(transfer(&nft, transaction_id, USERS[1], ZERO_ID, 0).main_failed());
-}
-
-#[test]
 fn owner_success() {
     let sys = System::new();
     init_nft(&sys);
@@ -513,8 +476,6 @@ fn approve_success() {
     })
     .encode();
     assert!(res.contains(&(USERS[0], message)));
-    transaction_id += 1;
-    assert!(!transfer(&nft, transaction_id, USERS[1], USERS[2], 0).main_failed());
 }
 
 #[test]
@@ -537,12 +498,6 @@ fn approve_failures() {
     //approve
     transaction_id += 1;
     assert!(!approve(&nft, transaction_id, USERS[0], USERS[1], 0).main_failed());
-    //transfer
-    transaction_id += 1;
-    assert!(!transfer(&nft, transaction_id, USERS[1], USERS[2], 0).main_failed());
-    //must fail since approval was removed after transferring
-    transaction_id += 1;
-    assert!(transfer(&nft, transaction_id, USERS[1], USERS[0], 0).main_failed());
 }
 
 #[test]
@@ -577,7 +532,6 @@ fn delegated_approve_success() {
     })
     .encode();
     assert!(res.contains(&(USERS[1], message)));
-    assert!(!transfer(&nft, transaction_id, USERS[1], USERS[2], 0).main_failed());
 }
 
 #[test]

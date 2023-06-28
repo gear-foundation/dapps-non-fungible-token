@@ -58,17 +58,6 @@ pub enum NFTAction {
         transaction_id: u64,
         token_id: TokenId,
     },
-    Transfer {
-        transaction_id: u64,
-        to: ActorId,
-        token_id: TokenId,
-    },
-    TransferPayout {
-        transaction_id: u64,
-        to: ActorId,
-        token_id: TokenId,
-        amount: u128,
-    },
     NFTPayout {
         owner: ActorId,
         amount: u128,
