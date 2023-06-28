@@ -15,6 +15,9 @@ sp-core-hashing.workspace = true
 hashbrown.workspace = true
 gmeta.workspace = true
 
+rand_core = "0.6"
+rand_chacha = { version = "0.3", default-features = false }
+
 [dev-dependencies]
 nft-state = { workspace = true, features = ["binary-vendor"] }
 hex-literal.workspace = true

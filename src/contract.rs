@@ -65,10 +65,9 @@ unsafe extern "C" fn handle() {
             }
         }
         NFTAction::MintReferral { transaction_id } => {
-            let token_metadata = nft
-                .referral_metadata
-                .pop()
-                .expect("Missing metadata for referral");
+            let index = random() as usize % nft.referral_metadata.len();
+            let token_metadata = nft.referral_metadata.swap_remove(index);
+
             if nft.is_valid_referral(&msg_src) {
                 msg::reply(
                     nft.process_transaction(transaction_id, |nft| {
@@ -388,4 +387,16 @@ impl From<&Contract> for State {
             constraints: constraints.clone(),
         }
     }
+}
+
+fn random() -> u64 {
+    use rand_chacha::ChaCha20Rng;
+    use rand_core::{RngCore, SeedableRng};
+
+    let subject: [u8; 32] = core::array::from_fn(|i| i as u8 + 1);
+    let (seed, block_number) = exec::random(subject).expect("Error in random");
+
+    let mut rng = ChaCha20Rng::from_seed(seed);
+
+    rng.next_u64()
 }

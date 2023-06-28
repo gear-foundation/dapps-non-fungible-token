@@ -2293,6 +2293,8 @@ dependencies = [
  "nft-io",
  "nft-state",
  "primitive-types",
+ "rand_chacha 0.3.1",
+ "rand_core 0.6.4",
  "sp-core 7.0.0 (git+https://github.com/gear-tech/substrate.git?rev=36699c4478ce8ae05517bb42a1b115403313e083)",
  "sp-core-hashing 8.0.0",
  "tokio",
