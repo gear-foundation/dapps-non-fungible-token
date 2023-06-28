@@ -18,13 +18,18 @@ async fn mint_test() -> Result<()> {
         description: String::from("My token"),
     };
     let actor_id = ActorId::from_slice(&api.account_id().encode()).unwrap();
+    let referral = Referral {
+        id: actor_id,
+        can_mint: true,
+    };
+    let referrals: Vec<Referral> = vec![referral];
     let init_nft = InitNFT {
         collection,
         royalties: None,
         constraints: Constraints {
             max_mint_count: Some(100),
             authorized_minters: vec![actor_id],
-            referrals: vec![actor_id],
+            referrals,
         },
     }
     .encode();
@@ -88,13 +93,18 @@ async fn burn_test() -> Result<()> {
     };
 
     let actor_id = ActorId::from_slice(&api.account_id().encode()).unwrap();
+    let referral = Referral {
+        id: actor_id,
+        can_mint: true,
+    };
+    let referrals: Vec<Referral> = vec![referral];
     let init_nft = InitNFT {
         collection,
         royalties: None,
         constraints: Constraints {
             max_mint_count: Some(100),
             authorized_minters: vec![actor_id],
-            referrals: vec![actor_id],
+            referrals,
         },
     }
     .encode();
@@ -196,13 +206,18 @@ async fn transfer_test() -> Result<()> {
     };
 
     let actor_id = ActorId::from_slice(&api.account_id().encode()).unwrap();
+    let referral = Referral {
+        id: actor_id,
+        can_mint: true,
+    };
+    let referrals: Vec<Referral> = vec![referral];
     let init_nft = InitNFT {
         collection,
         royalties: None,
         constraints: Constraints {
             max_mint_count: Some(100),
             authorized_minters: vec![actor_id],
-            referrals: vec![actor_id],
+            referrals,
         },
     }
     .encode();
@@ -287,13 +302,18 @@ async fn owner_test() -> Result<()> {
     };
 
     let actor_id = ActorId::from_slice(&api.account_id().encode()).unwrap();
+    let referral = Referral {
+        id: actor_id,
+        can_mint: true,
+    };
+    let referrals: Vec<Referral> = vec![referral];
     let init_nft = InitNFT {
         collection,
         royalties: None,
         constraints: Constraints {
             max_mint_count: Some(100),
             authorized_minters: vec![actor_id],
-            referrals: vec![actor_id],
+            referrals,
         },
     }
     .encode();
@@ -372,13 +392,18 @@ async fn approved() -> Result<()> {
     };
 
     let actor_id = ActorId::from_slice(&api.account_id().encode()).unwrap();
+    let referral = Referral {
+        id: actor_id,
+        can_mint: true,
+    };
+    let referrals: Vec<Referral> = vec![referral];
     let init_nft = InitNFT {
         collection,
         royalties: None,
         constraints: Constraints {
             max_mint_count: Some(100),
             authorized_minters: vec![actor_id],
-            referrals: vec![actor_id],
+            referrals,
         },
     }
     .encode();

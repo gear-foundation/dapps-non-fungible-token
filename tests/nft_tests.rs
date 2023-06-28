@@ -38,7 +38,11 @@ fn mint_limit_exceed() {
         description: String::from("My token"),
     };
 
-    let referrals: Vec<ActorId> = vec![USERS[0].into()];
+    let referral = Referral {
+        id: USERS[0].into(),
+        can_mint: true,
+    };
+    let referrals: Vec<Referral> = vec![referral];
     let init_nft = InitNFT {
         collection,
         royalties: None,
@@ -73,7 +77,11 @@ fn mint_authorized() {
     };
 
     let authorized_minters: Vec<ActorId> = vec![USERS[0].into()];
-    let referrals: Vec<ActorId> = vec![USERS[0].into()];
+    let referral = Referral {
+        id: USERS[0].into(),
+        can_mint: true,
+    };
+    let referrals: Vec<Referral> = vec![referral];
     let init_nft = InitNFT {
         collection,
         royalties: None,
@@ -108,7 +116,11 @@ fn mint_not_authorized() {
     };
 
     let authorized_minters: Vec<ActorId> = vec![USERS[0].into()];
-    let referrals: Vec<ActorId> = vec![USERS[0].into()];
+    let referral = Referral {
+        id: USERS[0].into(),
+        can_mint: true,
+    };
+    let referrals: Vec<Referral> = vec![referral];
     let init_nft = InitNFT {
         collection,
         royalties: None,
@@ -143,7 +155,11 @@ fn mint_added() {
     };
 
     let authorized_minters: Vec<ActorId> = vec![USERS[0].into()];
-    let referrals: Vec<ActorId> = vec![USERS[0].into()];
+    let referral = Referral {
+        id: USERS[0].into(),
+        can_mint: true,
+    };
+    let referrals: Vec<Referral> = vec![referral];
     let init_nft = InitNFT {
         collection,
         royalties: None,
@@ -181,7 +197,11 @@ fn mint_referral() {
     };
 
     let authorized_minters: Vec<ActorId> = vec![];
-    let referrals: Vec<ActorId> = vec![USERS[0].into()];
+    let referral = Referral {
+        id: USERS[0].into(),
+        can_mint: true,
+    };
+    let referrals: Vec<Referral> = vec![referral];
     let init_nft = InitNFT {
         collection,
         royalties: None,
@@ -201,7 +221,7 @@ fn mint_referral() {
     let res = mint(&nft, transaction_id, USERS[0]);
     assert!(!res.main_failed());
     let res = mint(&nft, transaction_id + 1, USERS[0]);
-    assert!(!res.main_failed())
+    assert!(res.main_failed())
 }
 
 #[test]
@@ -216,7 +236,11 @@ fn mint_not_referral() {
     };
 
     let authorized_minters: Vec<ActorId> = vec![];
-    let referrals: Vec<ActorId> = vec![USERS[0].into()];
+    let referral = Referral {
+        id: USERS[0].into(),
+        can_mint: true,
+    };
+    let referrals: Vec<Referral> = vec![referral];
     let init_nft = InitNFT {
         collection,
         royalties: None,
@@ -251,7 +275,11 @@ fn referal_added() {
     };
 
     let authorized_minters: Vec<ActorId> = vec![USERS[0].into()];
-    let referrals: Vec<ActorId> = vec![USERS[0].into()];
+    let referral = Referral {
+        id: USERS[0].into(),
+        can_mint: true,
+    };
+    let referrals: Vec<Referral> = vec![referral];
     let init_nft = InitNFT {
         collection,
         royalties: None,

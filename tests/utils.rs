@@ -14,13 +14,14 @@ pub fn init_nft(sys: &System) {
         description: String::from("My token"),
     };
 
+    let referrals: Vec<Referral> = vec![];
     let init_nft = InitNFT {
         collection,
         royalties: None,
         constraints: Constraints {
             max_mint_count: Some(100),
             authorized_minters: vec![USERS[0].into()],
-            referrals: vec![USERS[0].into()],
+            referrals,
         },
     };
 

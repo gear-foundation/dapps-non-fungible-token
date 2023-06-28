@@ -18,7 +18,7 @@ pub struct NFTMetadata;
 pub struct Constraints {
     pub max_mint_count: Option<u32>,
     pub authorized_minters: Vec<ActorId>,
-    pub referrals: Vec<ActorId>,
+    pub referrals: Vec<Referral>,
 }
 
 #[derive(Debug, Encode, Decode, TypeInfo)]
@@ -41,6 +41,11 @@ impl Metadata for NFTMetadata {
     type Others = ();
     type Signal = ();
     type State = State;
+}
+#[derive(Debug, Encode, Decode, TypeInfo, Clone, Copy)]
+pub struct Referral {
+    pub id: ActorId,
+    pub can_mint: bool,
 }
 
 #[derive(Debug, Encode, Decode, TypeInfo)]
@@ -92,7 +97,7 @@ pub enum NFTAction {
         transaction_id: u64,
         minter_id: ActorId,
     },
-    AddReferrals {
+    AddReferral {
         transaction_id: u64,
         referral_id: ActorId,
     },

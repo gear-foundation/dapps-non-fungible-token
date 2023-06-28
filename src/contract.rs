@@ -2,7 +2,7 @@ use gear_lib::non_fungible_token::{io::NFTTransfer, nft_core::*, state::*, token
 use gear_lib_derive::{NFTCore, NFTMetaState, NFTStateKeeper};
 use gstd::{errors::Result as GstdResult, exec, msg, prelude::*, ActorId, MessageId};
 use hashbrown::HashMap;
-use nft_io::{Collection, Constraints, InitNFT, IoNFT, NFTAction, NFTEvent, Nft, State};
+use nft_io::{Collection, Constraints, InitNFT, IoNFT, NFTAction, NFTEvent, Nft, Referral, State};
 use primitive_types::{H256, U256};
 
 #[derive(Debug, Default, NFTStateKeeper, NFTCore, NFTMetaState)]
@@ -48,7 +48,7 @@ unsafe extern "C" fn handle() {
             transaction_id,
             token_metadata,
         } => {
-            if nft.is_authorized_minter(&msg_src) || nft.is_referral(&msg_src) {
+            if nft.is_authorized_minter(&msg_src) {
                 msg::reply(
                     nft.process_transaction(transaction_id, |nft| {
                         NFTEvent::Transfer(MyNFTCore::mint(nft, token_metadata))
@@ -56,6 +56,21 @@ unsafe extern "C" fn handle() {
                     0,
                 )
                 .expect("Error during replying with `NFTEvent::Transfer`");
+            } else if nft.is_valid_referral(&msg_src) {
+                msg::reply(
+                    nft.process_transaction(transaction_id, |nft| {
+                        NFTEvent::Transfer(MyNFTCore::mint(nft, token_metadata))
+                    }),
+                    0,
+                )
+                .expect("Error during replying with `NFTEvent::Transfer`");
+                let referral = nft
+                    .constraints
+                    .referrals
+                    .iter_mut()
+                    .find(|referral| msg_src.eq(&referral.id))
+                    .expect("Must be find");
+                referral.can_mint = false;
             } else {
                 panic!(
                     "Current ID {:?} is not authorized ar minter or referral",
@@ -177,13 +192,17 @@ unsafe extern "C" fn handle() {
                 );
             }
         }
-        NFTAction::AddReferrals {
+        NFTAction::AddReferral {
             transaction_id,
             referral_id,
         } => {
             msg::reply(
                 nft.process_transaction(transaction_id, |nft| {
-                    nft.constraints.referrals.push(referral_id);
+                    let referral = Referral {
+                        id: referral_id,
+                        can_mint: true,
+                    };
+                    nft.constraints.referrals.push(referral);
                     NFTEvent::ReferralAdded { referral_id }
                 }),
                 0,
@@ -205,6 +224,9 @@ impl MyNFTCore for Contract {
     }
 }
 
+// Добавить загрузку ссылок на картинки, загрузить картинки в контракт.
+// Выдача - посылается сообщения Mint без полей, контракт генерирует число 1-1000 и если такое число не выдано то выдаётся NFT под этим номером
+// referrals can mint only 1 time то что прошел по реферальной ссылке, то что один раз сминтил, и выдать NFT которую
 impl Contract {
     fn process_transaction(
         &mut self,
@@ -250,11 +272,11 @@ impl Contract {
             .any(|authorized_minter| authorized_minter.eq(current_minter))
     }
 
-    fn is_referral(&self, current_referral: &ActorId) -> bool {
+    fn is_valid_referral(&self, current_referral: &ActorId) -> bool {
         self.constraints
             .referrals
             .iter()
-            .any(|referral| current_referral.eq(referral))
+            .any(|referral| current_referral.eq(&referral.id) && referral.can_mint)
     }
 }
 
