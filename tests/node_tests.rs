@@ -1,5 +1,5 @@
 use gclient::{EventProcessor, GearApi, Result};
-use gstd::{ActorId, Encode};
+use gstd::{ActorId, BTreeSet, Encode};
 use nft::WASM_BINARY_OPT;
 use nft_io::*;
 
@@ -22,13 +22,13 @@ async fn mint_test() -> Result<()> {
         id: actor_id,
         can_mint: true,
     };
-    let referrals: Vec<Referral> = vec![referral];
+    let referrals: BTreeSet<Referral> = [referral; 1].into();
     let init_nft = InitNFT {
         collection,
         royalties: None,
         constraints: Constraints {
             max_mint_count: Some(100),
-            authorized_minters: vec![actor_id],
+            authorized_minters: [actor_id; 1].into(),
             referrals,
         },
     }
@@ -97,13 +97,13 @@ async fn burn_test() -> Result<()> {
         id: actor_id,
         can_mint: true,
     };
-    let referrals: Vec<Referral> = vec![referral];
+    let referrals: BTreeSet<Referral> = [referral; 1].into();
     let init_nft = InitNFT {
         collection,
         royalties: None,
         constraints: Constraints {
             max_mint_count: Some(100),
-            authorized_minters: vec![actor_id],
+            authorized_minters: [actor_id; 1].into(),
             referrals,
         },
     }
@@ -210,13 +210,13 @@ async fn transfer_test() -> Result<()> {
         id: actor_id,
         can_mint: true,
     };
-    let referrals: Vec<Referral> = vec![referral];
+    let referrals: BTreeSet<Referral> = [referral; 1].into();
     let init_nft = InitNFT {
         collection,
         royalties: None,
         constraints: Constraints {
             max_mint_count: Some(100),
-            authorized_minters: vec![actor_id],
+            authorized_minters: [actor_id; 1].into(),
             referrals,
         },
     }
@@ -306,13 +306,13 @@ async fn owner_test() -> Result<()> {
         id: actor_id,
         can_mint: true,
     };
-    let referrals: Vec<Referral> = vec![referral];
+    let referrals: BTreeSet<Referral> = [referral; 1].into();
     let init_nft = InitNFT {
         collection,
         royalties: None,
         constraints: Constraints {
             max_mint_count: Some(100),
-            authorized_minters: vec![actor_id],
+            authorized_minters: [actor_id; 1].into(),
             referrals,
         },
     }
@@ -396,13 +396,13 @@ async fn approved() -> Result<()> {
         id: actor_id,
         can_mint: true,
     };
-    let referrals: Vec<Referral> = vec![referral];
+    let referrals: BTreeSet<Referral> = [referral; 1].into();
     let init_nft = InitNFT {
         collection,
         royalties: None,
         constraints: Constraints {
             max_mint_count: Some(100),
-            authorized_minters: vec![actor_id],
+            authorized_minters: [actor_id; 1].into(),
             referrals,
         },
     }

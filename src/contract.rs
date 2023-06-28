@@ -14,6 +14,7 @@ pub struct Contract {
     pub transactions: HashMap<H256, NFTEvent>,
     pub collection: Collection,
     pub constraints: Constraints,
+    pub referral_metadata: Vec<TokenMetadata>,
 }
 
 static mut CONTRACT: Option<Contract> = None;
@@ -56,7 +57,19 @@ unsafe extern "C" fn handle() {
                     0,
                 )
                 .expect("Error during replying with `NFTEvent::Transfer`");
-            } else if nft.is_valid_referral(&msg_src) {
+            } else {
+                panic!(
+                    "Current ID {:?} is not authorized ar minter or referral",
+                    msg_src
+                );
+            }
+        }
+        NFTAction::MintReferral { transaction_id } => {
+            let token_metadata = nft
+                .referral_metadata
+                .pop()
+                .expect("Missing metadata for referral");
+            if nft.is_valid_referral(&msg_src) {
                 msg::reply(
                     nft.process_transaction(transaction_id, |nft| {
                         NFTEvent::Transfer(MyNFTCore::mint(nft, token_metadata))
@@ -64,18 +77,12 @@ unsafe extern "C" fn handle() {
                     0,
                 )
                 .expect("Error during replying with `NFTEvent::Transfer`");
-                let referral = nft
-                    .constraints
-                    .referrals
-                    .iter_mut()
-                    .find(|referral| msg_src.eq(&referral.id))
-                    .expect("Must be find");
-                referral.can_mint = false;
+                nft.constraints.referrals.insert(Referral {
+                    id: msg_src,
+                    can_mint: false,
+                });
             } else {
-                panic!(
-                    "Current ID {:?} is not authorized ar minter or referral",
-                    msg_src
-                );
+                panic!("Current ID {:?} is not referral or already minted", msg_src);
             }
         }
         NFTAction::Burn {
@@ -179,7 +186,7 @@ unsafe extern "C" fn handle() {
             if nft.is_authorized_minter(&msg_src) {
                 msg::reply(
                     nft.process_transaction(transaction_id, |nft| {
-                        nft.constraints.authorized_minters.push(minter_id);
+                        nft.constraints.authorized_minters.insert(minter_id);
                         NFTEvent::MinterAdded { minter_id }
                     }),
                     0,
@@ -202,12 +209,15 @@ unsafe extern "C" fn handle() {
                         id: referral_id,
                         can_mint: true,
                     };
-                    nft.constraints.referrals.push(referral);
+                    nft.constraints.referrals.insert(referral);
                     NFTEvent::ReferralAdded { referral_id }
                 }),
                 0,
             )
             .expect("Error during replying with `NFTEvent::Approval`");
+        }
+        NFTAction::AddReferralMetadata(metadata) => {
+            nft.referral_metadata.push(metadata);
         }
     };
 }
@@ -338,6 +348,7 @@ impl From<&Contract> for State {
             transactions,
             collection,
             constraints,
+            referral_metadata,
         } = value;
 
         let owners = token

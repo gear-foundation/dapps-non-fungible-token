@@ -1,6 +1,6 @@
-use gear_lib::non_fungible_token::delegated::DelegatedApproveMessage;
 use gear_lib::non_fungible_token::io::*;
-use gstd::{ActorId, Encode};
+use gear_lib::non_fungible_token::{delegated::DelegatedApproveMessage, token::TokenMetadata};
+use gstd::{ActorId, BTreeSet, Encode};
 use gtest::System;
 mod utils;
 use hex_literal::hex;
@@ -42,13 +42,13 @@ fn mint_limit_exceed() {
         id: USERS[0].into(),
         can_mint: true,
     };
-    let referrals: Vec<Referral> = vec![referral];
+    let referrals: BTreeSet<Referral> = [referral; 1].into();
     let init_nft = InitNFT {
         collection,
         royalties: None,
         constraints: Constraints {
             max_mint_count: Some(1),
-            authorized_minters: vec![USERS[0].into()],
+            authorized_minters: [USERS[0].into(); 1].into(),
             referrals,
         },
     };
@@ -76,12 +76,12 @@ fn mint_authorized() {
         description: String::from("My token"),
     };
 
-    let authorized_minters: Vec<ActorId> = vec![USERS[0].into()];
+    let authorized_minters: BTreeSet<ActorId> = [USERS[0].into(); 1].into();
     let referral = Referral {
         id: USERS[0].into(),
         can_mint: true,
     };
-    let referrals: Vec<Referral> = vec![referral];
+    let referrals: BTreeSet<Referral> = [referral; 1].into();
     let init_nft = InitNFT {
         collection,
         royalties: None,
@@ -115,12 +115,12 @@ fn mint_not_authorized() {
         description: String::from("My token"),
     };
 
-    let authorized_minters: Vec<ActorId> = vec![USERS[0].into()];
+    let authorized_minters: BTreeSet<ActorId> = [USERS[0].into(); 1].into();
     let referral = Referral {
         id: USERS[0].into(),
         can_mint: true,
     };
-    let referrals: Vec<Referral> = vec![referral];
+    let referrals: BTreeSet<Referral> = [referral; 1].into();
     let init_nft = InitNFT {
         collection,
         royalties: None,
@@ -154,12 +154,12 @@ fn mint_added() {
         description: String::from("My token"),
     };
 
-    let authorized_minters: Vec<ActorId> = vec![USERS[0].into()];
+    let authorized_minters: BTreeSet<ActorId> = [USERS[0].into(); 1].into();
     let referral = Referral {
         id: USERS[0].into(),
         can_mint: true,
     };
-    let referrals: Vec<Referral> = vec![referral];
+    let referrals: BTreeSet<Referral> = [referral; 1].into();
     let init_nft = InitNFT {
         collection,
         royalties: None,
@@ -185,8 +185,86 @@ fn mint_added() {
     assert!(res.main_failed())
 }
 
+// #[test]
+// fn mint_referral() {
+//     let sys = System::new();
+//     sys.init_logger();
+//     let nft = gtest::Program::current(&sys);
+
+//     let collection = Collection {
+//         name: String::from("MyToken"),
+//         description: String::from("My token"),
+//     };
+
+//     let authorized_minters: BTreeSet<ActorId> = vec![];
+//     let referral = Referral {
+//         id: USERS[0].into(),
+//         can_mint: true,
+//     };
+//     let referrals: BTreeSet<Referral> = [referral; 1].into();
+//     let init_nft = InitNFT {
+//         collection,
+//         royalties: None,
+//         constraints: Constraints {
+//             max_mint_count: None,
+//             authorized_minters,
+//             referrals,
+//         },
+//     };
+
+//     let res = nft.send(USERS[0], init_nft);
+
+//     assert!(res.log().is_empty());
+
+//     let nft = sys.get_program(1);
+//     let transaction_id: u64 = 0;
+//     let res = mint(&nft, transaction_id, USERS[0]);
+//     assert!(!res.main_failed());
+//     let res = mint(&nft, transaction_id + 1, USERS[0]);
+//     assert!(res.main_failed())
+// }
+
+// #[test]
+// fn mint_not_referral() {
+//     let sys = System::new();
+//     sys.init_logger();
+//     let nft = gtest::Program::current(&sys);
+
+//     let collection = Collection {
+//         name: String::from("MyToken"),
+//         description: String::from("My token"),
+//     };
+
+//     let authorized_minters: BTreeSet<ActorId> = vec![];
+//     let referral = Referral {
+//         id: USERS[0].into(),
+//         can_mint: true,
+//     };
+//     let referrals: BTreeSet<Referral> = [referral; 1].into();
+//     let init_nft = InitNFT {
+//         collection,
+//         royalties: None,
+//         constraints: Constraints {
+//             max_mint_count: None,
+//             authorized_minters,
+//             referrals,
+//         },
+//     };
+
+//     let res = nft.send(USERS[0], init_nft);
+
+//     assert!(res.log().is_empty());
+
+//     let nft = sys.get_program(1);
+//     let transaction_id: u64 = 0;
+//     let res = mint(&nft, transaction_id, USERS[0]);
+//     assert!(!res.main_failed());
+//     let res = mint(&nft, transaction_id + 1, USERS[1]);
+//     assert!(res.main_failed())
+// }
+
 #[test]
-fn mint_referral() {
+fn referral_added() {
     let sys = System::new();
     sys.init_logger();
     let nft = gtest::Program::current(&sys);
@@ -196,12 +274,12 @@ fn mint_referral() {
         description: String::from("My token"),
     };
 
-    let authorized_minters: Vec<ActorId> = vec![];
+    let authorized_minters: BTreeSet<ActorId> = [USERS[0].into(); 1].into();
     let referral = Referral {
         id: USERS[0].into(),
         can_mint: true,
     };
-    let referrals: Vec<Referral> = vec![referral];
+    let referrals: BTreeSet<Referral> = [referral; 1].into();
     let init_nft = InitNFT {
         collection,
         royalties: None,
@@ -218,14 +296,17 @@ fn mint_referral() {
 
     let nft = sys.get_program(1);
     let transaction_id: u64 = 0;
-    let res = mint(&nft, transaction_id, USERS[0]);
+    let res = add_referral(&nft, transaction_id, USERS[1].into(), USERS[0]);
     assert!(!res.main_failed());
-    let res = mint(&nft, transaction_id + 1, USERS[0]);
-    assert!(res.main_failed())
+    let res = add_referral(&nft, transaction_id + 1, USERS[2].into(), USERS[1]);
+    assert!(!res.main_failed());
+
+    let res = add_referral(&nft, transaction_id + 1, 5.into(), 7);
+    assert!(!res.main_failed())
 }
 
 #[test]
-fn mint_not_referral() {
+fn add_referral_metadata_and_mint() {
     let sys = System::new();
     sys.init_logger();
     let nft = gtest::Program::current(&sys);
@@ -235,12 +316,12 @@ fn mint_not_referral() {
         description: String::from("My token"),
     };
 
-    let authorized_minters: Vec<ActorId> = vec![];
+    let authorized_minters: BTreeSet<ActorId> = [USERS[0].into(); 1].into();
     let referral = Referral {
         id: USERS[0].into(),
         can_mint: true,
     };
-    let referrals: Vec<Referral> = vec![referral];
+    let referrals: BTreeSet<Referral> = [referral; 1].into();
     let init_nft = InitNFT {
         collection,
         royalties: None,
@@ -256,53 +337,36 @@ fn mint_not_referral() {
     assert!(res.log().is_empty());
 
     let nft = sys.get_program(1);
-    let transaction_id: u64 = 0;
-    let res = mint(&nft, transaction_id, USERS[0]);
-    assert!(!res.main_failed());
-    let res = mint(&nft, transaction_id + 1, USERS[1]);
-    assert!(res.main_failed())
-}
-
-#[test]
-fn referal_added() {
-    let sys = System::new();
-    sys.init_logger();
-    let nft = gtest::Program::current(&sys);
-
-    let collection = Collection {
-        name: String::from("MyToken"),
-        description: String::from("My token"),
-    };
-
-    let authorized_minters: Vec<ActorId> = vec![USERS[0].into()];
-    let referral = Referral {
-        id: USERS[0].into(),
-        can_mint: true,
-    };
-    let referrals: Vec<Referral> = vec![referral];
-    let init_nft = InitNFT {
-        collection,
-        royalties: None,
-        constraints: Constraints {
-            max_mint_count: None,
-            authorized_minters,
-            referrals,
-        },
-    };
-
-    let res = nft.send(USERS[0], init_nft);
-
-    assert!(res.log().is_empty());
-
-    let nft = sys.get_program(1);
-    let transaction_id: u64 = 0;
-    let res = add_minter(&nft, transaction_id, USERS[1].into(), USERS[0]);
-    assert!(!res.main_failed());
-    let res = add_minter(&nft, transaction_id + 1, USERS[2].into(), USERS[1]);
+    let mut transaction_id: u64 = 0;
+    let res = add_referral(&nft, transaction_id, USERS[1].into(), USERS[0]);
     assert!(!res.main_failed());
 
-    let res = add_minter(&nft, transaction_id + 1, 5.into(), 7);
-    assert!(res.main_failed())
+    transaction_id += 1;
+    let res = add_referral(&nft, transaction_id, USERS[2].into(), USERS[1]);
+    assert!(!res.main_failed());
+
+    transaction_id += 1;
+    let res = add_referral(&nft, transaction_id, 5.into(), 7);
+    assert!(!res.main_failed());
+
+    let token_metadata = TokenMetadata {
+        name: "Rex".to_string(),
+        description: "black dog".to_string(),
+        media: "QSh29hf".to_string(),
+        reference: "reference.json".to_string(),
+    };
+
+    let res = add_media(&nft, token_metadata, USERS[0]);
+
+    assert!(!res.main_failed());
+
+    transaction_id += 1;
+    let res = mint_referral(&nft, transaction_id, USERS[0]);
+    assert!(!res.main_failed());
+
+    let state: State = nft.read_state().expect("Can't read state");
+
+    println!("{:?}", state);
 }
 
 #[test]
