@@ -40,7 +40,6 @@ fn mint_limit_exceed() {
 
     let referral = Referral {
         id: USERS[0].into(),
-        can_mint: true,
     };
     let referrals: BTreeSet<Referral> = [referral; 1].into();
     let init_nft = InitNFT {
@@ -79,7 +78,6 @@ fn mint_authorized() {
     let authorized_minters: BTreeSet<ActorId> = [USERS[0].into(); 1].into();
     let referral = Referral {
         id: USERS[0].into(),
-        can_mint: true,
     };
     let referrals: BTreeSet<Referral> = [referral; 1].into();
     let init_nft = InitNFT {
@@ -118,7 +116,6 @@ fn mint_not_authorized() {
     let authorized_minters: BTreeSet<ActorId> = [USERS[0].into(); 1].into();
     let referral = Referral {
         id: USERS[0].into(),
-        can_mint: true,
     };
     let referrals: BTreeSet<Referral> = [referral; 1].into();
     let init_nft = InitNFT {
@@ -157,7 +154,6 @@ fn mint_added() {
     let authorized_minters: BTreeSet<ActorId> = [USERS[0].into(); 1].into();
     let referral = Referral {
         id: USERS[0].into(),
-        can_mint: true,
     };
     let referrals: BTreeSet<Referral> = [referral; 1].into();
     let init_nft = InitNFT {
@@ -199,7 +195,7 @@ fn mint_added() {
 //     let authorized_minters: BTreeSet<ActorId> = vec![];
 //     let referral = Referral {
 //         id: USERS[0].into(),
-//         can_mint: true,
+//
 //     };
 //     let referrals: BTreeSet<Referral> = [referral; 1].into();
 //     let init_nft = InitNFT {
@@ -238,7 +234,7 @@ fn mint_added() {
 //     let authorized_minters: BTreeSet<ActorId> = vec![];
 //     let referral = Referral {
 //         id: USERS[0].into(),
-//         can_mint: true,
+//
 //     };
 //     let referrals: BTreeSet<Referral> = [referral; 1].into();
 //     let init_nft = InitNFT {
@@ -277,7 +273,6 @@ fn referral_added() {
     let authorized_minters: BTreeSet<ActorId> = [USERS[0].into(); 1].into();
     let referral = Referral {
         id: USERS[0].into(),
-        can_mint: true,
     };
     let referrals: BTreeSet<Referral> = [referral; 1].into();
     let init_nft = InitNFT {
@@ -319,7 +314,6 @@ fn add_referral_metadata_and_mint() {
     let authorized_minters: BTreeSet<ActorId> = [USERS[0].into(); 1].into();
     let referral = Referral {
         id: USERS[0].into(),
-        can_mint: true,
     };
     let referrals: BTreeSet<Referral> = [referral; 1].into();
     let init_nft = InitNFT {

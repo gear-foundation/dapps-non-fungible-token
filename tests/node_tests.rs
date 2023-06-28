@@ -18,10 +18,7 @@ async fn mint_test() -> Result<()> {
         description: String::from("My token"),
     };
     let actor_id = ActorId::from_slice(&api.account_id().encode()).unwrap();
-    let referral = Referral {
-        id: actor_id,
-        can_mint: true,
-    };
+    let referral = Referral { id: actor_id };
     let referrals: BTreeSet<Referral> = [referral; 1].into();
     let init_nft = InitNFT {
         collection,
@@ -93,10 +90,7 @@ async fn burn_test() -> Result<()> {
     };
 
     let actor_id = ActorId::from_slice(&api.account_id().encode()).unwrap();
-    let referral = Referral {
-        id: actor_id,
-        can_mint: true,
-    };
+    let referral = Referral { id: actor_id };
     let referrals: BTreeSet<Referral> = [referral; 1].into();
     let init_nft = InitNFT {
         collection,
@@ -206,10 +200,7 @@ async fn transfer_test() -> Result<()> {
     };
 
     let actor_id = ActorId::from_slice(&api.account_id().encode()).unwrap();
-    let referral = Referral {
-        id: actor_id,
-        can_mint: true,
-    };
+    let referral = Referral { id: actor_id };
     let referrals: BTreeSet<Referral> = [referral; 1].into();
     let init_nft = InitNFT {
         collection,
@@ -302,10 +293,7 @@ async fn owner_test() -> Result<()> {
     };
 
     let actor_id = ActorId::from_slice(&api.account_id().encode()).unwrap();
-    let referral = Referral {
-        id: actor_id,
-        can_mint: true,
-    };
+    let referral = Referral { id: actor_id };
     let referrals: BTreeSet<Referral> = [referral; 1].into();
     let init_nft = InitNFT {
         collection,
@@ -392,10 +380,7 @@ async fn approved() -> Result<()> {
     };
 
     let actor_id = ActorId::from_slice(&api.account_id().encode()).unwrap();
-    let referral = Referral {
-        id: actor_id,
-        can_mint: true,
-    };
+    let referral = Referral { id: actor_id };
     let referrals: BTreeSet<Referral> = [referral; 1].into();
     let init_nft = InitNFT {
         collection,

@@ -76,10 +76,7 @@ unsafe extern "C" fn handle() {
                     0,
                 )
                 .expect("Error during replying with `NFTEvent::Transfer`");
-                nft.constraints.referrals.insert(Referral {
-                    id: msg_src,
-                    can_mint: false,
-                });
+                nft.constraints.referrals.insert(Referral { id: msg_src });
             } else {
                 panic!("Current ID {:?} is not referral or already minted", msg_src);
             }
@@ -204,10 +201,7 @@ unsafe extern "C" fn handle() {
         } => {
             msg::reply(
                 nft.process_transaction(transaction_id, |nft| {
-                    let referral = Referral {
-                        id: referral_id,
-                        can_mint: true,
-                    };
+                    let referral = Referral { id: referral_id };
                     nft.constraints.referrals.insert(referral);
                     NFTEvent::ReferralAdded { referral_id }
                 }),
@@ -282,10 +276,15 @@ impl Contract {
     }
 
     fn is_valid_referral(&self, current_referral: &ActorId) -> bool {
-        self.constraints
+        let is_exist = self
+            .constraints
             .referrals
             .iter()
-            .any(|referral| current_referral.eq(&referral.id) && referral.can_mint)
+            .any(|referral| current_referral.eq(&referral.id));
+
+        let can_mint = self.tokens_for_owner(current_referral).is_empty();
+
+        is_exist && can_mint
     }
 }
 

@@ -216,7 +216,6 @@ pub struct State {
 #[derive(Debug, Encode, Decode, TypeInfo, Clone, Copy)]
 pub struct Referral {
     pub id: ActorId,
-    pub can_mint: bool,
 }
 
 impl PartialEq for Referral {
