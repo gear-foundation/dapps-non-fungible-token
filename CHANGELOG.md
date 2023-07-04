@@ -66,7 +66,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release.
 
-[Unreleased]: https://github.com/gear-dapps/non-fungible-token/compare/0.2.11...HEAD
+[Unreleased]: https://github.com/gear-dapps/non-fungible-token/compare/0.2.12...HEAD
+[0.2.11]: https://github.com/gear-dapps/non-fungible-token/compare/0.2.11...0.2.12
 [0.2.11]: https://github.com/gear-dapps/non-fungible-token/compare/0.2.10...0.2.11
 [0.2.10]: https://github.com/gear-dapps/non-fungible-token/compare/0.2.9...0.2.10
 [0.2.9]: https://github.com/gear-dapps/non-fungible-token/compare/0.2.8...0.2.9
