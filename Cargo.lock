@@ -2363,7 +2363,6 @@ dependencies = [
  "gtest",
  "hashbrown 0.14.0",
  "hex-literal",
- "nft",
  "nft-io",
  "nft-state",
  "primitive-types",

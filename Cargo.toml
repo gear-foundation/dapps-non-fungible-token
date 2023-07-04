@@ -17,7 +17,6 @@ gmeta.workspace = true
 
 [dev-dependencies]
 nft-state = { workspace = true, features = ["binary-vendor"] }
-nft = { workspace = true, features = ["binary-vendor"] }
 hex-literal.workspace = true
 sp-core.workspace = true
 gclient.workspace = true
@@ -52,7 +51,6 @@ gear-lib = { git = "https://github.com/gear-dapps/gear-lib", branch = "update-de
 gear-lib-derive = { git = "https://github.com/gear-dapps/gear-lib", branch = "update-deps" }
 nft-io.path = "io"
 nft-state.path = "state"
-nft.path = "."
 parity-scale-codec = { version = "3", default-features = false }
 scale-info = { version = "2", default-features = false }
 primitive-types = { version = "0.12", default-features = false }
