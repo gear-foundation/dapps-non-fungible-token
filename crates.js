@@ -1,0 +1,1 @@
+window.ALL_CRATES = ["nft","nft_io","nft_state"];
